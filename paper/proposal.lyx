@@ -76,7 +76,7 @@ status open
 
 
 \backslash
-title{CPSC 433 - Scheduling Problem}
+title{CPSC 433 - Course Scheduling Problem}
 \end_layout
 
 \begin_layout Plain Layout
@@ -120,7 +120,7 @@ and
 
 \begin_layout Plain Layout
 
-Kendra Kaminsky
+Kendra Wannamaker
 \backslash
 
 \backslash
@@ -136,7 +136,7 @@ and
 
 \begin_layout Plain Layout
 
-Thomas
+Thomas Bystersky
 \backslash
 
 \backslash
@@ -161,6 +161,22 @@ Jordan
 
 \begin_layout Plain Layout
 
+
+\backslash
+and
+\end_layout
+
+\begin_layout Plain Layout
+
+Aaron Mouratidis
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
 }
 \end_layout
 
@@ -176,6 +192,15 @@ maketitle
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Abstract
 \end_layout
@@ -184,7 +209,22 @@ Abstract
 In this paper, we will present two approaches to solving the scheduling
  problem for the Computer Science Department at the University of Calgary.
  The first is a set-based search model, with a genetic approach.
- The second is an And-Tree based 
+ The second is an And-Tree based model that subdivides the schedule and
+ attempts to combine subproblems to find an overall solution.
+ 
+\end_layout
+
+\begin_layout Section
+CPSC Department Specific Instance
+\end_layout
+
+\begin_layout Standard
+We can transform the input for the CPSC-specific instance of the problem
+ into a general instance of the problem like so:
+\end_layout
+
+\begin_layout Standard
+<TODO>
 \end_layout
 
 \begin_layout Section
@@ -196,11 +236,10 @@ Overview
 \end_layout
 
 \begin_layout Standard
-This is a genetic algorithms approach that begins with a set of valid solutions,
- and uses mutate and crossover operations on the stop percentile of the
- population each iteration to ensure that the solution grows over time to
- a reasonably effective solution.
- 
+This is a genetic algorithms approach that begins with a set of valid, unoptimiz
+ed solutions, and then for a number of generations uses mutate and crossover
+ operations on some subset of the population to create a gradually improving
+ solution.
 \end_layout
 
 \begin_layout Standard
@@ -211,17 +250,27 @@ The desirability of a given solution is given by the
  function.
  More desirable solutions are cross-bred and mutated, and their offspring
  are added to the next generation.
- We keep the top 
-\begin_inset Formula $50\%$
+ From one generation to the next, the members that survive are randomly
+ selected with a bias towards those with a lower 
+\begin_inset Formula $Eval$
 \end_inset
 
- of members of the population from one iteration to the next.
- The rest are discarded.
+ value.
+ The rest are discarded, and those that survive are crossover and mutated
+ accordingly.
+ The members that survive are randomly selected with a bias towards those
+ with a lower 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value.
 \end_layout
 
 \begin_layout Standard
-Mutations and crossbreeds are done in such a way that all solutions are
- kept valid.
+Mutations and crossovers are done in such a way that all solutions are kept
+ valid.
+ There will never be a solution in the population that does not satisfy
+ all hard requirements.
  
 \end_layout
 
@@ -229,12 +278,1631 @@ Mutations and crossbreeds are done in such a way that all solutions are
 Search Model
 \end_layout
 
+\begin_layout Standard
+Facts in this system are represented as assignment relations that map courses
+ and labs to time slots.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f\in F\iff f:\,(L\cup C)\times S
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A=(S,T)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ext=\left\{ A\rightarrow B|A,B\in F,\,\forall s\in S,A\subseteq S,\left((s-A)\cup B\right)\in S,\left(Mutate(A,B)\lor Crossover(A,B)\right)\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S\subseteq2^{F},\,|S|\leq PopCap
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+T=\left\{ (s,s')|\exists A,B\in Ext,\,A\subseteq s,\;s'=(s-A)\cup B\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $PopCap$
+\end_inset
+
+ is the maximum population for a generation.
+\end_layout
+
+\begin_layout Standard
+We also have some other relations and variables included in our problem
+ definition.
+ We will refer to them as follows:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $L$
+\end_inset
+
+=Set of Labs
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $C$
+\end_inset
+
+=Set of Courses
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $D$
+\end_inset
+
+=Set of slots
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $N$
+\end_inset
+
+=not-compatible relation, 
+\begin_inset Formula $N:\,L\cup C\times L\cup C$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $U$
+\end_inset
+
+=unwanted relation, 
+\begin_inset Formula $U:\,L\cup C\times S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Mutation Function
+\end_layout
+
+\begin_layout Standard
+The mutation function mutate(A,B) takes as input a singleton set 
+\begin_inset Formula $A\subseteq S$
+\end_inset
+
+, and transforms it into another singleton set 
+\begin_inset Formula $B\subseteq S$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+We can let 
+\begin_inset Formula $f\in A$
+\end_inset
+
+ be the only item in the singleton set.
+ We know that 
+\begin_inset Formula $f\in F$
+\end_inset
+
+, since 
+\begin_inset Formula $A\subseteq F$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Our mutation function then does two operations.
+\end_layout
+
+\begin_layout Subsubsection*
+Reassignment of a Course or Lab
+\end_layout
+
+\begin_layout Standard
+If there exists a slot 
+\begin_inset Formula $s\in D$
+\end_inset
+
+ such that 
+\begin_inset Formula $\forall x\in(L\cup C)$
+\end_inset
+
+, 
+\begin_inset Formula $a(x)\neq s$
+\end_inset
+
+, (That is to say, that slot has not been assigned any courses or labs),
+ then let we transform 
+\begin_inset Formula $f$
+\end_inset
+
+ as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f'=f-\{(a,s)\}+\{(a,s')\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $(a,s)\in f$
+\end_inset
+
+, 
+\begin_inset Formula $a\in(C\cup L)$
+\end_inset
+
+, 
+\begin_inset Formula $s,s'\in D$
+\end_inset
+
+, and the following holds:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $s'$
+\end_inset
+
+ are randomly selected with uniform distribution over all 
+\begin_inset Formula $(C\cup L)$
+\end_inset
+
+ and all 
+\begin_inset Formula $D$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\forall m$
+\end_inset
+
+ such that 
+\begin_inset Formula $(m,s')\in f$
+\end_inset
+
+, 
+\begin_inset Formula $(a,m)\notin N$
+\end_inset
+
+ (a is compatible with all others assigned to slot 
+\begin_inset Formula $s'$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $(a,s')\notin U$
+\end_inset
+
+ (A is not unwanted in slot 
+\begin_inset Formula $s'$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $a\in C$
+\end_inset
+
+ Then
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\forall l$
+\end_inset
+
+ where 
+\begin_inset Formula $l$
+\end_inset
+
+ is a lab of 
+\begin_inset Formula $a$
+\end_inset
+
+, 
+\begin_inset Formula $(l,s')\notin f$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If 
+\begin_inset Formula $a\in L$
+\end_inset
+
+ Then
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $(c,s')\notin f$
+\end_inset
+
+ where 
+\begin_inset Formula $c$
+\end_inset
+
+ is the class corresponding to 
+\begin_inset Formula $a$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+If no slots and assignable courses or labs exist that satisfy this criteria,
+ then let 
+\begin_inset Formula $f'=f$
+\end_inset
+
+ and move on to the next step:
+\end_layout
+
+\begin_layout Subsubsection*
+Swapping of Two Assignments
+\end_layout
+
+\begin_layout Standard
+We transform 
+\begin_inset Formula $f'$
+\end_inset
+
+ to produce another fact, 
+\begin_inset Formula $f^{\prime\prime}$
+\end_inset
+
+ as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f^{\prime\prime}=f'-\{(a,s_{a}),(b,s_{b})\}+\{(a,s_{b}),(b,s_{a})\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $\left\{ (a,s_{a}),(b,s_{b})\right\} \subseteq F$
+\end_inset
+
+, 
+\begin_inset Formula $a,b\in(C\cup L)$
+\end_inset
+
+, 
+\begin_inset Formula $s_{a},s_{b}\in D$
+\end_inset
+
+, and the following holds:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ are randomly selected with uniform distribution over all 
+\begin_inset Formula $(C\cup L)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\forall m$
+\end_inset
+
+ such that 
+\begin_inset Formula $(m,s_{b})\in f$
+\end_inset
+
+, 
+\begin_inset Formula $(a,m)\notin N$
+\end_inset
+
+ (a is compatible with all others assigned to slot 
+\begin_inset Formula $s_{b}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\forall m$
+\end_inset
+
+ such that 
+\begin_inset Formula $(m,s_{a})\in f$
+\end_inset
+
+, 
+\begin_inset Formula $(b,m)\notin N$
+\end_inset
+
+ (b is compatible with all others assigned to slot 
+\begin_inset Formula $s_{a}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $(a,s_{b})\notin U$
+\end_inset
+
+ (
+\begin_inset Formula $a$
+\end_inset
+
+ is not unwanted in slot 
+\begin_inset Formula $s_{b}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $(b,s_{a})\notin U$
+\end_inset
+
+ (
+\begin_inset Formula $b$
+\end_inset
+
+ is not unwanted in slot 
+\begin_inset Formula $s_{a}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $a\in C$
+\end_inset
+
+ Then
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\forall l$
+\end_inset
+
+ where 
+\begin_inset Formula $l$
+\end_inset
+
+ is a lab of 
+\begin_inset Formula $a$
+\end_inset
+
+, 
+\begin_inset Formula $(l,s_{b})\notin f$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If 
+\begin_inset Formula $b\in C$
+\end_inset
+
+ Then
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\forall l$
+\end_inset
+
+ where 
+\begin_inset Formula $l$
+\end_inset
+
+ is a lab of b, 
+\begin_inset Formula $(l,s_{a})\notin f$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If 
+\begin_inset Formula $a\in L$
+\end_inset
+
+ Then
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $(c,s_{b})\notin f$
+\end_inset
+
+ where 
+\begin_inset Formula $c$
+\end_inset
+
+ is the class corresponding to 
+\begin_inset Formula $a$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If 
+\begin_inset Formula $b\in L$
+\end_inset
+
+ Then
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $(c,s_{a})\notin f$
+\end_inset
+
+ where 
+\begin_inset Formula $c$
+\end_inset
+
+ is the class corresponding to 
+\begin_inset Formula $b$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+If no slots and assignable courses or labs exist that satisfy this criteria,
+ then let 
+\begin_inset Formula $f^{\prime\prime}=f$
+\end_inset
+
+'.
+ Now we can define 
+\begin_inset Formula $B$
+\end_inset
+
+ as the set containing our transformed fact as well as our original fact.
+ 
+\begin_inset Formula 
+\[
+B=\{f,f^{\prime\prime}\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Crossover Function
+\end_layout
+
+\begin_layout Standard
+The crossover function crossover(A,B) takes as input a two-item set 
+\begin_inset Formula $A\subseteq S$
+\end_inset
+
+, 
+\begin_inset Formula $|A|=2$
+\end_inset
+
+ and transforms it into another set 
+\begin_inset Formula $B\subseteq S$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+We can let 
+\begin_inset Formula $f_{m},f_{f}\in A$
+\end_inset
+
+ be the mother and father facts for this crossover.
+ It does not matter which is which, they can be selected arbitrarily.
+ 
+\end_layout
+
+\begin_layout Standard
+We do our crossover operation as an or-tree-based search.
+\end_layout
+
+\begin_layout Subsubsection*
+Crossover Search Model
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A=(S,T)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $Prob$
+\end_inset
+
+ = Set of problem descriptions, of the form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+pr\in Prob\iff pr=(L,C,D,N,U,Z,M,F,par)
+\]
+
+\end_inset
+
+Where 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $L$
+\end_inset
+
+=Set of Labs
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $C$
+\end_inset
+
+=Set of Courses
+\end_layout
+
+\begin_layout Itemize
+D=Set of slots
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $N$
+\end_inset
+
+=not-compatible relation, 
+\begin_inset Formula $N:\,L\cup C\times L\cup C$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $U$
+\end_inset
+
+=Unwanted relation, 
+\begin_inset Formula $U:\,L\cup C\times S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Z$
+\end_inset
+
+=Assign relation, 
+\begin_inset Formula $Z:L\cup C\times S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $M$
+\end_inset
+
+=The mother for the crossover.
+ 
+\begin_inset Formula $M\in A$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $F$
+\end_inset
+
+=The father for the crossover.
+ 
+\begin_inset Formula $F\in A$
+\end_inset
+
+, 
+\begin_inset Formula $F\neq M$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $par$
+\end_inset
+
+=The current parent we are taking genetic material from.
+ This alternates at each level of our search tree.
+ 
+\begin_inset Formula $par\in\{M,F\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $Altern(pr):$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For each 
+\begin_inset Formula $x\in a\times s$
+\end_inset
+
+ where 
+\begin_inset Formula $a\in(L\cup C)$
+\end_inset
+
+, 
+\begin_inset Formula $s\in S$
+\end_inset
+
+ where: 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\forall m$
+\end_inset
+
+ such that 
+\begin_inset Formula $Z(m)=s,\;\neg N(a,m)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\neg U(a,s)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $a\in L$
+\end_inset
+
+ and 
+\begin_inset Formula $a$
+\end_inset
+
+ has some corresponding course 
+\begin_inset Formula $c\in C$
+\end_inset
+
+,
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $Z(c)\neq s$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If 
+\begin_inset Formula $a\in C$
+\end_inset
+
+ and 
+\begin_inset Formula $a$
+\end_inset
+
+ has some correspoinding labs 
+\begin_inset Formula $\left\{ l_{1},...,l_{n}\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\forall l_{i}$
+\end_inset
+
+ where 
+\begin_inset Formula $1\leq i\leq n$
+\end_inset
+
+, 
+\begin_inset Formula $Z(l_{i})\neq s$
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Create a branch 
+\begin_inset Formula $b_{i}=(pr',?)$
+\end_inset
+
+ where 
+\begin_inset Formula $pr'=(L,C,S,N,U,Z',M,F,par')$
+\end_inset
+
+ and 
+\begin_inset Formula $Z'=Z+(a,s)$
+\end_inset
+
+ and 
+\begin_inset Formula 
+\[
+par'=\begin{cases}
+M & par=F\\
+F & par=M
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+This causes the currently active parent to be swapped at every level of
+ the tree, meaning we switch from parent to parent when taking genetic material.
+\end_layout
+
+\begin_layout Subsubsection*
+Crossover Search Process
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+P=(A,Env,k)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+k(s,e)=s^{\prime}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $s^{\prime}$
+\end_inset
+
+is uniformly randomly selected from 
+\begin_inset Formula $Altern(s)$
+\end_inset
+
+ based on the following:
+\end_layout
+
+\begin_layout Enumerate
+If there exists some 
+\begin_inset Formula $s_{1}$
+\end_inset
+
+ that adds 
+\begin_inset Formula $(x,l)$
+\end_inset
+
+ to the solution, and 
+\begin_inset Formula $(x,l)\in par$
+\end_inset
+
+, use 
+\begin_inset Formula $s'=s_{1}$
+\end_inset
+
+ with the highest priority.
+ (That is, if 
+\begin_inset Formula $s_{1}$
+\end_inset
+
+ was taken from the current parent's solution, use it before using all others.)
+\end_layout
+
+\begin_layout Enumerate
+If there exists some 
+\begin_inset Formula $s_{2}$
+\end_inset
+
+ that adds 
+\begin_inset Formula $(x,l)$
+\end_inset
+
+ to the solution, and 
+\begin_inset Formula $(x,l)\in k,$
+\end_inset
+
+ where 
+\begin_inset Formula $k\in\{M,F\}$
+\end_inset
+
+ and 
+\begin_inset Formula $k\neq par$
+\end_inset
+
+ use 
+\begin_inset Formula $s'=s_{2}$
+\end_inset
+
+ with the second highest priority.
+ (That is, if 
+\begin_inset Formula $s_{2}$
+\end_inset
+
+ was taken from the other parent's solution, use it before using everything
+ below.)
+\end_layout
+
+\begin_layout Enumerate
+Otherwise, use a uniformly random distribution to select a value 
+\begin_inset Formula $s'$
+\end_inset
+
+ from 
+\begin_inset Formula $Altern(s)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Using this model, we alternate between taking scheduled items from each
+ parent, until no more items fit.
+ Then we fill up the schedule using random valid transitions.
+ This is not a true crossover function, as some parts are still left to
+ chance, but I feel it is a close enough approximation given the complexity
+ of this system.
+\end_layout
+
+\begin_layout Subsubsection*
+Crossover Search Instance
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ins=(s_{0},G)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+s_{0}=(pr_{0},?)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula 
+\[
+pr_{0}=(L,C,S,N,U,Z,M,F,M)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+with 
+\begin_inset Formula $Z$
+\end_inset
+
+ intialized to 
+\begin_inset Formula $partassign$
+\end_inset
+
+, and 
+\begin_inset Formula $L,C,S,N,U$
+\end_inset
+
+ initialized to their values in our overall search problem.
+ 
+\begin_inset Formula $M$
+\end_inset
+
+ and 
+\begin_inset Formula $F$
+\end_inset
+
+ are both elements of 
+\begin_inset Formula $A$
+\end_inset
+
+, such that 
+\begin_inset Formula $M\neq F$
+\end_inset
+
+.
+ They can be assigned arbitrarily.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $G(s)$
+\end_inset
+
+ is no more specific than the basic definition of 
+\begin_inset Formula $G(s)$
+\end_inset
+
+ for an or-tree based search.
+ We know we have a sol-value of yes when for all 
+\begin_inset Formula $x\in(L\cup C)$
+\end_inset
+
+, 
+\begin_inset Formula $\exists(x,y)\in Z$
+\end_inset
+
+ for some value 
+\begin_inset Formula $y$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Once a solution is found, we can define the output of the relation, 
+\begin_inset Formula $B,$
+\end_inset
+
+ as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+B=\{M,F,Z\}
+\]
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Seach Control
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula 
+\[
+P=(A,Env,k)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+K(s,e)=(s-A)\cup B,\:(A\rightarrow B)\in Ext,\:A\subseteq s
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula 
+\[
+\forall\left(A^{\prime}\rightarrow B^{\prime}\right)\in Ext,\:A^{\prime}\subseteq s,\,f_{wert}(A,B,e)\leq f_{wert}(A^{\prime},B^{\prime},e)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A\rightarrow B=f_{select}r\left(\left\{ A^{\prime}\rightarrow B^{\prime}|f_{wert}(A^{\prime},B^{\prime},e)\leq f_{wert}(A^{\prime\prime},B^{\prime\prime},e),\;\forall A^{\prime\prime}\rightarrow B^{\prime\prime}\in Ext,\;A^{\prime\prime}\subseteq s\right\} ,e\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f_{wert}(A,B,e)=Eval(B)-Eval(A)+EvalMax
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $f_{select}(A)$
+\end_inset
+
+ randomly returns some 
+\begin_inset Formula $a\in A$
+\end_inset
+
+, as a tie breaker.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $EvalMax$
+\end_inset
+
+ is the maximal value that can be returned by Eval.
+ We add this to ensure that our values for 
+\begin_inset Formula $f_{wert}$
+\end_inset
+
+do not go into the negatives.
+ (ie.
+ This is to ensure that 
+\begin_inset Formula $f_{wert}\in\mathbb{{N}}$
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Subsection
 Search Instance
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ins=(S_{0},G)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S_{0}=\left\{ S_{0_{1}},S_{0_{2}},...,S_{0_{n}}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where for 
+\begin_inset Formula $1\leq i\leq n$
+\end_inset
+
+, 
+\begin_inset Formula $S_{o_{i}}=RandomSol()$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $RandomSol()$
+\end_inset
+
+ is a function defined below.
+\end_layout
+
+\begin_layout Standard
+We define 
+\begin_inset Formula $G$
+\end_inset
+
+ to be true if and only if we are on our 
+\begin_inset Formula $FinalGeneration$
+\end_inset
+
+th generation, where 
+\begin_inset Formula $FinalGeneration\in\mathbb{N}$
+\end_inset
+
+.
+ This is the number of generations for which we run our algorithm.
+ A higher value should lead to more accurate results, but it will take longer.
+ 
+\end_layout
+
+\begin_layout Standard
+The final result returned should be the element of 
+\begin_inset Formula $S$
+\end_inset
+
+ with the lowest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value after the 
+\begin_inset Formula $FinalGeneration$
+\end_inset
+
+th generation.
+\end_layout
+
+\begin_layout Subsubsection
+RandomSol Function
+\end_layout
+
+\begin_layout Standard
+This function generates a pseudorandom solution to the scheduling problem.
+ We generate it by traversing an or-tree in random order and returning the
+ first solution we find that satisfies all hard constraints.
+ 
+\end_layout
+
+\begin_layout Standard
+We use this function to fill our initial population with random members.
+\end_layout
+
+\begin_layout Standard
+The or-tree-based search is described below.
+\end_layout
+
+\begin_layout Subsubsection*
+Search Model
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A=(S,T)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $Prob$
+\end_inset
+
+ = Set of problem descriptions, of the form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+pr\in Prob\iff pr=(L,C,D,N,U,Z)
+\]
+
+\end_inset
+
+Where 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $L$
+\end_inset
+
+=Set of Labs
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $C$
+\end_inset
+
+=Set of Courses
+\end_layout
+
+\begin_layout Itemize
+D=Set of slots
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $N$
+\end_inset
+
+=not-compatible relation, 
+\begin_inset Formula $N:\,L\cup C\times L\cup C$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $U$
+\end_inset
+
+=Unwanted relation, 
+\begin_inset Formula $U:\,L\cup C\times S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Z$
+\end_inset
+
+=Assign relation, 
+\begin_inset Formula $Z:L\cup C\times S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $Altern(pr):$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For each 
+\begin_inset Formula $x\in a\times s$
+\end_inset
+
+ where 
+\begin_inset Formula $a\in(L\cup C)$
+\end_inset
+
+, 
+\begin_inset Formula $s\in S$
+\end_inset
+
+ where: 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\forall m$
+\end_inset
+
+ such that 
+\begin_inset Formula $Z(m)=s,\;\neg N(a,m)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\neg U(a,s)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $a\in L$
+\end_inset
+
+ and 
+\begin_inset Formula $a$
+\end_inset
+
+ has some corresponding course 
+\begin_inset Formula $c\in C$
+\end_inset
+
+,
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $Z(c)\neq s$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+If 
+\begin_inset Formula $a\in C$
+\end_inset
+
+ and 
+\begin_inset Formula $a$
+\end_inset
+
+ has some correspoinding labs 
+\begin_inset Formula $\left\{ l_{1},...,l_{n}\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\forall l_{i}$
+\end_inset
+
+ where 
+\begin_inset Formula $1\leq i\leq n$
+\end_inset
+
+, 
+\begin_inset Formula $Z(l_{i})\neq s$
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Create a branch 
+\begin_inset Formula $b_{i}=(pr',?)$
+\end_inset
+
+ where 
+\begin_inset Formula $pr'=(L,C,S,N,U,Z')$
+\end_inset
+
+ and 
+\begin_inset Formula $Z'=Z+(a,s)$
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Subsubsection*
+Search Process
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+P=(A,Env,k)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+k(s,e)=s^{\prime}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $s^{\prime}$
+\end_inset
+
+is uniformly randomly selected from 
+\begin_inset Formula $Altern(s)$
+\end_inset
+
+, using a pseudorandomly generated number.
+\end_layout
+
+\begin_layout Standard
+The environment 
+\begin_inset Formula $e$
+\end_inset
+
+ is kept constant, and is irrelevant to our definition.
+\end_layout
+
+\begin_layout Subsubsection*
+Search Instance
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ins=(s_{0},G)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+s_{0}=(pr_{0},?)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula 
+\[
+pr_{0}=(L,C,S,N,U,Z)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+with 
+\begin_inset Formula $Z$
+\end_inset
+
+ intialized to 
+\begin_inset Formula $partassign$
+\end_inset
+
+, and 
+\begin_inset Formula $L,C,S,N,U$
+\end_inset
+
+ initialized to their values in our overall search problem.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $G(s)$
+\end_inset
+
+ is no more specific than the basic definition of 
+\begin_inset Formula $G(s)$
+\end_inset
+
+ for an or-tree based search.
+ We know we have a sol-value of yes when for all 
+\begin_inset Formula $x\in(L\cup C)$
+\end_inset
+
+, 
+\begin_inset Formula $Z(x)$
+\end_inset
+
+ is defined.
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since RandomSol() is an or-tree-based search, if we are entirely unable
+ to find a solution, we know that our problem instance has no possible solution
+ before we even start the main algorithm.
+ This can save us some time, and solves one shortcoming of our genetic algorithm
+s approach.
 \end_layout
 
 \begin_layout Subsection
