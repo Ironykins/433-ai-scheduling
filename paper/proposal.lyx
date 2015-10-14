@@ -152,7 +152,7 @@ and
 
 \begin_layout Plain Layout
 
-Jordan
+Jordan Wallace
 \backslash
 
 \backslash
@@ -256,7 +256,7 @@ The desirability of a given solution is given by the
 \end_inset
 
  value.
- The rest are discarded, and those that survive are crossover and mutated
+ The rest are discarded, and those that survive are crossbred and mutated
  accordingly.
  The members that survive are randomly selected with a bias towards those
  with a lower 
@@ -274,81 +274,22 @@ Mutations and crossovers are done in such a way that all solutions are kept
  
 \end_layout
 
+\begin_layout Standard
+The algorithm terminates after a number of generations determined at runtime.
+ After simulating the generations, the final solution is the member of the
+ population with the lowest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value.
+\end_layout
+
 \begin_layout Subsection
 Search Model
 \end_layout
 
 \begin_layout Standard
-Facts in this system are represented as assignment relations that map courses
- and labs to time slots.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-f\in F\iff f:\,(L\cup C)\times S
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-A=(S,T)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-Ext=\left\{ A\rightarrow B|A,B\in F,\,\forall s\in S,A\subseteq S,\left((s-A)\cup B\right)\in S,\left(Mutate(A,B)\lor Crossover(A,B)\right)\right\} 
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-S\subseteq2^{F},\,|S|\leq PopCap
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-T=\left\{ (s,s')|\exists A,B\in Ext,\,A\subseteq s,\;s'=(s-A)\cup B\right\} 
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $PopCap$
-\end_inset
-
- is the maximum population for a generation.
-\end_layout
-
-\begin_layout Standard
-We also have some other relations and variables included in our problem
- definition.
+We have some relations and variables included in our problem definition.
  We will refer to them as follows:
 \end_layout
 
@@ -395,17 +336,103 @@ We also have some other relations and variables included in our problem
 
 \end_layout
 
+\begin_layout Itemize
+\begin_inset Formula $PopCap$
+\end_inset
+
+=The maximum number of solutions we have at any given time.
+\end_layout
+
+\begin_layout Standard
+Facts in this system are represented as tuples that map courses and labs
+ to time slots.
+ 
+\end_layout
+
+\begin_layout Standard
+Solutions 
+\begin_inset Formula $I$
+\end_inset
+
+ are sets of facts.
+ They are essentially assignment relations.
+ In our system, all solutions must satisfy the 
+\begin_inset Formula $Constr$
+\end_inset
+
+ function.
+\end_layout
+
+\begin_layout Standard
+Search States are sets of solutions, which we refer to as populations.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A=(S,T)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S\subseteq2^{F},\,\forall s\in S,\,|s|\leq PopCap,\ \forall x\in s,\,Constr(x)=true
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+T=\left\{ (s,s')|\exists A,B\in Ext,\,A\subseteq s,\;s'=(s-A)\cup B\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f\in F\iff f:\,(L\cup C)\times D
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ext=\left\{ A\rightarrow B|A,B\subseteq F,\,\forall s\in S,\left((s-A)\cup B\right)\in S,\left(Mutate(A,B)\lor Crossover(A,B)\right)\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Mutation Function
 \end_layout
 
 \begin_layout Standard
 The mutation function mutate(A,B) takes as input a singleton set 
-\begin_inset Formula $A\subseteq S$
+\begin_inset Formula $A\subseteq F$
 \end_inset
 
 , and transforms it into another singleton set 
-\begin_inset Formula $B\subseteq S$
+\begin_inset Formula $B\subseteq F$
 \end_inset
 
 .
@@ -447,7 +474,7 @@ If there exists a slot
 \end_inset
 
 , 
-\begin_inset Formula $a(x)\neq s$
+\begin_inset Formula $(x,s)\notin A$
 \end_inset
 
 , (That is to say, that slot has not been assigned any courses or labs),
@@ -479,7 +506,7 @@ Where
 \end_inset
 
 , 
-\begin_inset Formula $s,s'\in D$
+\begin_inset Formula $s'\in D$
 \end_inset
 
 , and the following holds:
@@ -516,7 +543,11 @@ Where
 \begin_inset Formula $(a,m)\notin N$
 \end_inset
 
- (a is compatible with all others assigned to slot 
+ (
+\begin_inset Formula $a$
+\end_inset
+
+ is compatible with all others assigned to slot 
 \begin_inset Formula $s'$
 \end_inset
 
@@ -556,7 +587,7 @@ If
 \end_inset
 
 , 
-\begin_inset Formula $(l,s')\notin f$
+\begin_inset Formula $(l,s')\notin f^{\prime}$
 \end_inset
 
 
@@ -573,7 +604,7 @@ If
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $(c,s')\notin f$
+\begin_inset Formula $(c,s')\notin f^{\prime}$
 \end_inset
 
  where 
@@ -589,6 +620,10 @@ If
 
 \end_deeper
 \begin_layout Standard
+TODO: Should we instead just say Constr(f') is true?
+\end_layout
+
+\begin_layout Standard
 If no slots and assignable courses or labs exist that satisfy this criteria,
  then let 
 \begin_inset Formula $f'=f$
@@ -603,7 +638,7 @@ Swapping of Two Assignments
 
 \begin_layout Standard
 We transform 
-\begin_inset Formula $f'$
+\begin_inset Formula $f^{\prime}$
 \end_inset
 
  to produce another fact, 
@@ -616,7 +651,7 @@ We transform
 \begin_layout Standard
 \begin_inset Formula 
 \[
-f^{\prime\prime}=f'-\{(a,s_{a}),(b,s_{b})\}+\{(a,s_{b}),(b,s_{a})\}
+f^{\prime\prime}=f^{\prime}-\{(a,s_{a}),(b,s_{b})\}+\{(a,s_{b}),(b,s_{a})\}
 \]
 
 \end_inset
@@ -745,7 +780,7 @@ If
 \end_inset
 
 , 
-\begin_inset Formula $(l,s_{b})\notin f$
+\begin_inset Formula $(l,s_{b})\notin f^{\prime\prime}$
 \end_inset
 
 
@@ -770,7 +805,7 @@ If
 \end_inset
 
  is a lab of b, 
-\begin_inset Formula $(l,s_{a})\notin f$
+\begin_inset Formula $(l,s_{a})\notin f^{\prime\prime}$
 \end_inset
 
 
@@ -787,14 +822,14 @@ If
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $(c,s_{b})\notin f$
+\begin_inset Formula $(c,s_{b})\notin f^{\prime\prime}$
 \end_inset
 
  where 
 \begin_inset Formula $c$
 \end_inset
 
- is the class corresponding to 
+ is the lecture corresponding to 
 \begin_inset Formula $a$
 \end_inset
 
@@ -812,32 +847,32 @@ If
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $(c,s_{a})\notin f$
+\begin_inset Formula $(c,s_{a})\notin f^{\prime\prime}$
 \end_inset
 
  where 
 \begin_inset Formula $c$
 \end_inset
 
- is the class corresponding to 
+ is the lecture corresponding to 
 \begin_inset Formula $b$
 \end_inset
 
 .
-\begin_inset Newline newline
-\end_inset
-
-
 \end_layout
 
 \end_deeper
 \begin_layout Standard
+TODO: Should we instead just say Constr(f'') is true?
+\end_layout
+
+\begin_layout Standard
 If no slots and assignable courses or labs exist that satisfy this criteria,
  then let 
-\begin_inset Formula $f^{\prime\prime}=f$
+\begin_inset Formula $f^{\prime\prime}=f^{\prime}$
 \end_inset
 
-'.
+.
  Now we can define 
 \begin_inset Formula $B$
 \end_inset
@@ -860,7 +895,7 @@ Crossover Function
 
 \begin_layout Standard
 The crossover function crossover(A,B) takes as input a two-item set 
-\begin_inset Formula $A\subseteq S$
+\begin_inset Formula $A\subseteq F$
 \end_inset
 
 , 
@@ -868,7 +903,7 @@ The crossover function crossover(A,B) takes as input a two-item set
 \end_inset
 
  and transforms it into another set 
-\begin_inset Formula $B\subseteq S$
+\begin_inset Formula $B\subseteq F$
 \end_inset
 
 .
@@ -877,7 +912,7 @@ The crossover function crossover(A,B) takes as input a two-item set
 
 \begin_layout Standard
 We can let 
-\begin_inset Formula $f_{m},f_{f}\in A$
+\begin_inset Formula $M,F\in A$
 \end_inset
 
  be the mother and father facts for this crossover.
@@ -902,6 +937,10 @@ A=(S,T)
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+TODO: Formally define S and T.
 \end_layout
 
 \begin_layout Standard
@@ -937,7 +976,10 @@ Where
 \end_layout
 
 \begin_layout Itemize
-D=Set of slots
+\begin_inset Formula $D$
+\end_inset
+
+=Set of slots
 \end_layout
 
 \begin_layout Itemize
@@ -1357,8 +1399,8 @@ with
 \begin_inset Formula $\exists(x,y)\in Z$
 \end_inset
 
- for some value 
-\begin_inset Formula $y$
+ for some 
+\begin_inset Formula $y\in D$
 \end_inset
 
 .
@@ -1388,9 +1430,17 @@ Seach Control
 \end_layout
 
 \begin_layout Standard
+TODO: use fancy script K.
+\end_layout
+
+\begin_layout Standard
+TODO: Properly select solutions to mutate and discard.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \[
-P=(A,Env,k)
+P=(A,Env,K)
 \]
 
 \end_inset
@@ -1420,7 +1470,7 @@ where
 \begin_layout Standard
 \begin_inset Formula 
 \[
-A\rightarrow B=f_{select}r\left(\left\{ A^{\prime}\rightarrow B^{\prime}|f_{wert}(A^{\prime},B^{\prime},e)\leq f_{wert}(A^{\prime\prime},B^{\prime\prime},e),\;\forall A^{\prime\prime}\rightarrow B^{\prime\prime}\in Ext,\;A^{\prime\prime}\subseteq s\right\} ,e\right)
+A\rightarrow B=f_{select}\left(\left\{ A^{\prime}\rightarrow B^{\prime}|f_{wert}(A^{\prime},B^{\prime},e)\leq f_{wert}(A^{\prime\prime},B^{\prime\prime},e),\;\forall A^{\prime\prime}\rightarrow B^{\prime\prime}\in Ext,\;A^{\prime\prime}\subseteq s\right\} ,e\right)
 \]
 
 \end_inset
@@ -1440,7 +1490,7 @@ f_{wert}(A,B,e)=Eval(B)-Eval(A)+EvalMax
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $f_{select}(A)$
+\begin_inset Formula $f_{select}(A,e)$
 \end_inset
 
  randomly returns some 
@@ -1461,7 +1511,6 @@ f_{wert}(A,B,e)=Eval(B)-Eval(A)+EvalMax
 \end_inset
 
 do not go into the negatives.
- (ie.
  This is to ensure that 
 \begin_inset Formula $f_{wert}\in\mathbb{{N}}$
 \end_inset
@@ -1487,7 +1536,7 @@ Ins=(S_{0},G)
 \begin_layout Standard
 \begin_inset Formula 
 \[
-S_{0}=\left\{ S_{0_{1}},S_{0_{2}},...,S_{0_{n}}\right\} 
+S_{0}=\left\{ s_{1},s_{2},...-s_{n}\right\} 
 \]
 
 \end_inset
@@ -1570,6 +1619,10 @@ The or-tree-based search is described below.
 
 \begin_layout Subsubsection*
 Search Model
+\end_layout
+
+\begin_layout Standard
+TODO: Formally define S and T.
 \end_layout
 
 \begin_layout Standard
@@ -1774,6 +1827,10 @@ Create a branch
 \end_deeper
 \begin_layout Subsubsection*
 Search Process
+\end_layout
+
+\begin_layout Standard
+TODO: Depth Criteria for selecting solutions.
 \end_layout
 
 \begin_layout Standard
