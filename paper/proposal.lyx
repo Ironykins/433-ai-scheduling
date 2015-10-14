@@ -344,6 +344,10 @@ We have some relations and variables included in our problem definition.
 \end_layout
 
 \begin_layout Standard
+TODO: Add all relations and variables to this list.
+\end_layout
+
+\begin_layout Standard
 Facts in this system are represented as tuples that map courses and labs
  to time slots.
  
@@ -532,95 +536,10 @@ Where
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\forall m$
-\end_inset
-
- such that 
-\begin_inset Formula $(m,s')\in f$
-\end_inset
-
-, 
-\begin_inset Formula $(a,m)\notin N$
-\end_inset
-
- (
-\begin_inset Formula $a$
-\end_inset
-
- is compatible with all others assigned to slot 
-\begin_inset Formula $s'$
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $(a,s')\notin U$
-\end_inset
-
- (A is not unwanted in slot 
-\begin_inset Formula $s'$
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Itemize
-If 
-\begin_inset Formula $a\in C$
-\end_inset
-
- Then
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset Formula $\forall l$
-\end_inset
-
- where 
-\begin_inset Formula $l$
-\end_inset
-
- is a lab of 
-\begin_inset Formula $a$
-\end_inset
-
-, 
-\begin_inset Formula $(l,s')\notin f^{\prime}$
+\begin_inset Formula $Constr(f^{\prime})=true$
 \end_inset
 
 
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-If 
-\begin_inset Formula $a\in L$
-\end_inset
-
- Then
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset Formula $(c,s')\notin f^{\prime}$
-\end_inset
-
- where 
-\begin_inset Formula $c$
-\end_inset
-
- is the class corresponding to 
-\begin_inset Formula $a$
-\end_inset
-
-.
-\end_layout
-
-\end_deeper
-\begin_layout Standard
-TODO: Should we instead just say Constr(f') is true?
 \end_layout
 
 \begin_layout Standard
@@ -661,7 +580,7 @@ f^{\prime\prime}=f^{\prime}-\{(a,s_{a}),(b,s_{b})\}+\{(a,s_{b}),(b,s_{a})\}
 
 \begin_layout Standard
 Where 
-\begin_inset Formula $\left\{ (a,s_{a}),(b,s_{b})\right\} \subseteq F$
+\begin_inset Formula $\left\{ (a,s_{a}),(b,s_{b})\right\} \in f^{\prime}$
 \end_inset
 
 , 
@@ -691,179 +610,10 @@ Where
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\forall m$
-\end_inset
-
- such that 
-\begin_inset Formula $(m,s_{b})\in f$
-\end_inset
-
-, 
-\begin_inset Formula $(a,m)\notin N$
-\end_inset
-
- (a is compatible with all others assigned to slot 
-\begin_inset Formula $s_{b}$
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $\forall m$
-\end_inset
-
- such that 
-\begin_inset Formula $(m,s_{a})\in f$
-\end_inset
-
-, 
-\begin_inset Formula $(b,m)\notin N$
-\end_inset
-
- (b is compatible with all others assigned to slot 
-\begin_inset Formula $s_{a}$
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $(a,s_{b})\notin U$
-\end_inset
-
- (
-\begin_inset Formula $a$
-\end_inset
-
- is not unwanted in slot 
-\begin_inset Formula $s_{b}$
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Itemize
-\begin_inset Formula $(b,s_{a})\notin U$
-\end_inset
-
- (
-\begin_inset Formula $b$
-\end_inset
-
- is not unwanted in slot 
-\begin_inset Formula $s_{a}$
-\end_inset
-
-)
-\end_layout
-
-\begin_layout Itemize
-If 
-\begin_inset Formula $a\in C$
-\end_inset
-
- Then
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset Formula $\forall l$
-\end_inset
-
- where 
-\begin_inset Formula $l$
-\end_inset
-
- is a lab of 
-\begin_inset Formula $a$
-\end_inset
-
-, 
-\begin_inset Formula $(l,s_{b})\notin f^{\prime\prime}$
+\begin_inset Formula $Constr(f^{\prime\prime})=true$
 \end_inset
 
 
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-If 
-\begin_inset Formula $b\in C$
-\end_inset
-
- Then
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset Formula $\forall l$
-\end_inset
-
- where 
-\begin_inset Formula $l$
-\end_inset
-
- is a lab of b, 
-\begin_inset Formula $(l,s_{a})\notin f^{\prime\prime}$
-\end_inset
-
-
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-If 
-\begin_inset Formula $a\in L$
-\end_inset
-
- Then
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset Formula $(c,s_{b})\notin f^{\prime\prime}$
-\end_inset
-
- where 
-\begin_inset Formula $c$
-\end_inset
-
- is the lecture corresponding to 
-\begin_inset Formula $a$
-\end_inset
-
-.
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-If 
-\begin_inset Formula $b\in L$
-\end_inset
-
- Then
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-\begin_inset Formula $(c,s_{a})\notin f^{\prime\prime}$
-\end_inset
-
- where 
-\begin_inset Formula $c$
-\end_inset
-
- is the lecture corresponding to 
-\begin_inset Formula $b$
-\end_inset
-
-.
-\end_layout
-
-\end_deeper
-\begin_layout Standard
-TODO: Should we instead just say Constr(f'') is true?
 \end_layout
 
 \begin_layout Standard
@@ -1196,6 +946,10 @@ Crossover Search Process
 \end_layout
 
 \begin_layout Standard
+TODO: Formalize
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \[
 P=(A,Env,k)
@@ -1498,7 +1252,6 @@ f_{wert}(A,B,e)=Eval(B)-Eval(A)+EvalMax
 \end_inset
 
 , as a tie breaker.
- 
 \end_layout
 
 \begin_layout Standard
@@ -1964,6 +1717,10 @@ s approach.
 
 \begin_layout Subsection
 Example
+\end_layout
+
+\begin_layout Standard
+TODO: Example.
 \end_layout
 
 \begin_layout Section
