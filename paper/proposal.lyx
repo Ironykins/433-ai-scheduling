@@ -270,7 +270,7 @@ The desirability of a given solution is given by the
 Mutations and crossovers are done in such a way that all solutions are kept
  valid.
  There will never be a solution in the population that does not satisfy
- all hard requirements.
+ all hard constraints.
  
 \end_layout
 
@@ -343,8 +343,11 @@ We have some relations and variables included in our problem definition.
 =The maximum number of solutions we have at any given time.
 \end_layout
 
-\begin_layout Standard
-TODO: Add all relations and variables to this list.
+\begin_layout Itemize
+\begin_inset Formula $GenCount$
+\end_inset
+
+=The number of generations (iterations) that we simulate.
 \end_layout
 
 \begin_layout Standard
@@ -374,7 +377,7 @@ Search States are sets of solutions, which we refer to as populations.
 \begin_layout Standard
 \begin_inset Formula 
 \[
-A=(S,T)
+\mathbb{A}=(S,T)
 \]
 
 \end_inset
@@ -681,7 +684,7 @@ Crossover Search Model
 \begin_layout Standard
 \begin_inset Formula 
 \[
-A=(S,T)
+\mathbb{A}=(S,T)
 \]
 
 \end_inset
@@ -697,7 +700,7 @@ TODO: Formally define S and T.
 \begin_inset Formula $Prob$
 \end_inset
 
- = Set of problem descriptions, of the form:
+ = Set of problem descriptions:
 \end_layout
 
 \begin_layout Standard
@@ -798,7 +801,7 @@ Where
 \end_inset
 
 =The current parent we are taking genetic material from.
- This alternates at each level of our search tree.
+ This switches at each level of our search tree.
  
 \begin_inset Formula $par\in\{M,F\}$
 \end_inset
@@ -952,7 +955,7 @@ TODO: Formalize
 \begin_layout Standard
 \begin_inset Formula 
 \[
-P=(A,Env,k)
+\mathbb{{P}}=(\mathbb{{A}},Env,\mbox{\mathbb{K}})
 \]
 
 \end_inset
@@ -963,7 +966,7 @@ P=(A,Env,k)
 \begin_layout Standard
 \begin_inset Formula 
 \[
-k(s,e)=s^{\prime}
+\mathbb{{K}}(s,e)=s^{\prime}
 \]
 
 \end_inset
@@ -1070,7 +1073,7 @@ Crossover Search Instance
 \begin_layout Standard
 \begin_inset Formula 
 \[
-Ins=(s_{0},G)
+Ins=(s_{0},\mathbb{G})
 \]
 
 \end_inset
@@ -1137,11 +1140,11 @@ with
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $G(s)$
+\begin_inset Formula $\mathbb{G}(s)$
 \end_inset
 
  is no more specific than the basic definition of 
-\begin_inset Formula $G(s)$
+\begin_inset Formula $\mathbb{G}(s)$
 \end_inset
 
  for an or-tree based search.
@@ -1184,17 +1187,13 @@ Seach Control
 \end_layout
 
 \begin_layout Standard
-TODO: use fancy script K.
-\end_layout
-
-\begin_layout Standard
 TODO: Properly select solutions to mutate and discard.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \[
-P=(A,Env,K)
+\mathbb{P}=(\mathbb{A},Env,\mathbb{K})
 \]
 
 \end_inset
@@ -1205,7 +1204,7 @@ P=(A,Env,K)
 \begin_layout Standard
 \begin_inset Formula 
 \[
-K(s,e)=(s-A)\cup B,\:(A\rightarrow B)\in Ext,\:A\subseteq s
+\mathbb{K}(s,e)=(s-A)\cup B,\:(A\rightarrow B)\in Ext,\:A\subseteq s
 \]
 
 \end_inset
@@ -1278,7 +1277,7 @@ Search Instance
 \begin_layout Standard
 \begin_inset Formula 
 \[
-Ins=(S_{0},G)
+Ins=(S_{0},\mathbb{G})
 \]
 
 \end_inset
@@ -1321,12 +1320,9 @@ We define
 \begin_inset Formula $G$
 \end_inset
 
- to be true if and only if we are on our 
-\begin_inset Formula $FinalGeneration$
-\end_inset
-
-th generation, where 
-\begin_inset Formula $FinalGeneration\in\mathbb{N}$
+ to be true if and only if we are on our last generation, i.e.
+ we are on generation number 
+\begin_inset Formula $GenCount$
 \end_inset
 
 .
@@ -1344,11 +1340,7 @@ The final result returned should be the element of
 \begin_inset Formula $Eval$
 \end_inset
 
- value after the 
-\begin_inset Formula $FinalGeneration$
-\end_inset
-
-th generation.
+ value after the final generation.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1381,7 +1373,7 @@ TODO: Formally define S and T.
 \begin_layout Standard
 \begin_inset Formula 
 \[
-A=(S,T)
+\mathbb{A}=(S,T)
 \]
 
 \end_inset
@@ -1422,7 +1414,10 @@ Where
 \end_layout
 
 \begin_layout Itemize
-D=Set of slots
+\begin_inset Formula $D$
+\end_inset
+
+=Set of slots
 \end_layout
 
 \begin_layout Itemize
@@ -1589,7 +1584,7 @@ TODO: Depth Criteria for selecting solutions.
 \begin_layout Standard
 \begin_inset Formula 
 \[
-P=(A,Env,k)
+\mathbb{P}=(\mathbb{A},Env,\mathbb{K})
 \]
 
 \end_inset
@@ -1600,7 +1595,7 @@ P=(A,Env,k)
 \begin_layout Standard
 \begin_inset Formula 
 \[
-k(s,e)=s^{\prime}
+\mathbb{K}(s,e)=s^{\prime}
 \]
 
 \end_inset
@@ -1635,7 +1630,7 @@ Search Instance
 \begin_layout Standard
 \begin_inset Formula 
 \[
-Ins=(s_{0},G)
+Ins=(s_{0},\mathbb{G})
 \]
 
 \end_inset
@@ -1684,11 +1679,11 @@ with
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $G(s)$
+\begin_inset Formula $\mathbb{G}(s)$
 \end_inset
 
  is no more specific than the basic definition of 
-\begin_inset Formula $G(s)$
+\begin_inset Formula $\mathbb{G}(s)$
 \end_inset
 
  for an or-tree based search.
@@ -1711,8 +1706,6 @@ with
 Since RandomSol() is an or-tree-based search, if we are entirely unable
  to find a solution, we know that our problem instance has no possible solution
  before we even start the main algorithm.
- This can save us some time, and solves one shortcoming of our genetic algorithm
-s approach.
 \end_layout
 
 \begin_layout Subsection
