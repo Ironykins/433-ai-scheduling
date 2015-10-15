@@ -399,7 +399,7 @@ S\subseteq2^{F},\,\forall s\in S,\,|s|\leq PopCap,\ \forall x\in s,\,Constr(x)=t
 \begin_layout Standard
 \begin_inset Formula 
 \[
-T=\left\{ (s,s')|\exists A,B\in Ext,\,A\subseteq s,\;s'=(s-A)\cup B\right\} 
+T=\left\{ (s,s')|\exists A\rightarrow B\in Ext,\,A\subseteq s,\;s'=(s-A)\cup B\right\} 
 \]
 
 \end_inset
@@ -1212,10 +1212,6 @@ Seach Control
 \end_layout
 
 \begin_layout Standard
-TODO: Properly select solutions to mutate and discard.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Formula 
 \[
 \mathbb{P}=(\mathbb{A},Env,\mathbb{K})
@@ -1229,26 +1225,18 @@ TODO: Properly select solutions to mutate and discard.
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\mathbb{K}(s,e)=(s-A)\cup B,\:(A\rightarrow B)\in Ext,\:A\subseteq s
+\mathbb{K}(s,e)=(s-A-H)\cup B,\:(A\rightarrow B)\in Ext,\:A\subseteq s
 \]
 
 \end_inset
 
-where 
-\begin_inset Formula 
-\[
-\forall\left(A^{\prime}\rightarrow B^{\prime}\right)\in Ext,\:A^{\prime}\subseteq s,\,f_{wert}(A,B,e)\leq f_{wert}(A^{\prime},B^{\prime},e)
-\]
-
-\end_inset
-
-
+where
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \[
-A\rightarrow B=f_{select}\left(\left\{ A^{\prime}\rightarrow B^{\prime}|f_{wert}(A^{\prime},B^{\prime},e)\leq f_{wert}(A^{\prime\prime},B^{\prime\prime},e),\;\forall A^{\prime\prime}\rightarrow B^{\prime\prime}\in Ext,\;A^{\prime\prime}\subseteq s\right\} ,e\right)
+A,B,H\subseteq F
 \]
 
 \end_inset
@@ -1256,10 +1244,18 @@ A\rightarrow B=f_{select}\left(\left\{ A^{\prime}\rightarrow B^{\prime}|f_{wert}
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+\begin_inset Formula $H\subseteq F$
+\end_inset
+
+ is a singleton set with its only item selected randomly from 
+\begin_inset Formula $s$
+\end_inset
+
+ according to the following distribution:
 \begin_inset Formula 
 \[
-f_{wert}(A,B,e)=Eval(B)-Eval(A)+EvalMax
+p_{j}=\frac{Eval(s_{j})}{\sum_{k=1}^{N}Eval(s_{k})}\,\forall s_{j}\in s
 \]
 
 \end_inset
@@ -1267,32 +1263,153 @@ f_{wert}(A,B,e)=Eval(B)-Eval(A)+EvalMax
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $f_{select}(A,e)$
+\begin_layout Itemize
+In other words, the probability that solution 
+\begin_inset Formula $s_{j}$
 \end_inset
 
- randomly returns some 
-\begin_inset Formula $a\in A$
-\end_inset
-
-, as a tie breaker.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $EvalMax$
-\end_inset
-
- is the maximal value that can be returned by Eval.
- We add this to ensure that our values for 
-\begin_inset Formula $f_{wert}$
-\end_inset
-
-do not go into the negatives.
- This is to ensure that 
-\begin_inset Formula $f_{wert}\in\mathbb{{N}}$
+ will be selected is 
+\begin_inset Formula $p_{j}$
 \end_inset
 
 .
+ Values with a higher 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value are more likely to get selected.
+ 
+\end_layout
+
+\begin_layout Itemize
+This value is our 'loser' for the generation.
+ It is killed off.
+ Worse solutions are more likely to be killed off.
+\end_layout
+
+\begin_layout Standard
+And 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $A\subseteq F$
+\end_inset
+
+ and 
+\begin_inset Formula $B\subseteq F$
+\end_inset
+
+ , and 
+\begin_inset Formula $(A\rightarrow B)\in Ext$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Let 
+\begin_inset Formula $operation$
+\end_inset
+
+ be a uniformly random value selected from the set 
+\begin_inset Formula $\{mut,cross\}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $operation=mut$
+\end_inset
+
+, 
+\begin_inset Formula $A=\{w_{1}\}$
+\end_inset
+
+ where 
+\begin_inset Formula $w_{1}$
+\end_inset
+
+ is randomly selected from 
+\begin_inset Formula $s$
+\end_inset
+
+ according to the following distribution:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+p_{j}=\frac{1}{Eval(s{}_{j})\cdot\sum_{k=1}^{N}\frac{1}{Eval(s_{k})}}\,\forall s_{j}\in s
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Else, if 
+\begin_inset Formula $operation=cross$
+\end_inset
+
+, 
+\begin_inset Formula $A=\{w_{1},w_{2}\}$
+\end_inset
+
+ where 
+\begin_inset Formula $w_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $w_{2}$
+\end_inset
+
+ are randomly selected from 
+\begin_inset Formula $s$
+\end_inset
+
+ according to the same distribution as above.
+\end_layout
+
+\begin_layout Standard
+In either case, 
+\begin_inset Formula $A\rightarrow B$
+\end_inset
+
+ must be an element of 
+\begin_inset Formula $Ext$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $A$
+\end_inset
+
+ has two items, the only way that this can hold is if 
+\begin_inset Formula $crossover(A,B)$
+\end_inset
+
+ holds.
+ Likewise, if 
+\begin_inset Formula $A$
+\end_inset
+
+ has a single item, the only way this can hold is if 
+\begin_inset Formula $mutate(A,B)$
+\end_inset
+
+ holds.
+ 
+\end_layout
+
+\begin_layout Standard
+In summary, each step we take with our search control selects one solution
+ to be removed, and either selects one solution to be mutated, or two solutions
+ to be crossed over.
+ These selections are all done at random, with a distribution that favours
+ a certain group.
 \end_layout
 
 \begin_layout Subsection
