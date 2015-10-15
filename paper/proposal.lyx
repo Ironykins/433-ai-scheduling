@@ -682,25 +682,12 @@ Crossover Search Model
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\[
-\mathbb{A}=(S,T)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-TODO: Formally define S and T.
-\end_layout
-
-\begin_layout Standard
+The search model is no more specific than that of a regular or-tree-based
+ search, except we define 
 \begin_inset Formula $Prob$
 \end_inset
 
- = Set of problem descriptions:
+ with the following statement:
 \end_layout
 
 \begin_layout Standard
@@ -810,23 +797,16 @@ Where
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $Altern(pr):$
-\end_inset
+Then we define the Altern relation as follows:
+\end_layout
 
-
+\begin_layout Subsubsection*
+Altern(pr):
 \end_layout
 
 \begin_layout Standard
 For each 
-\begin_inset Formula $x\in a\times s$
-\end_inset
-
- where 
-\begin_inset Formula $a\in(L\cup C)$
-\end_inset
-
-, 
-\begin_inset Formula $s\in S$
+\begin_inset Formula $(a_{i},s_{i})\in(L\cup C)\times S$
 \end_inset
 
  where: 
@@ -837,14 +817,14 @@ For each
 \end_inset
 
  such that 
-\begin_inset Formula $Z(m)=s,\;\neg N(a,m)$
+\begin_inset Formula $(m,s)\in Z,\;\neg N(a_{i},m)$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\neg U(a,s)$
+\begin_inset Formula $\neg U(a_{i},s_{i})$
 \end_inset
 
 
@@ -852,11 +832,11 @@ For each
 
 \begin_layout Itemize
 If 
-\begin_inset Formula $a\in L$
+\begin_inset Formula $a_{i}\in L$
 \end_inset
 
  and 
-\begin_inset Formula $a$
+\begin_inset Formula $a_{i}$
 \end_inset
 
  has some corresponding course 
@@ -868,7 +848,7 @@ If
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $Z(c)\neq s$
+\begin_inset Formula $(c,s_{i})\notin Z$
 \end_inset
 
 
@@ -876,12 +856,12 @@ If
 
 \end_deeper
 \begin_layout Itemize
-If 
-\begin_inset Formula $a\in C$
+Else if 
+\begin_inset Formula $a_{i}\in C$
 \end_inset
 
  and 
-\begin_inset Formula $a$
+\begin_inset Formula $a_{i}$
 \end_inset
 
  has some correspoinding labs 
@@ -893,35 +873,28 @@ If
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $\forall l_{i}$
+\begin_inset Formula $\forall l_{j}$
 \end_inset
 
  where 
-\begin_inset Formula $1\leq i\leq n$
+\begin_inset Formula $1\leq j\leq n$
 \end_inset
 
 , 
-\begin_inset Formula $Z(l_{i})\neq s$
-\end_inset
-
-
-\begin_inset Newline newline
+\begin_inset Formula $(l_{j},s)\notin Z$
 \end_inset
 
 
 \end_layout
 
+\end_deeper
 \begin_layout Standard
-Create a branch 
-\begin_inset Formula $b_{i}=(pr',?)$
+Create a new problem definition 
+\begin_inset Formula $pr_{i}=(L,C,S,N,U,Z',M,F,par')$
 \end_inset
 
  where 
-\begin_inset Formula $pr'=(L,C,S,N,U,Z',M,F,par')$
-\end_inset
-
- and 
-\begin_inset Formula $Z'=Z+(a,s)$
+\begin_inset Formula $Z'=Z+(a_{i},s_{i})$
 \end_inset
 
  and 
@@ -936,20 +909,27 @@ F & par=M
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+(This causes the currently active parent to be swapped at every level of
+ the tree.)
 \end_layout
 
-\end_deeper
 \begin_layout Standard
-This causes the currently active parent to be swapped at every level of
- the tree, meaning we switch from parent to parent when taking genetic material.
+We then say that the following relationship holds: 
+\begin_inset Formula 
+\[
+Altern(pr,pr_{1},pr_{2},...,pr_{i})
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection*
 Crossover Search Process
-\end_layout
-
-\begin_layout Standard
-TODO: Formalize
 \end_layout
 
 \begin_layout Standard
@@ -979,79 +959,124 @@ Where
 \begin_inset Formula $s^{\prime}$
 \end_inset
 
-is uniformly randomly selected from 
+ is a uniformly randomly selected state from 
 \begin_inset Formula $Altern(s)$
 \end_inset
 
- based on the following:
+ that satisfies:
+\begin_inset Formula 
+\[
+\forall x\in S,\;f_{leaf}(x)\geq f_{leaf}(s^{\prime})
+\]
+
+\end_inset
+
+
 \end_layout
 
-\begin_layout Enumerate
-If there exists some 
-\begin_inset Formula $s_{1}$
+\begin_layout Standard
+We define 
+\begin_inset Formula $f_{leaf}(m)$
 \end_inset
 
- that adds 
-\begin_inset Formula $(x,l)$
-\end_inset
-
- to the solution, and 
-\begin_inset Formula $(x,l)\in par$
-\end_inset
-
-, use 
-\begin_inset Formula $s'=s_{1}$
-\end_inset
-
- with the highest priority.
- (That is, if 
-\begin_inset Formula $s_{1}$
-\end_inset
-
- was taken from the current parent's solution, use it before using all others.)
+ as follows:
 \end_layout
 
-\begin_layout Enumerate
-If there exists some 
-\begin_inset Formula $s_{2}$
+\begin_layout Standard
+Let 
+\begin_inset Formula $m$
 \end_inset
 
- that adds 
-\begin_inset Formula $(x,l)$
-\end_inset
-
- to the solution, and 
-\begin_inset Formula $(x,l)\in k,$
-\end_inset
-
- where 
-\begin_inset Formula $k\in\{M,F\}$
-\end_inset
-
- and 
-\begin_inset Formula $k\neq par$
-\end_inset
-
- use 
-\begin_inset Formula $s'=s_{2}$
-\end_inset
-
- with the second highest priority.
- (That is, if 
-\begin_inset Formula $s_{2}$
-\end_inset
-
- was taken from the other parent's solution, use it before using everything
- below.)
+ be a search state.
 \end_layout
 
-\begin_layout Enumerate
-Otherwise, use a uniformly random distribution to select a value 
-\begin_inset Formula $s'$
+\begin_layout Standard
+Let 
+\begin_inset Formula $Z_{m}$
 \end_inset
 
- from 
-\begin_inset Formula $Altern(s)$
+be the assignment relation of 
+\begin_inset Formula $m$
+\end_inset
+
+.
+ (The sixth item of the problem instance tuple in state 
+\begin_inset Formula $m$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $parent_{m}$
+\end_inset
+
+ be the current parent of 
+\begin_inset Formula $m$
+\end_inset
+
+.
+ (The 
+\begin_inset Formula $par$
+\end_inset
+
+ value, or the 9th value of the instance tuple in state 
+\begin_inset Formula $m$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $altparent_{m}$
+\end_inset
+
+ be the other parent of 
+\begin_inset Formula $m$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f_{leaf}(m)=\begin{cases}
+1 & \exists t\in Z_{m},t\in parent_{m}\\
+2 & \exists t\in Z_{m},t\in altparent_{m}\\
+3 & otherwise
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Or, if our transition adds an item from the active parent, it is of the
+ highest priority.
+ If it is from the inactive parent, it is of lower priority.
+ If it is from neither parent, it is of the lowest priority.
+ When we select a transition in 
+\begin_inset Formula $k$
+\end_inset
+
+, we must take one of the highest priority transitions, but it should be
+ selected uniformly randomly from all equal priority transitions.
+ This is to reflect the randomness necessary in crossover.
+ 
+\end_layout
+
+\begin_layout Standard
+A function 
+\begin_inset Formula $f_{trans}$
+\end_inset
+
+ is not necessary, because we only have one type of operation in 
+\begin_inset Formula $Altern$
 \end_inset
 
 .
@@ -1367,25 +1392,12 @@ Search Model
 \end_layout
 
 \begin_layout Standard
-TODO: Formally define S and T.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\mathbb{A}=(S,T)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
+The search model is no more specific than that of a regular or-tree-based
+ search, except that we define 
 \begin_inset Formula $Prob$
 \end_inset
 
- = Set of problem descriptions, of the form:
+ with the following statement:
 \end_layout
 
 \begin_layout Standard
@@ -1453,24 +1465,13 @@ Where
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $Altern(pr):$
-\end_inset
-
-
+\begin_layout Subsubsection*
+Altern(pr):
 \end_layout
 
 \begin_layout Standard
 For each 
-\begin_inset Formula $x\in a\times s$
-\end_inset
-
- where 
-\begin_inset Formula $a\in(L\cup C)$
-\end_inset
-
-, 
-\begin_inset Formula $s\in S$
+\begin_inset Formula $(a_{i},s_{i})\in(L\cup C)\times S$
 \end_inset
 
  where: 
@@ -1481,14 +1482,14 @@ For each
 \end_inset
 
  such that 
-\begin_inset Formula $Z(m)=s,\;\neg N(a,m)$
+\begin_inset Formula $Z(m)=s_{i},\;\neg N(a_{i},m)$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $\neg U(a,s)$
+\begin_inset Formula $\neg U(a_{i},s_{i})$
 \end_inset
 
 
@@ -1496,11 +1497,11 @@ For each
 
 \begin_layout Itemize
 If 
-\begin_inset Formula $a\in L$
+\begin_inset Formula $a_{i}\in L$
 \end_inset
 
  and 
-\begin_inset Formula $a$
+\begin_inset Formula $a_{i}$
 \end_inset
 
  has some corresponding course 
@@ -1512,7 +1513,7 @@ If
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $Z(c)\neq s$
+\begin_inset Formula $(c,s)\notin Z(c)$
 \end_inset
 
 
@@ -1537,48 +1538,47 @@ If
 
 \begin_deeper
 \begin_layout Itemize
-\begin_inset Formula $\forall l_{i}$
+\begin_inset Formula $\forall l_{j}$
 \end_inset
 
  where 
-\begin_inset Formula $1\leq i\leq n$
+\begin_inset Formula $1\leq j\leq n$
 \end_inset
 
 , 
-\begin_inset Formula $Z(l_{i})\neq s$
-\end_inset
-
-
-\begin_inset Newline newline
+\begin_inset Formula $(l_{j},s)\notin Z$
 \end_inset
 
 
 \end_layout
 
+\end_deeper
 \begin_layout Standard
-Create a branch 
-\begin_inset Formula $b_{i}=(pr',?)$
+Create a new problem definition 
+\begin_inset Formula $pr_{i}=(L,C,S,N,U,Z')$
 \end_inset
 
  where 
-\begin_inset Formula $pr'=(L,C,S,N,U,Z')$
-\end_inset
-
- and 
 \begin_inset Formula $Z'=Z+(a,s)$
 \end_inset
 
 .
- 
-\end_layout
-
-\end_deeper
-\begin_layout Subsubsection*
-Search Process
 \end_layout
 
 \begin_layout Standard
-TODO: Depth Criteria for selecting solutions.
+We then say that the following relationship holds: 
+\begin_inset Formula 
+\[
+Altern(pr,pr_{1},pr_{2},...,pr_{i})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Search Process
 \end_layout
 
 \begin_layout Standard
@@ -1604,23 +1604,96 @@ TODO: Depth Criteria for selecting solutions.
 \end_layout
 
 \begin_layout Standard
-where 
+Where 
 \begin_inset Formula $s^{\prime}$
 \end_inset
 
-is uniformly randomly selected from 
+ is a uniformly randomly selected state from 
 \begin_inset Formula $Altern(s)$
 \end_inset
 
-, using a pseudorandomly generated number.
+ that satisfies: 
+\begin_inset Formula 
+\[
+\forall x\in S,\;f_{leaf}(x)\geq f_{leaf}(s^{\prime})
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-The environment 
-\begin_inset Formula $e$
+\begin_inset Formula $f_{leaf}(m)$
 \end_inset
 
- is kept constant, and is irrelevant to our definition.
+ is defined as follows:
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $m$
+\end_inset
+
+ be a search state.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $depth_{m}$
+\end_inset
+
+ be the depth of the node 
+\begin_inset Formula $m$
+\end_inset
+
+ in the search tree.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $maxdepth=|C_{m}\cup L_{m}|$
+\end_inset
+
+, where 
+\begin_inset Formula $C_{m}$
+\end_inset
+
+ and 
+\begin_inset Formula $L_{m}$
+\end_inset
+
+ are the sets of courses and labs for the search state, respectively.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f_{leaf}=maxdepth-depth
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+That is to say, our search process will randomly select a leaf to expand
+ from the leaves that are the deepest in the tree.
+ This is because those leaves are closest to a solution, so expanding them
+ first will allow us to finish faster.
+\end_layout
+
+\begin_layout Standard
+A function 
+\begin_inset Formula $f_{trans}$
+\end_inset
+
+ is not necessary, because we only have one type of operation in 
+\begin_inset Formula $Altern$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection*
