@@ -337,13 +337,6 @@ We have some relations and variables included in our problem definition.
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $PopCap$
-\end_inset
-
-=The maximum number of solutions we have at any given time.
-\end_layout
-
-\begin_layout Itemize
 \begin_inset Formula $GenCount$
 \end_inset
 
@@ -388,7 +381,7 @@ Search States are sets of solutions, which we refer to as populations.
 \begin_layout Standard
 \begin_inset Formula 
 \[
-S\subseteq2^{F},\,\forall s\in S,\,|s|\leq PopCap,\ \forall x\in s,\,Constr(x)=true
+S\subseteq2^{F},\,\forall s\in S,\ \forall x\in s,\,Constr(x)=true
 \]
 
 \end_inset
