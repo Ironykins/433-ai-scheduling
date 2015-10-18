@@ -209,22 +209,9 @@ Introduction
 In this paper, we will present two approaches to solving the scheduling
  problem for the Computer Science Department at the University of Calgary.
  The first is a set-based search model, with a genetic approach.
- The second is an And-Tree based model that subdivides the schedule and
+ The second is an And-Tree-Based model that subdivides the schedule and
  attempts to combine subproblems to find an overall solution.
  
-\end_layout
-
-\begin_layout Section
-CPSC Department Specific Instance
-\end_layout
-
-\begin_layout Standard
-We can transform the input for the CPSC-specific instance of the problem
- into a general instance of the problem like so:
-\end_layout
-
-\begin_layout Standard
-<TODO>
 \end_layout
 
 \begin_layout Section
@@ -371,8 +358,8 @@ Ext=\{A\rightarrow B|A,B\subseteq F,\,\left(Mutate(A,B)\lor Crossover(A,B)\lor P
 \end_layout
 
 \begin_layout Standard
-(Function definitions for mutate crossover and plague are given at the end
- of this section.)
+(Function definitions for Mutate, Crossover, and Plague are given at the
+ end of this section.)
 \end_layout
 
 \begin_layout Subsection
@@ -523,7 +510,18 @@ Condition 2: Crossover
 \begin_layout Itemize
 \begin_inset Formula 
 \[
-p_{j}=\frac{1}{Eval(s{}_{j})\cdot\sum_{k=1}^{N}\frac{1}{Eval(s_{k})}}\,\forall s_{j}\in s
+p_{j}=\frac{1}{Eval(s{}_{j})\cdot fitSum}\,\forall s_{j}\in s-\{k_{1}\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula 
+\[
+\mbox{where }fitSum=\sum_{h=1}^{N}\frac{1}{Eval(s_{h})},\ N=|s-\{k_{1}\}|
 \]
 
 \end_inset
@@ -541,7 +539,12 @@ Where
 \end_inset
 
  is selcted.
- This is fitness proportinate selection.
+ This is fitness proportinate selection, meaning solutions with a better
+ 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value are more likely to be selected.
  The sum of all such probabilities is 
 \begin_inset Formula $1$
 \end_inset
@@ -549,7 +552,28 @@ Where
 .
 \end_layout
 
+\begin_layout Itemize
+\begin_inset Formula $Crossover(A,B)$
+\end_inset
+
+ holds.
+\end_layout
+
 \end_deeper
+\begin_layout Standard
+We only discard the worst members of the population when necessary, and
+ we ensure that the fittest member is always able to pass on his traits
+ through crossovers, while selecting the other crossover parent randomly
+ with a bias towards fitter individuals.
+ To ensure diversity, we add random mutations.
+\end_layout
+
+\begin_layout Standard
+This search control should build on the most successful solutions while
+ introducing enough randomness to maintain diversity.
+ That's the plan, anyways.
+\end_layout
+
 \begin_layout Subsection
 Search Instance
 \end_layout
@@ -807,6 +831,11 @@ Where
 is uniformly randomly selected among all nodes with the highest depth.
 \end_layout
 
+\begin_layout Standard
+Traversing the nodes in a random order should in theory lead us to a random
+ solution.
+\end_layout
+
 \begin_layout Subsubsection*
 Or-Tree-Based Search Instance
 \end_layout
@@ -838,11 +867,7 @@ s_{0}=partassign
 \end_inset
 
  is no more specific than the general definition.
- But we know the value of 
-\begin_inset Formula $sol$
-\end_inset
-
- based on the following:
+ Our criteria for when a solution is solved is the following:
 \end_layout
 
 \begin_layout Standard
@@ -867,7 +892,7 @@ Mutate
 \begin_layout Standard
 A mutation takes a single individual, and messes with a number of their
  course assignments, randomly switching them around.
- 
+ The purpose of this is to introduce randomness to preserve diversity.
 \end_layout
 
 \begin_layout Standard
@@ -1369,10 +1394,6 @@ Search Instance
 
 \begin_layout Subsection
 Example
-\end_layout
-
-\begin_layout Section
-Conclusion
 \end_layout
 
 \end_body
