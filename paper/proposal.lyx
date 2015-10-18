@@ -1145,7 +1145,206 @@ Example
 \end_layout
 
 \begin_layout Standard
-TODO: Example.
+Let's consider a simple scenario where:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Slots=\{s_{1},s_{2},s_{3}\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Courses=\{c_{1},c_{2}\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Labs=\{l_{11},l_{21}\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $not-compatible=\{(c_{1},l_{11}),(c_{2},l_{21})\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $unwanted=\{(c_{1},s_{3})\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $partassign=(\$,\$,\$,\$)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We will not specify values such as
+\begin_inset Formula $pen\_coursemin$
+\end_inset
+
+, or 
+\begin_inset Formula $Preference$
+\end_inset
+
+, and will simply give the 
+\begin_inset Formula $Eval$
+\end_inset
+
+ values of each fact as we see fit.
+ The operations that happens are as follows:
+\end_layout
+
+\begin_layout Subsubsection*
+1.
+ Generate a Random Population of Solutions
+\end_layout
+
+\begin_layout Standard
+We use RandomSol() to generate the following facts:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $f_{1}=(s_{1},s_{2},s_{3,}s_{3}),\;Eval(f_{1})=7$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $f_{2}=(s_{2},s_{3},s_{1,}s_{1}),\;Eval(f_{2})=10$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+2.
+ Mutate a Randomly Selected Fact
+\end_layout
+
+\begin_layout Standard
+We choose 
+\begin_inset Formula $f_{2}$
+\end_inset
+
+ randomly.
+ After applying the mutation operator, the result is the addition of 
+\begin_inset Formula $f_{3}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $f_{3}=(s_{2},s_{2},s_{1},s_{1}),\;Eval(f_{3})=5$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+3.
+ Crossover of Two facts
+\end_layout
+
+\begin_layout Standard
+The next operation is a crossover.
+ We pick 
+\begin_inset Formula $f_{3}$
+\end_inset
+
+because it has the lowest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value, and we randomly select 
+\begin_inset Formula $f_{1}$
+\end_inset
+
+ to be the other parent.
+ This results in the addition of the newly born 
+\begin_inset Formula $f_{4}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $f_{4}=(s_{2},s_{2},s_{3},s_{3}),\;Eval(f_{4})=3$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+4.
+ Trimming of the Population
+\end_layout
+
+\begin_layout Standard
+We now have too many facts in our population! We kill off the worst one.
+ In this case, that is 
+\begin_inset Formula $f_{2}$
+\end_inset
+
+, since it has the highest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value.
+ Our population is now:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $s=\{f_{1},f_{3},f_{4}\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+5.
+ Finished with Generations
+\end_layout
+
+\begin_layout Standard
+We only ran three generations in this example, but you should probably run
+ more.
+ Now that we are finished, we return the solution with the lowest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value in our population.
+ That value is 
+\begin_inset Formula $f_{4}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Solution = 
+\begin_inset Formula $f_{4}=(s_{2},s_{2},s_{3},s_{3})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And we are done!
 \end_layout
 
 \begin_layout Section
