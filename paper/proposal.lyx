@@ -136,7 +136,7 @@ and
 
 \begin_layout Plain Layout
 
-Thomas Bystersky
+Tomas Bystersky
 \backslash
 
 \backslash
@@ -1380,20 +1380,541 @@ And-Tree-Based Search
 Overview
 \end_layout
 
+\begin_layout Standard
+This is an And-Tree based approach that begins by inserting one element
+ of 
+\begin_inset Formula $C$
+\end_inset
+
+ at a time into every possibe slot.
+ Each of those newly created leaf nodes is evaluated to determine which
+ we should choose next.
+ We first prioritize moving branches to a goal state.
+ Our second priority depends if we have previously found a valid solution.
+ If we have not found a valid solution we will do a depth first search,
+ otherwise we will do a breadth first search.
+ Our goals states include 
+\begin_inset Quotes eld
+\end_inset
+
+violating our constraints
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+inserting all elements of 
+\begin_inset Formula $C$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+, and 
+\begin_inset Quotes eld
+\end_inset
+
+the leaf evaluates to less than our current best solution
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+In order to trim the size of the tree we use an 
+\begin_inset Formula $Eval$
+\end_inset
+
+ function which evaluates the current leaf based on an analysis of the violation
+s of the soft constraints.
+ Once a leaf is reached where the 
+\begin_inset Formula $Eval$
+\end_inset
+
+ function evaluates to a worse value than the current best solution, the
+ leaf is moved to a 
+\begin_inset Formula $Yes$
+\end_inset
+
+ state.
+ If a complete solution has been found, and has an 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value better than the current best solution, the we update it with our
+ current leaf solution.
+\end_layout
+
+\begin_layout Standard
+When all branches of the tree end in a 
+\begin_inset Formula $Yes$
+\end_inset
+
+ state leaf, the best solution has been found and is returned.
+ 
+\end_layout
+
 \begin_layout Subsection
 Search Model
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A=(S,T)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+pr\in Prob\iff pr=[X_{1},...,X_{N}]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $X_{i}\in(S\cup\{\$\})$
+\end_inset
+
+ where 
+\begin_inset Formula $S$
+\end_inset
+
+ is the set of Slots and 
+\begin_inset Formula $\$$
+\end_inset
+
+ represents an unassigned class.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Div(pr,pr_{1},...,pr_{M})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+holds if:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+pr=[X_{1},....X_{p}....X_{n}]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $X_{p}$
+\end_inset
+
+is the first instance of 
+\begin_inset Formula $\$$
+\end_inset
+
+ in 
+\begin_inset Formula $pr$
+\end_inset
+
+ and
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+pr_{j}=[X_{1},...,X_{p}^{\prime},...,X_{N}]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+for each 
+\begin_inset Formula $s_{j}\in Slots$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+X_{p}^{\prime}=s_{j}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S\subset Atree
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+T=\{k,k'|k,k'\in S\ Erw(k,k')\ or\ Erw*(k',k)\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $Atree$
+\end_inset
+
+ is defined recursively by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+(pr,sol)\text{\in}Atree
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+for
+\begin_inset Formula 
+\[
+pr\text{\in}Prob,sol\in{yes,?}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+(pr,sol,b_{1},\text{…},b_{M})\text{\in}Atree
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+for
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+pr\in Prob
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+sol\in\{yes,?\}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+b_{1},...,b_{n}\in Atree
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $pr$
+\end_inset
+
+ is solved
+\begin_inset Quotes erd
+\end_inset
+
+: 
+\begin_inset Formula $pr$
+\end_inset
+
+=
+\begin_inset Formula $[X_{1},...,X_{n}]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+when
+\begin_inset Formula 
+\[
+X_{n}\neq\$
+\]
+
+\end_inset
+
+ or when
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Eval(pr)<Eval(w)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where w = 
+\begin_inset Formula $min[Eval(pr_{i})]$
+\end_inset
+
+ where 
+\begin_inset Formula $pr=[X_{1},$
+\end_inset
+
+
+\begin_inset Formula $...,X_{n}]$
+\end_inset
+
+ and 
+\begin_inset Formula $X_{n}$
+\end_inset
+
+
+\begin_inset Formula $\neq\$$
+\end_inset
+
+ and 
+\begin_inset Formula $Constr(pr)=true\mbox{ }$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+ie w = current best solution
+\end_layout
+
+\begin_layout Standard
+or 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Constr(pr)=false
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Erw is no more specific than the general definition for And-tree search.
 \end_layout
 
 \begin_layout Subsection
 Seach Control
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f_{leaf}=\begin{cases}
+choose\ deepest & w=null\\
+choose\ shallowest & otherwise
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $f_{trans}$
+\end_inset
+
+expands 
+\begin_inset Formula $pr$
+\end_inset
+
+ based on the 
+\begin_inset Formula $Div$
+\end_inset
+
+ relations to produce 
+\begin_inset Formula $pr_{1}$
+\end_inset
+
+ to 
+\begin_inset Formula $pr_{n}$
+\end_inset
+
+ as children of 
+\begin_inset Formula $pr$
+\end_inset
+
+.
+\end_layout
+
 \begin_layout Subsection
 Search Instance
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula $Ins=(s_{0},G)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If the given problem to solve is pr, then we have
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $s_{0}=(pr,?)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $G(s)=yes$
+\end_inset
+
+ 
+\begin_inset Formula $iff$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $s=(pr\prime,yes)$
+\end_inset
+
+
+\begin_inset Formula $\lor$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $s=(pr\prime,?,b_{1},...,b_{M}),G(b_{1})=...=G(b_{M})=yes$
+\end_inset
+
+ and the solutions to 
+\begin_inset Formula $b_{1},...,b_{M}$
+\end_inset
+
+ are compatible with each other 
+\begin_inset Formula $\lor$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+there is no transition that has not been tried out already
+\end_layout
+
 \begin_layout Subsection
 Example
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $C=[A,B,C,a,b]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $wanted=\{(A,s_{1})\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $unwanted=\{(B,s_{2})\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $Slots=(s_{1},s_{2})$
+\end_inset
+
+
 \end_layout
 
 \end_body
