@@ -1,0 +1,985 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Set Based Search
+\end_layout
+
+\begin_layout Subsection
+Overview
+\end_layout
+
+\begin_layout Standard
+This is a genetic algorithms approach that begins with a set of valid, random
+ solutions, and then for a number of generations uses mutate and crossover
+ operations on some subset of the population to create a gradually improving
+ solution.
+\end_layout
+
+\begin_layout Standard
+The desirability of a given solution is given by the 
+\begin_inset Formula $Eval$
+\end_inset
+
+ function.
+ More desirable solutions are more likely to be crossbred.
+ Whenever the population expands beyond a certain threshold, the solutions
+ with the highest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ values are retired.
+\end_layout
+
+\begin_layout Standard
+Mutations and crossovers are done in such a way that all solutions are kept
+ valid.
+ There will never be a solution in the population that does not satisfy
+ all hard constraints.
+ 
+\end_layout
+
+\begin_layout Standard
+The algorithm terminates after a number of generations determined at runtime.
+ After simulating the generations, the final solution is the member of the
+ population with the lowest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value.
+\end_layout
+
+\begin_layout Subsection
+Search Model
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbb{A}=(S,T)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f\in F\iff f=(a_{1},...,a_{n})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+a_{i}\in Slots
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+ in 
+\begin_inset Formula $f$
+\end_inset
+
+ means that some course or lab with index 
+\begin_inset Formula $i$
+\end_inset
+
+ is assigned slot 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+.
+ (
+\begin_inset Formula $1\leq i\leq n)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S\subseteq2^{F}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+T=\{(s,s^{\prime})|\exists(A\rightarrow B)\in Ext,\,s^{\prime}=(s-A)\cup B\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ext=\{A\rightarrow B|A,B\subseteq F,\,\left(Mutate(A,B)\lor Crossover(A,B)\lor Plague(A,B)\right)\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+(Function definitions for mutate crossover and plague are given at the end
+ of this section.)
+\end_layout
+
+\begin_layout Subsection
+Search Process
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbb{P}=(\mathbb{A},Env,\mathbb{K})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbb{K}(s,e)=(s-A)\cup B
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula 
+\[
+A\rightarrow B\in Ext
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And:
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $|s|\geq threshold$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Where 
+\begin_inset Formula $threshold$
+\end_inset
+
+ is the maximum population size we allow.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $A$
+\end_inset
+
+ = The least valuable 40% of facts.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Plague(A,B)$
+\end_inset
+
+ holds.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Else, randomly select between one of the two following conditions with equal
+ probability:
+\end_layout
+
+\begin_layout Itemize
+Condition 1: Mutate
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $A=\{k_{1}\}$
+\end_inset
+
+ Where 
+\begin_inset Formula $k_{1}$
+\end_inset
+
+ is a randomly selected member of 
+\begin_inset Formula $s$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Mutate(A,B)$
+\end_inset
+
+ holds.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Condition 2: Crossover
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $A=\{k_{1},k_{2}\}$
+\end_inset
+
+ Where
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $k_{1}$
+\end_inset
+
+ = The member of 
+\begin_inset Formula $s$
+\end_inset
+
+ with the lowest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $k_{2}$
+\end_inset
+
+ Is a member of 
+\begin_inset Formula $s$
+\end_inset
+
+ randomly selected according to the following distribution:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula 
+\[
+p_{j}=\frac{1}{Eval(s{}_{j})\cdot\sum_{k=1}^{N}\frac{1}{Eval(s_{k})}}\,\forall s_{j}\in s
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Where 
+\begin_inset Formula $p_{j}$
+\end_inset
+
+ is the probability that 
+\begin_inset Formula $s_{j}$
+\end_inset
+
+ is selcted.
+ This is fitness proportinate selection.
+ The sum of all such probabilities is 
+\begin_inset Formula $1$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Search Instance
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ins=(s_{0},G)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+s_{0}=\{s_{0_{1}},s_{0_{2}},...,s_{0_{n}}\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $s_{0_{i}}=RandomSol()$
+\end_inset
+
+ for 
+\begin_inset Formula $1\leq i\leq n$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+G(s)=\begin{cases}
+true & \mbox{If this is the final generation}\\
+false & \mbox{Otherwise}
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In other words, we decide ahead of time for how many generations our search
+ will run.
+ Once we have reached our final generation, we quit the search.
+ Our solution will be the member of 
+\begin_inset Formula $s$
+\end_inset
+
+ with the lowest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value.
+\end_layout
+
+\begin_layout Subsection
+Relation Definitions
+\end_layout
+
+\begin_layout Subsubsection
+RandomSol
+\end_layout
+
+\begin_layout Standard
+RandomSol is an or-tree-based search that finds a random valid class assignment.
+ It is used to build our initial population of facts at the beginning.
+ It selects transitions randomly, prioritizing the ones at the deepest levels
+ of the tree to find solutions more quickly.
+\end_layout
+
+\begin_layout Standard
+If we fail to find a solution, we do not need to run the set based search,
+ as this means that there is no valid solution.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Or-Tree-Based Search Model
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbb{A}=(S,T)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $S\mbox{ and \ensuremath{T}}$
+\end_inset
+
+are no more specific than the general definition given for Or-Tree-Based
+ search.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+pr\in Prob\iff pr=(a_{1},...,a_{N})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $a_{i}\in(S\cup\{\$\})$
+\end_inset
+
+.
+ 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+ represents the slot assignment for the course or lab with index 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ An assignment of 
+\begin_inset Formula $\$$
+\end_inset
+
+ indicates that no assignment has been made thusfar.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Altern(pr,pr_{1},...,pr_{M})
+\]
+
+\end_inset
+
+ Holds where:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+pr=(a_{1},...,a_{i},...,a_{N})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $a_{i}$
+\end_inset
+
+ is the first element in this vector with a value of 
+\begin_inset Formula $\$$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+For each 
+\begin_inset Formula $s_{j}\in Slots$
+\end_inset
+
+, we create a 
+\begin_inset Formula $pr_{j}$
+\end_inset
+
+ such that:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+pr_{j}=(a_{1},...,a_{i}^{\prime},...,a_{N})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+a_{i}^{\prime}=s_{j}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Or-Tree-Based Search Process
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbb{P}=(\mathbb{A},Env,\mathbb{K})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbb{K}(s,e)=s^{\prime}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $\forall x\in S$
+\end_inset
+
+, 
+\begin_inset Formula $f_{leaf}(x)\geq f_{leaf}(s^{\prime})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $s^{\prime}$
+\end_inset
+
+is uniformly randomly selected among all nodes with the highest depth.
+\end_layout
+
+\begin_layout Subsubsection*
+Or-Tree-Based Search Instance
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ins=(s_{0},G)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+s_{0}=partassign
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $G(s)$
+\end_inset
+
+ is no more specific than the general definition.
+ But we know the value of 
+\begin_inset Formula $sol$
+\end_inset
+
+ based on the following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+sol=\begin{cases}
+yes & \forall x\in pr,\;x_{i}\neq\$,\;Constr(pr)=true\\
+no & \forall x\in pr,\;x_{i}\neq\$,\;Constr(pr)=false\\
+? & otherwise
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Mutate
+\end_layout
+
+\begin_layout Standard
+A mutation takes a single individual, and messes with a number of their
+ course assignments, randomly switching them around.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Mutate(A,B)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A\subseteq F,\;B\subseteq F
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A=\{f\},\;B=\{f,f^{\prime}\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Start with 
+\begin_inset Formula $f^{\prime}=f=(a_{1},...,a_{N})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Repeat the following a number of times:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Pick a uniformly random 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+ from 
+\begin_inset Formula $f^{\prime}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Set 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+ to some randomly selected 
+\begin_inset Formula $s\in Slots-\{a_{i}\}$
+\end_inset
+
+, where 
+\begin_inset Formula $Constr(f^{\prime})=true$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The number of switches in a mutation is constant and decided ahead of time.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Crossover
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Crossover(A,B)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A=\{M,F|M,F\in F,M\neq F\}\;B=\{M,F,C\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $M,F,$
+\end_inset
+
+ and 
+\begin_inset Formula $C$
+\end_inset
+
+ are the Mother, the Father, and the Child of the crossover operation, respectiv
+ely.
+ 
+\begin_inset Formula $C$
+\end_inset
+
+ is created by merging traits of 
+\begin_inset Formula $M$
+\end_inset
+
+ and 
+\begin_inset Formula $F$
+\end_inset
+
+ using an or-tree-based search.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Or-Tree-Based Search Model
+\end_layout
+
+\begin_layout Standard
+This search model is identical to that of RandomSol()
+\end_layout
+
+\begin_layout Subsubsection*
+Or-Tree-Based Search Process
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbb{P}=(\mathbb{A},Env,\mathbb{K})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbb{K}(s,e)=s^{\prime}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $s^{\prime}$
+\end_inset
+
+satisfies
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\forall x\in s$
+\end_inset
+
+, 
+\begin_inset Formula $f_{leaf}(x)\geq f_{leaf}(s^{\prime})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $s^{\prime}$
+\end_inset
+
+is otherwise selected uniformly randomly.
+\end_layout
+
+\begin_layout Standard
+We define 
+\begin_inset Formula $f_{leaf}(r)$
+\end_inset
+
+ as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f_{leaf}(r)=\begin{cases}
+1 & r\in M\;\land\;r\in F\\
+2 & r\in M\;\lor\;r\in F\\
+3 & otherwise
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Or-Tree-Based Search Instance
+\end_layout
+
+\begin_layout Standard
+This search instance is identical to that of RandomSol()
+\end_layout
+
+\begin_layout Subsubsection
+Plague
+\end_layout
+
+\begin_layout Standard
+Plague is very simple.
+ It takes a set of facts, and murders them with fire/disease/chemical warfare/pe
+stilence.
+ They are gone.
+ End of story.
+ We use this to prevent overpopulation.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Plague(A,B)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A\subseteq F
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+B=\{\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
