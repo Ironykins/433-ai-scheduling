@@ -740,7 +740,7 @@ Where
 \begin_inset Formula $\$$
 \end_inset
 
- indicates that no assignment has been made thusfar.
+ indicates that no assignment has been made thus far.
 \end_layout
 
 \begin_layout Standard
@@ -1434,7 +1434,7 @@ Overview
 
 \begin_layout Standard
 This is an And-Tree-Based approach that begins by inserting one course or
- lab at a time into every possibe slot.
+ lab at a time into every possible slot.
  Each of those newly created leaf nodes is evaluated to determine which
  we should choose next.
  We first prioritize moving branches to a goal state.
@@ -1548,7 +1548,7 @@ Where
 \begin_inset Formula $\$$
 \end_inset
 
- indicates that no assignment has been made thusfar.
+ indicates that no assignment has been made thus far.
 \end_layout
 
 \begin_layout Standard
