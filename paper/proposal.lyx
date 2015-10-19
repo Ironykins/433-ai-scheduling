@@ -313,7 +313,7 @@ Where
 \end_inset
 
  is assigned slot 
-\begin_inset Formula $a_{i}$
+\begin_inset Formula $a_{i}\in Slots$
 \end_inset
 
 .
@@ -322,6 +322,26 @@ Where
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+Our courses and labs are indexed based on some arbitrary ordering of the
+ elements in the set 
+\begin_inset Formula $Courses\cup Labs$
+\end_inset
+
+.
+ The ordering itself does not matter, so long as we have a unique index
+ for every course and lab.
+ There should be 
+\begin_inset Formula $n$
+\end_inset
+
+ such indices, where 
+\begin_inset Formula $n=|Courses\cup Labs|$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -538,8 +558,8 @@ Where
 \begin_inset Formula $s_{j}$
 \end_inset
 
- is selcted.
- This is fitness proportinate selection, meaning solutions with a better
+ is selected.
+ This is fitness proportionate selection, meaning solutions with a better
  
 \begin_inset Formula $Eval$
 \end_inset
@@ -592,7 +612,7 @@ Ins=(s_{0},G)
 \begin_layout Standard
 \begin_inset Formula 
 \[
-s_{0}=\{s_{0_{1}},s_{0_{2}},...,s_{0_{n}}\}
+s_{0}=\{s_{0_{1}},s_{0_{2}},...,s_{0_{q}}\}
 \]
 
 \end_inset
@@ -606,10 +626,15 @@ Where
 \end_inset
 
  for 
-\begin_inset Formula $1\leq i\leq n$
+\begin_inset Formula $1\leq i\leq q$
 \end_inset
 
+, where 
+\begin_inset Formula $q$
+\end_inset
 
+ is the number of elements in our starting population.
+ This number can be decided at runtime.
 \end_layout
 
 \begin_layout Standard
@@ -688,7 +713,7 @@ are no more specific than the general definition given for Or-Tree-Based
 \begin_layout Standard
 \begin_inset Formula 
 \[
-pr\in Prob\iff pr=(a_{1},...,a_{N})
+pr\in Prob\iff pr=(a_{1},...,a_{n})
 \]
 
 \end_inset
@@ -698,7 +723,7 @@ pr\in Prob\iff pr=(a_{1},...,a_{N})
 
 \begin_layout Standard
 Where 
-\begin_inset Formula $a_{i}\in(S\cup\{\$\})$
+\begin_inset Formula $a_{i}\in(Slots\cup\{\$\})$
 \end_inset
 
 .
@@ -719,6 +744,26 @@ Where
 \end_layout
 
 \begin_layout Standard
+As in the Set Based Search, our courses and labs are indexed based on some
+ arbitrary ordering of the elements in the set 
+\begin_inset Formula $Courses\cup Labs$
+\end_inset
+
+.
+ The ordering itself does not matter, so long as we have a unique index
+ for every course and lab.
+ There should be 
+\begin_inset Formula $n$
+\end_inset
+
+ such indices, where 
+\begin_inset Formula $n=|Courses\cup Labs|$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \[
 Altern(pr,pr_{1},...,pr_{M})
@@ -732,7 +777,7 @@ Altern(pr,pr_{1},...,pr_{M})
 \begin_layout Standard
 \begin_inset Formula 
 \[
-pr=(a_{1},...,a_{i},...,a_{N})
+pr=(a_{1},...,a_{i},...,a_{n})
 \]
 
 \end_inset
@@ -766,7 +811,7 @@ For each
 \begin_layout Standard
 \begin_inset Formula 
 \[
-pr_{j}=(a_{1},...,a_{i}^{\prime},...,a_{N})
+pr_{j}=(a_{1},...,a_{i}^{\prime},...,a_{n})
 \]
 
 \end_inset
@@ -1116,7 +1161,7 @@ Or-Tree-Based Search Instance
 \end_layout
 
 \begin_layout Standard
-This search instance is identical to that of RandomSol()
+This search instance is identical to that of RandomSol() 
 \end_layout
 
 \begin_layout Subsubsection
@@ -1125,11 +1170,9 @@ Plague
 
 \begin_layout Standard
 Plague is very simple.
- It takes a set of facts, and murders them with fire/disease/chemical warfare/pe
-stilence.
- They are gone.
- End of story.
- We use this to prevent overpopulation.
+ It takes a set of facts, and removes them.
+ We use this function to trim our population, preventing it from getting
+ too large.
 \end_layout
 
 \begin_layout Standard
@@ -1216,7 +1259,16 @@ Let's consider a simple scenario where:
 \end_layout
 
 \begin_layout Standard
-We will not specify values such as
+Let us index our courses and labs in the following order: 
+\begin_inset Formula $(c_{1},c_{2},l_{11},l_{21})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In the interest of keeping this section brief, we will not specify values
+ such as
 \begin_inset Formula $pen\_coursemin$
 \end_inset
 
@@ -1228,7 +1280,7 @@ We will not specify values such as
 \begin_inset Formula $Eval$
 \end_inset
 
- values of each fact as we see fit.
+ values of each fact.
  The operations that happens are as follows:
 \end_layout
 
@@ -1381,12 +1433,8 @@ Overview
 \end_layout
 
 \begin_layout Standard
-This is an And-Tree based approach that begins by inserting one element
- of 
-\begin_inset Formula $C$
-\end_inset
-
- at a time into every possibe slot.
+This is an And-Tree-Based approach that begins by inserting one course or
+ lab at a time into every possibe slot.
  Each of those newly created leaf nodes is evaluated to determine which
  we should choose next.
  We first prioritize moving branches to a goal state.
@@ -1405,11 +1453,7 @@ violating our constraints
 \begin_inset Quotes eld
 \end_inset
 
-inserting all elements of 
-\begin_inset Formula $C$
-\end_inset
-
-
+complete assignment of all course and labs
 \begin_inset Quotes erd
 \end_inset
 
@@ -1426,7 +1470,7 @@ the leaf evaluates to less than our current best solution
 \end_layout
 
 \begin_layout Standard
-In order to trim the size of the tree we use an 
+In order to trim the size of the tree we use the 
 \begin_inset Formula $Eval$
 \end_inset
 
@@ -1477,7 +1521,7 @@ A=(S,T)
 \begin_layout Standard
 \begin_inset Formula 
 \[
-pr\in Prob\iff pr=[X_{1},...,X_{N}]
+pr\in Prob\iff pr=(X_{1},...,X_{n})
 \]
 
 \end_inset
@@ -1487,18 +1531,44 @@ pr\in Prob\iff pr=[X_{1},...,X_{N}]
 
 \begin_layout Standard
 Where 
-\begin_inset Formula $X_{i}\in(S\cup\{\$\})$
+\begin_inset Formula $X_{i}\in(Slots\cup\{\$\})$
 \end_inset
 
- where 
-\begin_inset Formula $S$
+.
+ 
+\begin_inset Formula $X_{i}$
 \end_inset
 
- is the set of Slots and 
+ represents the slot assignment for the course or lab with index 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ An assignment of 
 \begin_inset Formula $\$$
 \end_inset
 
- represents an unassigned class.
+ indicates that no assignment has been made thusfar.
+\end_layout
+
+\begin_layout Standard
+As in the Set Based Search, our courses and labs are indexed based on some
+ arbitrary ordering of the elements in the set 
+\begin_inset Formula $Courses\cup Labs$
+\end_inset
+
+.
+ The ordering itself does not matter, so long as we have a unique index
+ for every course and lab.
+ There should be 
+\begin_inset Formula $n$
+\end_inset
+
+ such indices, where 
+\begin_inset Formula $n=|Courses\cup Labs|$
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1519,7 +1589,7 @@ holds if:
 \begin_layout Standard
 \begin_inset Formula 
 \[
-pr=[X_{1},....X_{p}....X_{n}]
+pr=(X_{1},....X_{p}....X_{n})
 \]
 
 \end_inset
@@ -1540,22 +1610,7 @@ is the first instance of
 \begin_inset Formula $pr$
 \end_inset
 
- and
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-pr_{j}=[X_{1},...,X_{p}^{\prime},...,X_{N}]
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-for each 
+ and for each 
 \begin_inset Formula $s_{j}\in Slots$
 \end_inset
 
@@ -1576,7 +1631,7 @@ X_{p}^{\prime}=s_{j}
 \begin_layout Standard
 \begin_inset Formula 
 \[
-S\subset Atree
+pr_{j}=(X_{1},...,X_{p}^{\prime},...,X_{n})
 \]
 
 \end_inset
@@ -1587,7 +1642,18 @@ S\subset Atree
 \begin_layout Standard
 \begin_inset Formula 
 \[
-T=\{k,k'|k,k'\in S\ Erw(k,k')\ or\ Erw*(k',k)\}
+S\subseteq Atree
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+T=\{(k,k')|k,k'\in S\ Erw(k,k')\ or\ Erw*(k',k)\}
 \]
 
 \end_inset
@@ -1692,12 +1758,12 @@ b_{1},...,b_{n}\in Atree
 \begin_inset Quotes erd
 \end_inset
 
-: 
-\begin_inset Formula $pr$
+
+\begin_inset Formula $\iff pr$
 \end_inset
 
 =
-\begin_inset Formula $[X_{1},...,X_{n}]$
+\begin_inset Formula $(X_{1},...,X_{n})$
 \end_inset
 
 
@@ -1707,7 +1773,7 @@ b_{1},...,b_{n}\in Atree
 when
 \begin_inset Formula 
 \[
-X_{n}\neq\$
+X_{k}\neq\$\;\mbox{for \ensuremath{1\leq k\leq n}}
 \]
 
 \end_inset
@@ -1727,16 +1793,16 @@ Eval(pr)<Eval(w)
 \end_layout
 
 \begin_layout Standard
-where w = 
-\begin_inset Formula $min[Eval(pr_{i})]$
+where 
+\begin_inset Formula $w=min[Eval(pr_{i})]$
 \end_inset
 
  where 
-\begin_inset Formula $pr=[X_{1},$
+\begin_inset Formula $pr=(X_{1},$
 \end_inset
 
 
-\begin_inset Formula $...,X_{n}]$
+\begin_inset Formula $...,X_{n})$
 \end_inset
 
  and 
@@ -1755,7 +1821,12 @@ where w =
 \end_layout
 
 \begin_layout Standard
-ie w = current best solution
+i.e.
+ 
+\begin_inset Formula $w=$
+\end_inset
+
+the current best solution
 \end_layout
 
 \begin_layout Standard
@@ -1774,11 +1845,14 @@ Constr(pr)=false
 \end_layout
 
 \begin_layout Standard
-Erw is no more specific than the general definition for And-tree search.
+\begin_inset Formula $Erw$
+\end_inset
+
+ is no more specific than the general definition for And-tree search.
 \end_layout
 
 \begin_layout Subsection
-Seach Control
+Search Control
 \end_layout
 
 \begin_layout Standard
@@ -1822,12 +1896,43 @@ expands
 .
 \end_layout
 
+\begin_layout Standard
+As above, 
+\begin_inset Formula $w$
+\end_inset
+
+ is our current best solution.
+ It is the leaf node with 
+\begin_inset Formula $sol=yes$
+\end_inset
+
+ which satisfies 
+\begin_inset Formula $Constr$
+\end_inset
+
+ and has the lowest 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value out of any we have traversed so far.
+\end_layout
+
+\begin_layout Standard
+In other words, we expand nodes deeper down the tree until we have found
+ a valid solution.
+ We then switch to a breadth-first method of traversing the tree.
+\end_layout
+
 \begin_layout Subsection
 Search Instance
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $Ins=(s_{0},G)$
+\begin_inset Formula 
+\[
+Ins=(s_{0},G)
+\]
+
 \end_inset
 
 
@@ -1841,32 +1946,29 @@ If the given problem to solve is pr, then we have
 \begin_inset Formula $s_{0}=(pr,?)$
 \end_inset
 
+, where 
+\begin_inset Formula $pr=partassign$
+\end_inset
 
+.
 \end_layout
 
 \begin_layout Standard
+And 
 \begin_inset Formula $G(s)=yes$
 \end_inset
 
- 
-\begin_inset Formula $iff$
-\end_inset
-
-
+ if and only if:
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 \begin_inset Formula $s=(pr\prime,yes)$
 \end_inset
 
-
-\begin_inset Formula $\lor$
-\end_inset
-
-
+ or
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 \begin_inset Formula $s=(pr\prime,?,b_{1},...,b_{M}),G(b_{1})=...=G(b_{M})=yes$
 \end_inset
 
@@ -1874,15 +1976,8 @@ If the given problem to solve is pr, then we have
 \begin_inset Formula $b_{1},...,b_{M}$
 \end_inset
 
- are compatible with each other 
-\begin_inset Formula $\lor$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-there is no transition that has not been tried out already
+ are compatible with each other or there is no transition that has not been
+ tried out already.
 \end_layout
 
 \begin_layout Subsection
@@ -1890,28 +1985,65 @@ Example
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $C=[A,B,C,a,b]$
+Let's consider a simple scenario where:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Slots=\{s_{1},s_{2}\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Courses=\{c_{1},c_{2},c_{3}\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Labs=\{l_{11},l_{21}\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $unwanted=\{(c_{2},s_{2})\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $partassign=(\$,\$,\$,\$,\$)$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $wanted=\{(A,s_{1})\}$
-\end_inset
-
-
+Let us index our courses and labs in the following order:
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $unwanted=\{(B,s_{2})\}$
+\begin_inset Formula $(c_{1},c_{2},c_{3},l_{11},l_{21})$
 \end_inset
 
 
+\begin_inset Newline newline
+\end_inset
+
+We end up with the following search tree:
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $Slots=(s_{1},s_{2})$
+\begin_inset Graphics
+	filename and_search_instance.JPG
+	display false
+	scale 15
+
 \end_inset
 
 
