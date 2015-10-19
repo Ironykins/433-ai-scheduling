@@ -1433,15 +1433,18 @@ Overview
 \end_layout
 
 \begin_layout Standard
-This is an And-Tree-Based approach that begins by inserting one course or
- lab at a time into every possible slot.
+This is an And-Tree-Based approach that, at each level of the tree, inserts
+ one more course or lab into every possible slot and create a new leaf for
+ each one.
  Each of those newly created leaf nodes is evaluated to determine which
  we should choose next.
- We first prioritize moving branches to a goal state.
- Our second priority depends if we have previously found a valid solution.
+ We first prioritize branches where we can change the sol entry.
+ Our second priority depends if we have previously found a valid solution
+ to compare soft constraint evaluation against.
  If we have not found a valid solution we will do a depth first search,
- otherwise we will do a breadth first search.
- Our goals states include 
+ to find the first valid solution as soon as possible.
+ Once we find our first solution we will switch to a breadth first search
+ beacuse our goals states can now include 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1481,17 +1484,20 @@ s of the soft constraints.
 \end_inset
 
  function evaluates to a worse value than the current best solution, the
- leaf is moved to a 
+ leaf's sol entry is changed to a 
 \begin_inset Formula $Yes$
 \end_inset
 
  state.
- If a complete solution has been found, and has an 
+ If a new complete solution is found, and has an 
 \begin_inset Formula $Eval$
 \end_inset
 
- value better than the current best solution, the we update it with our
- current leaf solution.
+ value better than the current best solution, the we update our best 
+\begin_inset Formula $Eval$
+\end_inset
+
+ with our new solution.
 \end_layout
 
 \begin_layout Standard
@@ -1705,6 +1711,10 @@ pr\text{\in}Prob,sol\in{yes,?}
 \end_layout
 
 \begin_layout Standard
+and
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \[
 (pr,sol,b_{1},\text{…},b_{M})\text{\in}Atree
@@ -1738,7 +1748,7 @@ sol\in\{yes,?\}
 
 \begin_inset Formula 
 \[
-b_{1},...,b_{n}\in Atree
+b_{1},...,b_{M}\in Atree
 \]
 
 \end_inset
@@ -1784,7 +1794,7 @@ X_{k}\neq\$\;\mbox{for \ensuremath{1\leq k\leq n}}
 \begin_layout Standard
 \begin_inset Formula 
 \[
-Eval(pr)<Eval(w)
+Eval(pr)\leq Eval(w)
 \]
 
 \end_inset
@@ -1962,14 +1972,14 @@ And
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $s=(pr\prime,yes)$
+\begin_inset Formula $s=(pr^{\prime},yes)$
 \end_inset
 
  or
 \end_layout
 
 \begin_layout Itemize
-\begin_inset Formula $s=(pr\prime,?,b_{1},...,b_{M}),G(b_{1})=...=G(b_{M})=yes$
+\begin_inset Formula $s=(pr^{\prime},?,b_{1},...,b_{M}),G(b_{1})=...=G(b_{M})=yes$
 \end_inset
 
  and the solutions to 
