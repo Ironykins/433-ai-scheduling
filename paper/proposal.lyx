@@ -663,7 +663,11 @@ In other words, we decide ahead of time for how many generations our search
 \begin_inset Formula $Eval$
 \end_inset
 
- value.
+ value.o
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -825,6 +829,13 @@ pr_{j}=(a_{1},...,a_{i}^{\prime},...,a_{n})
 a_{i}^{\prime}=s_{j}
 \]
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -1589,7 +1600,7 @@ Div(pr,pr_{1},...,pr_{M})
 \end_layout
 
 \begin_layout Standard
-holds if:
+Holds if:
 \end_layout
 
 \begin_layout Standard
@@ -1604,7 +1615,7 @@ pr=(X_{1},....X_{p}....X_{n})
 \end_layout
 
 \begin_layout Standard
-where 
+Where 
 \begin_inset Formula $X_{p}$
 \end_inset
 
@@ -1648,7 +1659,7 @@ pr_{j}=(X_{1},...,X_{p}^{\prime},...,X_{n})
 \begin_layout Standard
 \begin_inset Formula 
 \[
-S\subseteq Atree
+T=\{(k,k')|k,k'\in S\ Erw(k,k')\ or\ Erw*(k',k)\}
 \]
 
 \end_inset
@@ -1659,7 +1670,7 @@ S\subseteq Atree
 \begin_layout Standard
 \begin_inset Formula 
 \[
-T=\{(k,k')|k,k'\in S\ Erw(k,k')\ or\ Erw*(k',k)\}
+S\subseteq Atree
 \]
 
 \end_inset
@@ -1668,7 +1679,7 @@ T=\{(k,k')|k,k'\in S\ Erw(k,k')\ or\ Erw*(k',k)\}
 \end_layout
 
 \begin_layout Standard
-where 
+Where 
 \begin_inset Formula $Atree$
 \end_inset
 
@@ -1684,10 +1695,6 @@ where
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-
 \family roman
 \series medium
 \shape up
@@ -1699,19 +1706,15 @@ where
 \uwave off
 \noun off
 \color none
-for
+
 \begin_inset Formula 
 \[
-pr\text{\in}Prob,sol\in{yes,?}
+pr\text{\in}Prob,\;sol\in\{yes,?\}
 \]
 
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-and
 \end_layout
 
 \begin_layout Standard
@@ -1726,26 +1729,6 @@ and
 \end_layout
 
 \begin_layout Standard
-for
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-pr\in Prob
-\]
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-sol\in\{yes,?\}
-\]
-
-\end_inset
-
-
 \begin_inset Formula 
 \[
 b_{1},...,b_{M}\in Atree
@@ -1757,38 +1740,22 @@ b_{1},...,b_{M}\in Atree
 \end_layout
 
 \begin_layout Standard
-\begin_inset Quotes eld
-\end_inset
-
-
-\begin_inset Formula $pr$
-\end_inset
-
- is solved
-\begin_inset Quotes erd
-\end_inset
-
-
-\begin_inset Formula $\iff pr$
-\end_inset
-
-=
-\begin_inset Formula $(X_{1},...,X_{n})$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-when
 \begin_inset Formula 
 \[
-X_{k}\neq\$\;\mbox{for \ensuremath{1\leq k\leq n}}
+\mbox{"\ensuremath{pr} is solved"}\iff pr=(X_{1},...,X_{n})\mbox{ with}
 \]
 
 \end_inset
 
- or when
+
+\begin_inset Formula 
+\[
+X_{k}\neq\$\;\mbox{for \ensuremath{1\leq k\leq n}}\mbox{ or}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1803,7 +1770,7 @@ Eval(pr)\leq Eval(w)
 \end_layout
 
 \begin_layout Standard
-where 
+Where 
 \begin_inset Formula $w=min[Eval(pr_{i})]$
 \end_inset
 
@@ -1815,43 +1782,29 @@ where
 \begin_inset Formula $...,X_{n})$
 \end_inset
 
- and 
-\begin_inset Formula $X_{n}$
+ with all 
+\begin_inset Formula $X_{j}$
 \end_inset
 
 
 \begin_inset Formula $\neq\$$
 \end_inset
 
- and 
-\begin_inset Formula $Constr(pr)=true\mbox{ }$
+, 
+\begin_inset Formula $1\leq j\leq n$
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-i.e.
+.
  
-\begin_inset Formula $w=$
-\end_inset
-
-the current best solution
 \end_layout
 
 \begin_layout Standard
-or 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-Constr(pr)=false
-\]
-
+In other words, 
+\begin_inset Formula $w$
 \end_inset
 
-
+ is the current best solution.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1868,9 +1821,67 @@ Search Control
 \begin_layout Standard
 \begin_inset Formula 
 \[
-f_{leaf}=\begin{cases}
-choose\ deepest & w=null\\
-choose\ shallowest & otherwise
+\mathbb{P}=(\mathbb{A},Env,\mathbb{K})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathbb{K}(s,e)=s^{\prime}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $s^{\prime}$
+\end_inset
+
+satisfies
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\forall x\in s$
+\end_inset
+
+, 
+\begin_inset Formula $f_{leaf}(x)\geq f_{leaf}(s^{\prime})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+If there are multiple transitions that satisfy the above, 
+\begin_inset Formula $s^{\prime}$
+\end_inset
+
+ is the leftmost node.
+\end_layout
+
+\begin_layout Standard
+We define 
+\begin_inset Formula $f_{leaf}(r)$
+\end_inset
+
+ as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f_{leaf}(r)=\begin{cases}
+0 & sol\mbox{ value can be changed}\\
+depth_{max}-depth(r) & w=null\\
+depth(r) & w\neq null
 \end{cases}
 \]
 
@@ -1907,6 +1918,14 @@ expands
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula $depth_{max}$
+\end_inset
+
+ is the maximum depth of the tree.
+ 
+\end_layout
+
+\begin_layout Standard
 As above, 
 \begin_inset Formula $w$
 \end_inset
@@ -1931,6 +1950,12 @@ As above,
 In other words, we expand nodes deeper down the tree until we have found
  a valid solution.
  We then switch to a breadth-first method of traversing the tree.
+ This aids us in pruning the tree, by cutting off any branches with a worse
+ 
+\begin_inset Formula $Eval$
+\end_inset
+
+ value than our current best solution.
 \end_layout
 
 \begin_layout Subsection
