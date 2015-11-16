@@ -1,0 +1,49 @@
+Assignments and partial assignments: Fixed size vector.
+Item at index i is a slot. It is what lab x course indexed by i is assigned to.
+
+Slots are objects.
+    - Name (Day, Time)
+    - Unique ID
+    - mincourse, maxcourse
+    - minlab, maxlab
+
+Assignables are objects
+    - Name
+    - Unique Index/ID
+    - Subclasses: Courses and labs
+    - Vector: Incompatible relation
+        - Array of Index/ID offsets of all other incompatible.
+    - Unwanted slots for this assignable (As indices.)
+
+Solutions and partial solutions are objects
+    - Assign vector (indexed by the courses/labs, contains slots as indexes)
+    - We need to keep track of all the number of lectures and tutorials assigned to a slot
+        - Use integer vectors indexed by slots.
+        - CSize and LSize
+
+We use a priority Queue
+    - Expand Node atop Queue -> Put all children into Queue -> Discard parent. We don't need it.
+    - TRIMMING???!?!??! Seems like a difficult problem. We argued about this for a while.
+
+==TODO: System Components==
+
+Parser
+Output Printer
+Constr()
+Eval()
+
+Command line flags:
+Eval should be split up into 4 different types.
+minfilled, pref, pair, secdiff are the different types
+Weighting should specify their weighting on the overall Eval function.
+
+==Some fancy UML code for==
+
+Plug the following into yuml.me:
+(Or go to http://yuml.me/23a27eff)
+
+[Solution|Assign:Vector;CSize:vector;LSize:Vector|eval();constr()]
+[Assignable|-Name:String;Id:Int;Incompatible:Vector;Unwanted:Vector]
+[Course]->[Assignable]
+[Lab]->[Assignable]
+[Slot|Name:String;Id:Int;mincourse:Int;maxcourse:Int;minlab:Int;maxlab:Int]
