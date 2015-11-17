@@ -12,7 +12,7 @@ import java.util.Vector;
  * The data here should be static, and assigned when the program parses the input file.
  */
 public class Problem {
-	public final Vector<Course> Assignables;
+	public final Vector<Assignable> Assignables;
 	public final Vector<Slot> Slots;
 	
 	//Apparently the problem input allows us a problem instance name.
@@ -21,7 +21,7 @@ public class Problem {
 	public void setName(String name) { this.name = name; }
 	
 	public Problem() {
-		Assignables = new Vector<Course>();
+		Assignables = new Vector<Assignable>();
 		Slots = new Vector<Slot>();
 	}	
 }
