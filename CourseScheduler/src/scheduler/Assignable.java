@@ -1,4 +1,7 @@
 package scheduler;
+
+import java.util.Vector;
+
 //Labs and Courses seem pretty much the same,
 //So I think it would be ok to only have one object representing both
 public class Assignable {
@@ -23,13 +26,21 @@ public class Assignable {
 		this.id = id;
 		this.name = name;
 		this.isCourse = isCourse;
+		incompatible = new Vector<Integer>();
 	}
 	
-	//Question: should we refer to other courses by index, by their object or Name or some other value?
-	//A list of index that this course is incompatible
-	int incompatable[];
+	//A list of index that this course is incompatible with
+	public final Vector<Integer> incompatible;
 	
 	public String toString() {
 		return String.format("Id: %d, Name: %s, Type: %s", id, name, isCourse ? "Course" : "Lab");
+	}
+	
+	//We need to be able to compare assignables. Two of them are equal if they have the same name.
+	public boolean equals(Object toCompare) {
+        if (!(toCompare instanceof Assignable)) return false;
+        Assignable other = (Assignable) toCompare;
+        if(!other.name.equals(this.name)) return false;
+        return true;
 	}
 }

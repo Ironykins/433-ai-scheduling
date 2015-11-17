@@ -16,6 +16,7 @@ public class Parser {
 	private Problem prob;
 	private Pattern slotPattern;
 	private Pattern coursePattern;
+	private Pattern notCompatiblePattern;
 	private Pattern labPattern;
 	private int slotIndex;
 	private int assignableIndex;
@@ -31,6 +32,9 @@ public class Parser {
 				
 		//Matches and extracts lines of the form: SENG 311 (Optional: LEC 01) TUT 01
 		labPattern = Pattern.compile("^([A-Z]{4})[\\s]+([0-9]+)[\\s]+(?:LEC[\\s]+([0-9]+)[\\s]+){0,1}(?:TUT|LAB)[\\s]+([0-9]+)");
+		
+		//Matches and extracts lines of the form: (Assignable Name), (Assignable Name)
+		notCompatiblePattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([0-9A-Za-z\\s]*)");
 	}
 	
 	/**
@@ -62,7 +66,7 @@ public class Parser {
 		    	case "Lab slots:": parseLabSlots(br); break;
 		    	case "Courses:": parseCourses(br); break;
 		    	case "Labs:": parseLabs(br); break;
-		    	//case "Not compatible:": parseNotCompatible(br); break;
+		    	case "Not compatible:": parseNotCompatible(br); break;
 		    	//case "Unwanted:": parseUnwanted(br); break;
 		    	//case "Preferences:": parsePreferences(br); break;
 		    	//case "Pair:": parsePairs(br); break;
@@ -87,7 +91,7 @@ public class Parser {
 		}
 	}
 	
-	//Lines of format: 
+	//Lines of format:
 	//Day, Start time, coursemax, coursemin
 	//MO, 8:00, 3, 2
 	public void parseCourseSlots(BufferedReader br) throws IOException {
@@ -151,7 +155,8 @@ public class Parser {
 		while((line = br.readLine()) != null) {
 			Matcher m = coursePattern.matcher(line);
 			if(m.find()) {
-				Assignable newCourse = new Assignable(assignableIndex++, m.group(0), true);
+				String name = m.group(0).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+				Assignable newCourse = new Assignable(assignableIndex++, name, true);
 				prob.Assignables.add(newCourse);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
@@ -170,7 +175,8 @@ public class Parser {
 			Matcher m = labPattern.matcher(line);
 
 			if(m.find()) {
-				Assignable newLab = new Assignable(assignableIndex++, m.group(0), false);
+				String name = m.group(0).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+				Assignable newLab = new Assignable(assignableIndex++, name, false);
 				prob.Assignables.add(newLab);
 				//TODO: Make incompatible with the related course.
 				//Groups: 1: Course code 2: Course Number 3: Lecture Number (NULL=LEC 01) 4: Lab/Tut Number
@@ -182,7 +188,43 @@ public class Parser {
 		}
 	}
 	
-	public Problem getProb() {
-		return prob;
+	//Lines of format:
+	//Assignable Name, Assignable Name
+	//SENG 311 LEC 01 TUT 01, CPSC 433 LEC 01
+	public void parseNotCompatible(BufferedReader br) throws IOException {
+		String line;
+		while((line = br.readLine()) != null) {
+			Matcher m = notCompatiblePattern.matcher(line);
+
+			if(m.find()) {
+				//Group1 contains first one. Group2 contains second one.
+				//Add First's ID to Second's incompatible vector. And vice versa.
+				Assignable a1 = null;
+				Assignable a2 = null;
+				
+				//First, see if a slot like this one already exists.
+				for(Assignable ass : prob.Assignables) {
+					String name1 = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+					String name2 = m.group(2).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+					
+					if(ass.name.equals(name1)) { a1 = ass; };
+					if(ass.name.equals(name2)) { a2 = ass; };
+					if(a1 != null && a2 != null) break;
+				}
+				
+				//Mark them as incompatible.
+				if(a1 != null && a2 != null) {
+					a1.incompatible.add(a2.id);
+					a2.incompatible.add(a1.id);
+				}
+				else
+					throw new IllegalStateException(String.format("Tried to add %s to incompatible, but one of the assignables does not exist!", line));
+				
+			}
+			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+	    		if (line.trim().length() == 0) return;
+    			throw new IOException(String.format("Could not parse line as lab: %s", line));
+			}
+		}
 	}
 }
