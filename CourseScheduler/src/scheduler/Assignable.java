@@ -27,10 +27,14 @@ public class Assignable {
 		this.name = name;
 		this.isCourse = isCourse;
 		incompatible = new Vector<Integer>();
+		unwanted = new Vector<Integer>();
 	}
 	
-	//A list of index that this course is incompatible with
+	//A list of assignable ids that this course is incompatible with
 	public final Vector<Integer> incompatible;
+	
+	//A list of slot ids that this course is incompatible with.
+	public final Vector<Integer> unwanted;
 	
 	public String toString() {
 		return String.format("Id: %d, Name: %s, Type: %s", id, name, isCourse ? "Course" : "Lab");

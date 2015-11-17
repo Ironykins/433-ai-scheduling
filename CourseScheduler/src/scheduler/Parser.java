@@ -18,6 +18,7 @@ public class Parser {
 	private Pattern coursePattern;
 	private Pattern notCompatiblePattern;
 	private Pattern labPattern;
+	private Pattern unwantedPattern;
 	private int slotIndex;
 	private int assignableIndex;
 	
@@ -35,6 +36,9 @@ public class Parser {
 		
 		//Matches and extracts lines of the form: (Assignable Name), (Assignable Name)
 		notCompatiblePattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([0-9A-Za-z\\s]*)");
+		
+		//Matches and extracts lines of the form: (Assignable Name), Day, Time
+		unwantedPattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})");
 	}
 	
 	/**
@@ -67,7 +71,7 @@ public class Parser {
 		    	case "Courses:": parseCourses(br); break;
 		    	case "Labs:": parseLabs(br); break;
 		    	case "Not compatible:": parseNotCompatible(br); break;
-		    	//case "Unwanted:": parseUnwanted(br); break;
+		    	case "Unwanted:": parseUnwanted(br); break;
 		    	//case "Preferences:": parsePreferences(br); break;
 		    	//case "Pair:": parsePairs(br); break;
 		    	//case "Partial assignments:": parsePartAssign(br); break;
@@ -220,6 +224,47 @@ public class Parser {
 				else
 					throw new IllegalStateException(String.format("Tried to add %s to incompatible, but one of the assignables does not exist!", line));
 				
+			}
+			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+	    		if (line.trim().length() == 0) return;
+    			throw new IOException(String.format("Could not parse line as lab: %s", line));
+			}
+		}
+	}
+	
+	//Lines of format:
+	//Assignable Name, Day, Time
+	//CPSC 433 LEC 01, MO, 8:00
+	public void parseUnwanted(BufferedReader br) throws IOException {
+		String line;
+		while((line = br.readLine()) != null) {
+			Matcher m = unwantedPattern.matcher(line);
+
+			if(m.find()) {
+				//Group1 contains assignable name. Group2 contains day. Group 3 contains time.
+				
+				int slotIndex = -1;
+				for(Slot s : prob.Slots) {
+					if(s.day.equals(m.group(2)) && s.startTime.equals(m.group(3))) {
+						slotIndex = s.id;
+					}
+				}
+				
+				if(slotIndex == -1) 
+					throw new IllegalStateException(String.format("Tried to add %s to unwanted, but slot does not exist!", line));
+				
+				boolean found = false;
+				for(Assignable ass : prob.Assignables) {
+					String name = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+					if(ass.name.equals(name)) {
+						ass.unwanted.add(slotIndex);
+						found = true;
+						break;
+					}
+				}	
+				
+				if(!found)
+					throw new IllegalStateException(String.format("Tried to add %s to unwanted, but assignable does not exist!", line));
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;
