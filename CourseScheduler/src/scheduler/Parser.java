@@ -14,9 +14,16 @@ import java.util.regex.Pattern;
  */
 public class Parser {
 	private Problem prob;
-
+	private Pattern slotPattern;
+	private int slotIndex;
+	private int courseIndex;
+	
 	public Parser() {
 		prob = new Problem();
+		
+		//Matches and extracts lines of the form: DD, HH:MM, INT, INT
+		slotPattern = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9]*)[\\s]*,[\\s]*([0-9]*)[\\s]*$");
+				
 	}
 	
 	/**
@@ -45,7 +52,7 @@ public class Parser {
 	    	switch(line) {
 		    	case "Name:": parseName(br); break;
 		    	case "Course slots:": parseCourseSlots(br); break;
-		    	//case "Lab slots:": parseLabSlots(br); break;
+		    	case "Lab slots:": parseLabSlots(br); break;
 		    	//case "Courses:": parseCourses(br); break;
 		    	//case "Labs:": parseLabs(br); break;
 		    	//case "Not compatible:": parseNotCompatible(br); break;
@@ -77,20 +84,55 @@ public class Parser {
 	//Day, Start time, coursemax, coursemin
 	//MO, 8:00, 3, 2
 	public void parseCourseSlots(BufferedReader br) throws IOException {
-		//Matches and extracts lines of the form: DD, HH:MM, INT, INT
-		Pattern p = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9]*)[\\s]*,[\\s]*([0-9]*)[\\s]*$");
 		String line;
 		while((line = br.readLine()) != null) {
-			Matcher m = p.matcher(line);
+			Matcher m = slotPattern.matcher(line);
 			if(m.find()) {
-				System.out.println("Day: " + m.group(1));
-				System.out.println("Time: " + m.group(2));
-				System.out.println("Coursemax: " + m.group(3));
-				System.out.println("CourseMin: " + m.group(4));
+				//Shouldn't need input sanitation here. The regex should only match things that are okay to parse.
+				Slot newSlot = new Slot(slotIndex++, m.group(1), m.group(2));
+				newSlot.setCourseMax(Integer.parseInt(m.group(3)));
+				newSlot.setCourseMin(Integer.parseInt(m.group(4)));
+				prob.Slots.add(newSlot);
 			}
-			else //If the line is not whitespace and we can't parse it, we have a problem.
-	    		if (line.trim().length() > 0) 
-	    			throw new IOException(String.format("Could not parse line: %s", line));
+			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+	    		if (line.trim().length() == 0) return;
+	    		throw new IOException(String.format("Could not parse line as course slot: %s", line));
+			}
+	    }
+	}
+	
+	//Lines of format: 
+	//Day, Start time, coursemax, coursemin
+	//MO, 8:00, 3, 2
+	public void parseLabSlots(BufferedReader br) throws IOException {
+		String line;
+		while((line = br.readLine()) != null) {
+			Matcher m = slotPattern.matcher(line);
+			if(m.find()) {
+				boolean found = false;
+				//First, see if a slot like this one already exists.
+				for(Slot s : prob.Slots) {
+					//If this slot already exists, just use it.
+					if(s.day.equals(m.group(1)) && s.startTime.equals(m.group(2))) { 
+						s.setLabMax(Integer.parseInt(m.group(3)));
+						s.setLabMin(Integer.parseInt(m.group(4)));
+						found = true;
+						break;
+					}
+				}
+				
+				//If the slot doesn't exist, add it.
+				if(!found) { 
+					Slot newSlot = new Slot(slotIndex++, m.group(1), m.group(2));
+					newSlot.setLabMax(Integer.parseInt(m.group(3)));
+					newSlot.setLabMin(Integer.parseInt(m.group(4)));
+					prob.Slots.add(newSlot);
+				}
+			}
+			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+	    		if (line.trim().length() == 0) return;
+    			throw new IOException(String.format("Could not parse line as lab slot: %s", line));
+			}
 		}
 	}
 
