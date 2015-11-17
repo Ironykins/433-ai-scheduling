@@ -12,21 +12,24 @@ public class Assignable {
 	 * or CPSC 433 LEC 03 TUT 02 LAB 02
 	 */
 	public final String name;
+	public final int id;
 	
 	//false if lab, true if course
 	//This will make it easier to test the constraints
 	//And help decide if we inc a slot's course # or lab #
 	public final boolean isCourse;
 	
-	public Assignable(String name, boolean isCourse) {
+	public Assignable(int id, String name, boolean isCourse) {
+		this.id = id;
 		this.name = name;
 		this.isCourse = isCourse;
 	}
 	
-	//A unique number for each course
-	int index;
-	
 	//Question: should we refer to other courses by index, by their object or Name or some other value?
 	//A list of index that this course is incompatible
 	int incompatable[];
+	
+	public String toString() {
+		return String.format("Id: %d, Name: %s, Type: %s", id, name, isCourse ? "Course" : "Lab");
+	}
 }

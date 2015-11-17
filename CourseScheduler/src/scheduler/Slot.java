@@ -37,6 +37,14 @@ public class Slot {
         if(!other.day.equals(this.day)) return false;
         return true;
 	}
+	
+	//Nice for debugging.
+	public String toString() {
+		return String.format(
+				"Id: %d, Day: %s, Time: %s, LabMax: %d, LabMin: %s, CourseMax: %d, CourseMin: %s",
+				id, day, startTime, labMax, labMin, courseMax, courseMin);
+		
+	}
 
     //Getters and setters.
 	public int getLabMax() { return labMax; }

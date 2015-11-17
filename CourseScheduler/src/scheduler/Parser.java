@@ -16,16 +16,21 @@ public class Parser {
 	private Problem prob;
 	private Pattern slotPattern;
 	private Pattern coursePattern;
+	private Pattern labPattern;
 	private int slotIndex;
-	private int courseIndex;
+	private int assignableIndex;
 	
 	public Parser() {
 		prob = new Problem();
 		
 		//Matches and extracts lines of the form: DD, HH:MM, INT, INT
 		slotPattern = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9]*)[\\s]*,[\\s]*([0-9]*)[\\s]*$");
+		
+		//Matches and extracts lines of the form: CourseCode, CourseNum, LEC, LecNum
 		coursePattern = Pattern.compile("^([A-Z]{4})[\\s]+([0-9]+)[\\s]+LEC[\\s]+([0-9]+)");
 				
+		//Matches and extracts lines of the form: SENG 311 (Optional: LEC 01) TUT 01
+		labPattern = Pattern.compile("^([A-Z]{4})[\\s]+([0-9]+)[\\s]+(?:LEC[\\s]+([0-9]+)[\\s]+){0,1}(?:TUT|LAB)[\\s]+([0-9]+)");
 	}
 	
 	/**
@@ -56,7 +61,7 @@ public class Parser {
 		    	case "Course slots:": parseCourseSlots(br); break;
 		    	case "Lab slots:": parseLabSlots(br); break;
 		    	case "Courses:": parseCourses(br); break;
-		    	//case "Labs:": parseLabs(br); break;
+		    	case "Labs:": parseLabs(br); break;
 		    	//case "Not compatible:": parseNotCompatible(br); break;
 		    	//case "Unwanted:": parseUnwanted(br); break;
 		    	//case "Preferences:": parsePreferences(br); break;
@@ -65,8 +70,8 @@ public class Parser {
 		    	
 		    	default: 
 		    		//If the line is not whitespace and we can't parse it, we have a problem.
-		    		if (line.trim().length() > 0) 
-		    			throw new IOException(String.format("Could not parse line: %s", line));
+		    		if (line.trim().length() > 0) return prob; //TODO: Remove this return statement when the parser is done. Uncomment next line.
+		    			//throw new IOException(String.format("Could not parse line: %s", line));
 	    	}
 	    }
 	    
@@ -139,14 +144,14 @@ public class Parser {
 	}
 
 	//Lines of format:
-	//Course Code, Course Number, LEC, Lecture number.
+	//Course-Code Course-Number LEC Lecture-number.
 	//CPSC 433 LEC 01
 	public void parseCourses(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = coursePattern.matcher(line);
 			if(m.find()) {
-				Assignable newCourse = new Assignable(m.group(0), true);
+				Assignable newCourse = new Assignable(assignableIndex++, m.group(0), true);
 				prob.Assignables.add(newCourse);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
@@ -154,8 +159,29 @@ public class Parser {
     			throw new IOException(String.format("Could not parse line as course: %s", line));
 			}
 		}
-		
 	}
+	
+	//Lines of format:
+	//Course-Code Course-Number LEC Lecture-number (TUT|LAB) Lab-Number
+	//SENG 311 LEC 01 TUT 01
+	public void parseLabs(BufferedReader br) throws IOException {
+		String line;
+		while((line = br.readLine()) != null) {
+			Matcher m = labPattern.matcher(line);
+
+			if(m.find()) {
+				Assignable newLab = new Assignable(assignableIndex++, m.group(0), false);
+				prob.Assignables.add(newLab);
+				//TODO: Make incompatible with the related course.
+				//Groups: 1: Course code 2: Course Number 3: Lecture Number (NULL=LEC 01) 4: Lab/Tut Number
+			}
+			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+	    		if (line.trim().length() == 0) return;
+    			throw new IOException(String.format("Could not parse line as lab: %s", line));
+			}
+		}
+	}
+	
 	public Problem getProb() {
 		return prob;
 	}
