@@ -150,6 +150,12 @@ public class ParserTest {
 	}
 	
 	@Test
+	public void parsesPreferences() { //Full lazy.
+		int[][] prefs = parsedProb.getPreferences();
+		assertEquals(prefs[0][2], 10);
+	}
+	
+	@Test
 	public void parsesPartAssign() { //Lazy. Should throw an index out of bounds exception if additional assignments are present.
 		State passign = parsedProb.getPartAssign();
 		for(int i=0;i<passign.assign.length; i++) {
