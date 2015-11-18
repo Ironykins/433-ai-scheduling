@@ -39,4 +39,30 @@ public class Problem {
 		Slots = slots;
 	}
 	
+	/**
+	 * Gets an assignable's ID from its name.
+	 * 
+	 * @param name The name of the assignable
+	 * @return The index of the assignable. -1 if we can't find it.
+	 */
+	public int getAssignableId(String name) {
+		for(int i=0; i<Assignables.length; i++)
+			if(Assignables[i].name.equals(name))
+				return i;
+		return -1;
+	}
+	
+	/**
+	 * Gets a slot's ID from its day and time.
+	 * 
+	 * @param day The day of the slot eg. 'MO'
+	 * @param time The starting time of the slot. eg. '8:00'
+	 * @return The index of the slot. -1 if we can't find it.
+	 */
+	public int getSlotId(String day, String time) {
+		for(int i=0; i<Slots.length; i++)
+			if(Slots[i].day.equals(day) && Slots[i].startTime.equals(time))
+				return i;
+		return -1;
+	}
 }
