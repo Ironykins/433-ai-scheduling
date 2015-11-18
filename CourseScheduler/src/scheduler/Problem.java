@@ -15,6 +15,9 @@ public class Problem {
 	public final Vector<Assignable> Assignables;
 	public final Vector<Slot> Slots;
 	
+	//The partial assignment for this problem. Serves as our starting state.
+	private State partAssign;
+	
 	//Apparently the problem input allows us a problem instance name.
 	private String name;
 	public String getName() { return name; }
@@ -23,5 +26,8 @@ public class Problem {
 	public Problem() {
 		Assignables = new Vector<Assignable>();
 		Slots = new Vector<Slot>();
-	}	
+	}
+	
+	public State getPartAssign() { return partAssign; }
+	public void setPartAssign(State partAssign) { this.partAssign = partAssign;	}	
 }

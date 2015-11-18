@@ -14,13 +14,17 @@ import java.util.regex.Pattern;
  */
 public class Parser {
 	private Problem prob;
-	private Pattern slotPattern;
-	private Pattern coursePattern;
-	private Pattern notCompatiblePattern;
-	private Pattern labPattern;
-	private Pattern unwantedPattern;
 	private int slotIndex;
 	private int assignableIndex;
+	
+	//Compiling patterns has some overhead, so we only do it once.
+	private Pattern slotPattern;
+	private Pattern coursePattern;
+	private Pattern assignmentPattern;
+	private Pattern labPattern;
+	private Pattern unwantedPattern;
+	private Pattern preferencesPattern;
+	private Pattern pairPattern;
 	
 	public Parser() {
 		prob = new Problem();
@@ -35,10 +39,17 @@ public class Parser {
 		labPattern = Pattern.compile("^([A-Z]{4})[\\s]+([0-9]+)[\\s]+(?:LEC[\\s]+([0-9]+)[\\s]+){0,1}(?:TUT|LAB)[\\s]+([0-9]+)");
 		
 		//Matches and extracts lines of the form: (Assignable Name), (Assignable Name)
-		notCompatiblePattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([0-9A-Za-z\\s]*)");
+		assignmentPattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([0-9A-Za-z\\s]*)");
 		
 		//Matches and extracts lines of the form: (Assignable Name), Day, Time
 		unwantedPattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})");
+		
+		//Matches and extracts lines of the form: DD,  HH:MM, (Assignable Name), INT
+		preferencesPattern = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9A-Za-z\\s]*)[\\s]*,[\\s]([0-9]*)");
+		
+		//Matches and extracts lines of the form: (Assignable Name), (Assignable Name)
+		pairPattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([0-9A-Za-z\\s]*)");
+		
 	}
 	
 	/**
@@ -72,14 +83,14 @@ public class Parser {
 		    	case "Labs:": parseLabs(br); break;
 		    	case "Not compatible:": parseNotCompatible(br); break;
 		    	case "Unwanted:": parseUnwanted(br); break;
-		    	//case "Preferences:": parsePreferences(br); break;
-		    	//case "Pair:": parsePairs(br); break;
-		    	//case "Partial assignments:": parsePartAssign(br); break;
+		    	case "Preferences:": parsePreferences(br); break;
+		    	case "Pair:": parsePairs(br); break;
+		    	case "Partial assignments:": parsePartassign(br); break;
 		    	
 		    	default: 
 		    		//If the line is not whitespace and we can't parse it, we have a problem.
-		    		if (line.trim().length() > 0) return prob; //TODO: Remove this return statement when the parser is done. Uncomment next line.
-		    			//throw new IOException(String.format("Could not parse line: %s", line));
+		    		if (line.trim().length() > 0) return prob;
+		    			throw new IOException(String.format("Could not parse line: %s", line));
 	    	}
 	    }
 	    
@@ -198,7 +209,7 @@ public class Parser {
 	public void parseNotCompatible(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
-			Matcher m = notCompatiblePattern.matcher(line);
+			Matcher m = assignmentPattern.matcher(line);
 
 			if(m.find()) {
 				//Group1 contains first one. Group2 contains second one.
@@ -227,7 +238,7 @@ public class Parser {
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;
-    			throw new IOException(String.format("Could not parse line as lab: %s", line));
+    			throw new IOException(String.format("Could not parse line as not-compatible: %s", line));
 			}
 		}
 	}
@@ -268,7 +279,62 @@ public class Parser {
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;
-    			throw new IOException(String.format("Could not parse line as lab: %s", line));
+    			throw new IOException(String.format("Could not parse line as unwanted: %s", line));
+			}
+		}
+	}
+	
+	//Lines of format:
+	//Day, Time, Assignable Name, Preference Value
+	public void parsePreferences(BufferedReader br) throws IOException {
+		String line;
+		while((line = br.readLine()) != null) {
+			Matcher m = preferencesPattern.matcher(line);
+
+			if(m.find()) {
+				//Group1 contains day, 2 contains time, 3 contains assignable, 4 contains value.
+				
+				//TODO: How do we represent the preferences?
+			}
+			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+	    		if (line.trim().length() == 0) return;
+    			throw new IOException(String.format("Could not parse line as preference: %s", line));
+			}
+		}
+	}
+	
+	//Lines of format:
+	//Assignable Name, Assignable Name
+	public void parsePairs(BufferedReader br) throws IOException {
+		String line;
+		while((line = br.readLine()) != null) {
+			Matcher m = pairPattern.matcher(line);
+
+			if(m.find()) {
+				//Group1 contains an assignable. Group 2 contains an assignable.
+				//TODO: How do we represent pairs?
+			}
+			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+	    		if (line.trim().length() == 0) return;
+    			throw new IOException(String.format("Could not parse line as pair: %s", line));
+			}
+		}
+	}
+	
+	//Lines of format:
+	//Assignable Name, Day, Time
+	public void parsePartassign(BufferedReader br) throws IOException {
+		String line;
+		while((line = br.readLine()) != null) {
+			Matcher m = assignmentPattern.matcher(line);
+
+			if(m.find()) {
+				//Group1 contains an assignable. Group 2 contains an assignable.
+				//TODO: How do we represent partial assignments?
+			}
+			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+	    		if (line.trim().length() == 0) return;
+    			throw new IOException(String.format("Could not parse line as partial assignment: %s", line));
 			}
 		}
 	}
