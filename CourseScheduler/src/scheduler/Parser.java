@@ -54,8 +54,7 @@ public class Parser {
 		preferencesPattern = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9A-Za-z\\s]*)[\\s]*,[\\s]([0-9]*)");
 		
 		//Matches and extracts lines of the form: (Assignable Name), (Assignable Name)
-		pairPattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([0-9A-Za-z\\s]*)");
-		
+		pairPattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([0-9A-Za-z\\s]*)");	
 	}
 	
 	/**

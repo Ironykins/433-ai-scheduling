@@ -27,8 +27,16 @@ public class Main {
 			System.out.println("Assignables:");
 			for(Assignable a : prob.Assignables) {
 				System.out.println(a);
+				for(int inc : a.incompatible) 
+					System.out.printf("\tIncompatible With: %s\n", prob.Assignables[inc]);
+
+				for(int inc : a.paired) 
+					System.out.printf("\tPaired With: %s\n", prob.Assignables[inc]);
+				
+				for(int inc : a.unwanted) 
+					System.out.printf("\tUnwanted in: %s\n", prob.Slots[inc]);
 			}
-	
+			
 		}
 		catch(IOException ex) {
 			System.out.println(ex.toString());
