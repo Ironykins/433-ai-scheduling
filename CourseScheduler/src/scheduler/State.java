@@ -8,12 +8,21 @@ public class State {
 	 * E.g. If currentSolution[x] maps to course A, 
 	 * then numOfCourses[x] and numOfLabs[x] map to A as well
 	 */
-	int assign[];
-	//Question: Should un-assigned courses be '-1' because it is an array of int's and I don't think $ will work
-	int numOfCourses[];
-	int numOfLabs[];
-	boolean fullSolution;
+	public int assign[];
+	
+	public int numOfCourses[];
+	public int numOfLabs[];
+	public boolean fullSolution;
 
 	//TODO: Function to find lab/course bases on time and day
-
+	
+	public State(int numAssignables, int numSlots) {
+		assign = new int[numAssignables];
+		numOfCourses = new int[numSlots];
+		numOfLabs = new int[numSlots];
+		
+		// Use -1 instead of $.
+		for(int i=0; i<numAssignables; i++)
+			assign[i] = -1;
+	}
 }

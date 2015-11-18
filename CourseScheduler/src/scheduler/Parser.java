@@ -21,9 +21,8 @@ public class Parser {
 	//Compiling patterns has some overhead, so we only do it once.
 	private Pattern slotPattern;
 	private Pattern coursePattern;
-	private Pattern assignmentPattern;
 	private Pattern labPattern;
-	private Pattern unwantedPattern;
+	private Pattern assignmentPattern;
 	private Pattern preferencesPattern;
 	private Pattern pairPattern;
 	
@@ -32,6 +31,8 @@ public class Parser {
 	private Vector<Assignable> assignables;
 	private Vector<Slot> slots;
 	private String name;
+	
+	private State partAssign;
 	
 	public Parser() {
 		assignables = new Vector<Assignable>();
@@ -46,11 +47,8 @@ public class Parser {
 		//Matches and extracts lines of the form: SENG 311 (Optional: LEC 01) TUT 01
 		labPattern = Pattern.compile("^([A-Z]{4})[\\s]+([0-9]+)[\\s]+(?:LEC[\\s]+([0-9]+)[\\s]+){0,1}(?:TUT|LAB)[\\s]+([0-9]+)");
 		
-		//Matches and extracts lines of the form: (Assignable Name), (Assignable Name)
-		assignmentPattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([0-9A-Za-z\\s]*)");
-		
 		//Matches and extracts lines of the form: (Assignable Name), Day, Time
-		unwantedPattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})");
+		assignmentPattern = Pattern.compile("^([0-9A-Za-z\\s]*)[\\s]*,[\\s]*([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})");
 		
 		//Matches and extracts lines of the form: DD,  HH:MM, (Assignable Name), INT
 		preferencesPattern = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9A-Za-z\\s]*)[\\s]*,[\\s]([0-9]*)");
@@ -100,10 +98,11 @@ public class Parser {
 		    			throw new IOException(String.format("Could not parse line: %s", line));
 	    	}
 	    }
+	    
+	    //Return a new problem with all this information.
 	    Problem prob = new Problem(assignables.toArray(new Assignable[0]), slots.toArray(new Slot[0]));
 	    prob.setName(name);
-	    
-	    
+	    prob.setPartAssign(partAssign);
 	    return prob;
 	}
 	
@@ -233,7 +232,7 @@ public class Parser {
 	private void parseNotCompatible(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
-			Matcher m = assignmentPattern.matcher(line);
+			Matcher m = pairPattern.matcher(line);
 
 			if(m.find()) {
 				//Group1 contains first one. Group2 contains second one.
@@ -273,7 +272,7 @@ public class Parser {
 	private void parseUnwanted(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
-			Matcher m = unwantedPattern.matcher(line);
+			Matcher m = assignmentPattern.matcher(line);
 
 			if(m.find()) {
 				//Group1 contains assignable name. Group2 contains day. Group 3 contains time.
@@ -296,7 +295,7 @@ public class Parser {
 						found = true;
 						break;
 					}
-				}	
+				}
 				
 				if(!found)
 					throw new IllegalStateException(String.format("Tried to add %s to unwanted, but assignable does not exist!", line));
@@ -349,12 +348,39 @@ public class Parser {
 	//Assignable Name, Day, Time
 	private void parsePartassign(BufferedReader br) throws IOException {
 		String line;
+		partAssign = new State(assignableIndex, slotIndex);
+		
 		while((line = br.readLine()) != null) {
 			Matcher m = assignmentPattern.matcher(line);
 
 			if(m.find()) {
-				//Group1 contains an assignable. Group 2 contains an assignable.
-				//TODO: How do we represent partial assignments?
+				//Group1 contains an assignable. Group 2 contains a day, group 3 contains a time.
+				//Creates a state object called partassign.
+				
+				//Find our assignable.
+				int assignIndex = -1;
+				for(Assignable ass : assignables) {
+					String name = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+					if(ass.name.equals(name)) {
+						assignIndex = ass.id;
+						break;
+					}
+				}
+				
+				//Find our slot.
+				int slotIndex = -1;
+				for(Slot s : slots) {
+					if(s.day.equals(m.group(2)) && s.startTime.equals(m.group(3))) {
+						slotIndex = s.id;
+					}
+				}
+				
+				if(slotIndex == -1 || assignIndex == -1) 
+					throw new IllegalStateException(String.format("Could not add pair %s to partAssign. Could not find assignable or slot.", line));
+				
+				//Add to the partial assignment.
+				//NOTE: This does not check that this is a valid assignment. A call to eval() may be necessary.
+				partAssign.assign[assignIndex] = slotIndex;
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.
 	    		if (line.trim().length() == 0) return;
