@@ -404,11 +404,11 @@ public class Parser {
 				//Creates a state object called partassign.
 				
 				//Find our assignable.
-				int assignIndex = -1;
+				Assignable toAssign = null;
 				for(Assignable ass : assignables) {
 					String name = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 					if(ass.name.equals(name)) {
-						assignIndex = ass.id;
+						toAssign = ass;
 						break;
 					}
 				}
@@ -421,12 +421,14 @@ public class Parser {
 					}
 				}
 				
-				if(slotIndex == -1 || assignIndex == -1) 
+				if(slotIndex == -1 || toAssign == null) 
 					throw new IllegalStateException(String.format("Could not add pair %s to partAssign. Could not find assignable or slot.", line));
 				
 				//Add to the partial assignment.
 				//NOTE: This does not check that this is a valid assignment. A call to eval() may be necessary.
-				partAssign.assign[assignIndex] = slotIndex;
+				partAssign.assign[toAssign.id] = slotIndex;
+				if(toAssign.isCourse) partAssign.numOfCourses[slotIndex]++;
+				else partAssign.numOfLabs[slotIndex]++;
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.
 	    		if (line.trim().length() == 0) return;

@@ -5,10 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import org.junit.Assert.*;
 
 /**
  * Unit/Integration tests for the parser
@@ -119,5 +117,50 @@ public class ParserTest {
 				assertTrue(a.isCourse);
 		}
 	}
-
+	
+	@Test 
+	public void parsesUnwanted() {
+		for(Assignable a : parsedProb.Assignables) {
+			if(a.name.equals("CPSC 433 LEC 01")) {
+				Slot s = parsedProb.Slots[a.unwanted.firstElement()];
+				assertEquals(s.day, "MO");
+				assertEquals(s.startTime, "8:00");
+			}
+		}
+	}
+	
+	@Test
+	public void parsesIncompatible() {
+		for(Assignable a : parsedProb.Assignables) {
+			for(int i : a.incompatible) {
+				Assignable s = parsedProb.Assignables[i];
+				assertTrue(s.incompatible.contains(a.id));
+			}
+		}
+	}
+	
+	@Test
+	public void parsesPairs() {
+		for(Assignable a : parsedProb.Assignables) {
+			for(int i : a.paired) {
+				Assignable s = parsedProb.Assignables[i];
+				assertTrue(s.paired.contains(a.id));
+			}
+		}
+	}
+	
+	@Test
+	public void parsesPartAssign() { //Lazy. Should throw an index out of bounds exception if additional assignments are present.
+		State passign = parsedProb.getPartAssign();
+		for(int i=0;i<passign.assign.length; i++) {
+			if(parsedProb.Assignables[i].name.equals("SENG 311 LEC 01")) {
+				assertEquals(parsedProb.Slots[passign.assign[i]].day, "MO");
+				assertEquals(parsedProb.Slots[passign.assign[i]].startTime, "8:00");
+			}
+			else if(parsedProb.Assignables[i].name.equals("SENG 311 LEC 01 TUT 01")) {
+				assertEquals(parsedProb.Slots[passign.assign[i]].day, "FR");
+				assertEquals(parsedProb.Slots[passign.assign[i]].startTime, "10:00");
+			}
+		}
+	}
 }
