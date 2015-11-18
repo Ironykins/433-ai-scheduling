@@ -6,7 +6,8 @@ import java.util.Vector;
 //So I think it would be ok to only have one object representing both
 public class Assignable {
 	
-	/* Not sure if name is the best variable name
+	/* 
+	 * Not sure if name is the best variable name
 	 * In instructions it is referred to as "Course/Lab Identifier"
 	 * Of the form course-code course-number section-number
 	 * CPSC 433 LEC 01

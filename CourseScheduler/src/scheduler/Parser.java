@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Vector;
 
 /**
  * @author konrad
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
  * This class parses an input file to produce a Problem definition, with all knowledge represented.
  */
 public class Parser {
-	private Problem prob;
+	//For generating unique IDs for slots and assignables.
 	private int slotIndex;
 	private int assignableIndex;
 	
@@ -26,8 +27,15 @@ public class Parser {
 	private Pattern preferencesPattern;
 	private Pattern pairPattern;
 	
+	//Used for building the initial structures.
+	//Later cast to arrays.
+	private Vector<Assignable> assignables;
+	private Vector<Slot> slots;
+	private String name;
+	
 	public Parser() {
-		prob = new Problem();
+		assignables = new Vector<Assignable>();
+		slots = new Vector<Slot>();
 		
 		//Matches and extracts lines of the form: DD, HH:MM, INT, INT
 		slotPattern = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9]*)[\\s]*,[\\s]*([0-9]*)[\\s]*$");
@@ -73,9 +81,10 @@ public class Parser {
 	public Problem parseBuffer(BufferedReader br) throws IOException {
 		String line;
 	    while ((line = br.readLine()) != null) {
+	    	String trimmed = line.trim();
 	    	//Look for lines that match sections of the input.
 	    	//For each of these lines, call the appropriate subroutine.
-	    	switch(line) {
+	    	switch(trimmed) {
 		    	case "Name:": parseName(br); break;
 		    	case "Course slots:": parseCourseSlots(br); break;
 		    	case "Lab slots:": parseLabSlots(br); break;
@@ -86,30 +95,31 @@ public class Parser {
 		    	case "Preferences:": parsePreferences(br); break;
 		    	case "Pair:": parsePairs(br); break;
 		    	case "Partial assignments:": parsePartassign(br); break;
-		    	
-		    	default: 
-		    		//If the line is not whitespace and we can't parse it, we have a problem.
-		    		if (line.trim().length() > 0) return prob;
+		    	default: //If the line is not whitespace and we can't parse it, we have a problem.
+		    		if (trimmed.length() > 0)
 		    			throw new IOException(String.format("Could not parse line: %s", line));
 	    	}
 	    }
+	    Problem prob = new Problem(assignables.toArray(new Assignable[0]), slots.toArray(new Slot[0]));
+	    prob.setName(name);
+	    
 	    
 	    return prob;
 	}
 	
 	//Parse the name field of the input.
-	public void parseName(BufferedReader br) throws IOException {
+	private void parseName(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			if(line.isEmpty()) return;
-			prob.setName(line);
+			name = line;
 		}
 	}
 	
 	//Lines of format:
 	//Day, Start time, coursemax, coursemin
 	//MO, 8:00, 3, 2
-	public void parseCourseSlots(BufferedReader br) throws IOException {
+	private void parseCourseSlots(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = slotPattern.matcher(line);
@@ -118,7 +128,7 @@ public class Parser {
 				Slot newSlot = new Slot(slotIndex++, m.group(1), m.group(2));
 				newSlot.setCourseMax(Integer.parseInt(m.group(3)));
 				newSlot.setCourseMin(Integer.parseInt(m.group(4)));
-				prob.Slots.add(newSlot);
+				slots.add(newSlot);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;
@@ -130,14 +140,14 @@ public class Parser {
 	//Lines of format: 
 	//Day, Start time, coursemax, coursemin
 	//MO, 8:00, 3, 2
-	public void parseLabSlots(BufferedReader br) throws IOException {
+	private void parseLabSlots(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = slotPattern.matcher(line);
 			if(m.find()) {
 				boolean found = false;
 				//First, see if a slot like this one already exists.
-				for(Slot s : prob.Slots) {
+				for(Slot s : slots) {
 					//If this slot already exists, just use it.
 					if(s.day.equals(m.group(1)) && s.startTime.equals(m.group(2))) { 
 						s.setLabMax(Integer.parseInt(m.group(3)));
@@ -152,7 +162,7 @@ public class Parser {
 					Slot newSlot = new Slot(slotIndex++, m.group(1), m.group(2));
 					newSlot.setLabMax(Integer.parseInt(m.group(3)));
 					newSlot.setLabMin(Integer.parseInt(m.group(4)));
-					prob.Slots.add(newSlot);
+					slots.add(newSlot);
 				}
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
@@ -165,14 +175,14 @@ public class Parser {
 	//Lines of format:
 	//Course-Code Course-Number LEC Lecture-number.
 	//CPSC 433 LEC 01
-	public void parseCourses(BufferedReader br) throws IOException {
+	private void parseCourses(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = coursePattern.matcher(line);
 			if(m.find()) {
 				String name = m.group(0).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 				Assignable newCourse = new Assignable(assignableIndex++, name, true);
-				prob.Assignables.add(newCourse);
+				assignables.add(newCourse);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;
@@ -184,17 +194,31 @@ public class Parser {
 	//Lines of format:
 	//Course-Code Course-Number LEC Lecture-number (TUT|LAB) Lab-Number
 	//SENG 311 LEC 01 TUT 01
-	public void parseLabs(BufferedReader br) throws IOException {
+	private void parseLabs(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = labPattern.matcher(line);
 
 			if(m.find()) {
+				//Groups: 1: Course code 2: Course Number 3: Lecture Number (NULL=LEC 01) 4: Lab/Tut Number
 				String name = m.group(0).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 				Assignable newLab = new Assignable(assignableIndex++, name, false);
-				prob.Assignables.add(newLab);
-				//TODO: Make incompatible with the related course.
-				//Groups: 1: Course code 2: Course Number 3: Lecture Number (NULL=LEC 01) 4: Lab/Tut Number
+				assignables.add(newLab);
+				String courseName = String.format("%s %s LEC %s", m.group(1), m.group(2), m.group(3) != null ? m.group(3) : "01");
+				
+				//Find the related lecture. Make them both incompatible with one another.
+				boolean found = false;
+				for(Assignable ass : assignables) {
+					if(ass.name.equals(courseName)) { 
+						ass.incompatible.add(newLab.id);
+						newLab.incompatible.add(ass.id);
+						found = true;
+						break;
+					}
+				}
+				
+				if(!found) 
+					throw new IllegalStateException(String.format("Tried to add %s labs, could not find the related course!", line));
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;
@@ -206,7 +230,7 @@ public class Parser {
 	//Lines of format:
 	//Assignable Name, Assignable Name
 	//SENG 311 LEC 01 TUT 01, CPSC 433 LEC 01
-	public void parseNotCompatible(BufferedReader br) throws IOException {
+	private void parseNotCompatible(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = assignmentPattern.matcher(line);
@@ -218,7 +242,7 @@ public class Parser {
 				Assignable a2 = null;
 				
 				//First, see if a slot like this one already exists.
-				for(Assignable ass : prob.Assignables) {
+				for(Assignable ass : assignables) {
 					String name1 = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 					String name2 = m.group(2).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 					
@@ -246,7 +270,7 @@ public class Parser {
 	//Lines of format:
 	//Assignable Name, Day, Time
 	//CPSC 433 LEC 01, MO, 8:00
-	public void parseUnwanted(BufferedReader br) throws IOException {
+	private void parseUnwanted(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = unwantedPattern.matcher(line);
@@ -255,7 +279,7 @@ public class Parser {
 				//Group1 contains assignable name. Group2 contains day. Group 3 contains time.
 				
 				int slotIndex = -1;
-				for(Slot s : prob.Slots) {
+				for(Slot s : slots) {
 					if(s.day.equals(m.group(2)) && s.startTime.equals(m.group(3))) {
 						slotIndex = s.id;
 					}
@@ -265,7 +289,7 @@ public class Parser {
 					throw new IllegalStateException(String.format("Tried to add %s to unwanted, but slot does not exist!", line));
 				
 				boolean found = false;
-				for(Assignable ass : prob.Assignables) {
+				for(Assignable ass : assignables) {
 					String name = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 					if(ass.name.equals(name)) {
 						ass.unwanted.add(slotIndex);
@@ -286,7 +310,7 @@ public class Parser {
 	
 	//Lines of format:
 	//Day, Time, Assignable Name, Preference Value
-	public void parsePreferences(BufferedReader br) throws IOException {
+	private void parsePreferences(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = preferencesPattern.matcher(line);
@@ -305,7 +329,7 @@ public class Parser {
 	
 	//Lines of format:
 	//Assignable Name, Assignable Name
-	public void parsePairs(BufferedReader br) throws IOException {
+	private void parsePairs(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = pairPattern.matcher(line);
@@ -323,7 +347,7 @@ public class Parser {
 	
 	//Lines of format:
 	//Assignable Name, Day, Time
-	public void parsePartassign(BufferedReader br) throws IOException {
+	private void parsePartassign(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
 			Matcher m = assignmentPattern.matcher(line);
@@ -332,7 +356,7 @@ public class Parser {
 				//Group1 contains an assignable. Group 2 contains an assignable.
 				//TODO: How do we represent partial assignments?
 			}
-			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+			else { //If the line is not whitespace and we can't parse it, we have a problem.
 	    		if (line.trim().length() == 0) return;
     			throw new IOException(String.format("Could not parse line as partial assignment: %s", line));
 			}

@@ -1,7 +1,5 @@
 package scheduler;
 
-import java.util.Vector;
-
 /**
  * @author konrad
  *
@@ -12,22 +10,22 @@ import java.util.Vector;
  * The data here should be static, and assigned when the program parses the input file.
  */
 public class Problem {
-	public final Vector<Assignable> Assignables;
-	public final Vector<Slot> Slots;
+	public final Assignable[] Assignables;
+	public final Slot[] Slots;
 	
 	//The partial assignment for this problem. Serves as our starting state.
 	private State partAssign;
+	public State getPartAssign() { return partAssign; }
+	public void setPartAssign(State partAssign) { this.partAssign = partAssign;	}	
 	
 	//Apparently the problem input allows us a problem instance name.
 	private String name;
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
 	
-	public Problem() {
-		Assignables = new Vector<Assignable>();
-		Slots = new Vector<Slot>();
+	//We have an unchanging number of assignables and slots. Must be initialized with these.
+	public Problem(Assignable[] assignables, Slot[] slots) {
+		Assignables = assignables;
+		Slots = slots;
 	}
-	
-	public State getPartAssign() { return partAssign; }
-	public void setPartAssign(State partAssign) { this.partAssign = partAssign;	}	
 }
