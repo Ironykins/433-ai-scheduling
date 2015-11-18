@@ -19,10 +19,6 @@ public class Slot {
 	private int labMin;
 	private int courseMin;
 	
-	//Question: should we refer to Courses/Labs as index or other value?
-	//A list of course indexes that are unwanted in this time slot
-	int unwanted[];
-
 	public Slot(int index, String day, String startTime) {
 		this.id = index;
 		this.day = day;
@@ -43,7 +39,6 @@ public class Slot {
 		return String.format(
 				"Id: %d, Day: %s, Time: %s, LabMax: %d, LabMin: %s, CourseMax: %d, CourseMin: %s",
 				id, day, startTime, labMax, labMin, courseMax, courseMin);
-		
 	}
 
     //Getters and setters.

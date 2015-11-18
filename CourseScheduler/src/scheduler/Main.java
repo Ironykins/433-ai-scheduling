@@ -12,13 +12,12 @@ public class Main {
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
-		System.out.println("Hello World!");
 		
 		try {
 			Parser parse = new Parser();
 			Problem prob = parse.parseFile("input.txt");
 			
-			System.out.println(prob.getName());
+			System.out.println("Problem Name: " + prob.getName());
 			
 			System.out.println("Slots:");
 			for(Slot s : prob.Slots) {

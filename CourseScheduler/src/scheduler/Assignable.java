@@ -29,6 +29,7 @@ public class Assignable {
 		this.isCourse = isCourse;
 		incompatible = new Vector<Integer>();
 		unwanted = new Vector<Integer>();
+		paired = new Vector<Integer>();
 	}
 	
 	//A list of assignable ids that this course is incompatible with
@@ -36,6 +37,9 @@ public class Assignable {
 	
 	//A list of slot ids that this course is incompatible with.
 	public final Vector<Integer> unwanted;
+	
+	//A list of assignable ids that this course is paired with.
+	public final Vector<Integer> paired;
 	
 	public String toString() {
 		return String.format("Id: %d, Name: %s, Type: %s", id, name, isCourse ? "Course" : "Lab");

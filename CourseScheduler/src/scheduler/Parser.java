@@ -31,8 +31,8 @@ public class Parser {
 	private Vector<Assignable> assignables;
 	private Vector<Slot> slots;
 	private String name;
-	
 	private State partAssign;
+	private int[][] preferences;
 	
 	public Parser() {
 		assignables = new Vector<Assignable>();
@@ -103,6 +103,7 @@ public class Parser {
 	    Problem prob = new Problem(assignables.toArray(new Assignable[0]), slots.toArray(new Slot[0]));
 	    prob.setName(name);
 	    prob.setPartAssign(partAssign);
+	    prob.setPreferences(preferences);
 	    return prob;
 	}
 	
@@ -311,13 +312,38 @@ public class Parser {
 	//Day, Time, Assignable Name, Preference Value
 	private void parsePreferences(BufferedReader br) throws IOException {
 		String line;
+		preferences = new int[assignableIndex][slotIndex];
+		
 		while((line = br.readLine()) != null) {
 			Matcher m = preferencesPattern.matcher(line);
 
 			if(m.find()) {
 				//Group1 contains day, 2 contains time, 3 contains assignable, 4 contains value.
 				
-				//TODO: How do we represent the preferences?
+				//Find our slot.
+				int sid = -1;
+				for(Slot s : slots) {
+					if(s.day.equals(m.group(1)) && s.startTime.equals(m.group(2))) {
+						sid = s.id;
+					}
+				}
+				
+				//Find our assignable.
+				int aid = -1;
+				for(Assignable ass : assignables) {
+					String name = m.group(3).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+					if(ass.name.equals(name)) {
+						aid = ass.id;
+						break;
+					}
+				}
+				
+				if(sid == -1) 
+					throw new IllegalStateException(String.format("Could not add pair %s to preferences. Could not find slot.", line));
+				if(aid == -1)
+					throw new IllegalStateException(String.format("Could not add pair %s to preferences. Could not find assignable.", line));
+				
+				preferences[aid][sid] = Integer.parseInt(m.group(4));
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;
@@ -335,7 +361,28 @@ public class Parser {
 
 			if(m.find()) {
 				//Group1 contains an assignable. Group 2 contains an assignable.
-				//TODO: How do we represent pairs?
+				//Add First's ID to Second's incompatible vector. And vice versa.
+				Assignable a1 = null;
+				Assignable a2 = null;
+				
+				//First, see if a slot like this one already exists.
+				for(Assignable ass : assignables) {
+					String name1 = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+					String name2 = m.group(2).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+					
+					if(ass.name.equals(name1)) { a1 = ass; };
+					if(ass.name.equals(name2)) { a2 = ass; };
+					if(a1 != null && a2 != null) break;
+				}
+				
+				//Mark them as incompatible.
+				if(a1 != null && a2 != null) {
+					a1.paired.add(a2.id);
+					a2.paired.add(a1.id);
+				}
+				else
+					throw new IllegalStateException(String.format("Tried to add %s to pairs, but one of the assignables does not exist!", line));
+				
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;

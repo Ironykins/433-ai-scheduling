@@ -13,12 +13,22 @@ public class Problem {
 	public final Assignable[] Assignables;
 	public final Slot[] Slots;
 	
+	//This is the preferences array. Indexed by [assignable][slot].
+	//Can fetch in constant time. Maybe there's a better way to do this. I dunno.
+	private int[][] preferences;
+	public int[][] getPreferences() { return preferences; }
+	public void setPreferences(int[][] preferences) { 
+		if(preferences.length != Assignables.length || preferences[0].length != Slots.length)
+			throw new IllegalArgumentException("Preferences must be size [assignables][slots]");
+		this.preferences = preferences; 
+	}
+	
 	//The partial assignment for this problem. Serves as our starting state.
 	private State partAssign;
 	public State getPartAssign() { return partAssign; }
 	public void setPartAssign(State partAssign) { this.partAssign = partAssign;	}	
 	
-	//Apparently the problem input allows us a problem instance name.
+	//Apparently the problem input specifies a problem instance name.
 	private String name;
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
@@ -28,4 +38,5 @@ public class Problem {
 		Assignables = assignables;
 		Slots = slots;
 	}
+	
 }
