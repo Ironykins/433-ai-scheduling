@@ -13,6 +13,15 @@ public class Problem {
 	public final Assignable[] Assignables;
 	public final Slot[] Slots;
 	
+	public final int pen_coursemin;
+	public final int pen_labmin;
+	private int bestLabminPenalty;
+	private int bestCourseminPenalty;
+	
+	public int getBestLabminPenalty() { return bestLabminPenalty; }
+	public int getBestCourseminPenalty() { return bestCourseminPenalty; }
+
+	
 	//This is the preferences array. Indexed by [assignable][slot].
 	//Can fetch in constant time. Maybe there's a better way to do this. I dunno.
 	private int[][] preferences;
@@ -37,6 +46,37 @@ public class Problem {
 	public Problem(Assignable[] assignables, Slot[] slots) {
 		Assignables = assignables;
 		Slots = slots;
+		
+		//TODO: This is not specified in the input file. Where is it specified?
+		pen_coursemin = 5;
+		pen_labmin = 5;
+		
+		computeBestMinPenalties();
+	}
+	/**
+	 * Computes the penalties for not meeting the minimum course/lab requirements in the _best_ case.
+	 * Used for Tomas's incremental Eval function.
+	 */
+	private void computeBestMinPenalties() {		
+		int totalLabMin = 0;
+		int totalCourseMin = 0;
+		for(Slot s : Slots) {
+			totalLabMin += s.getLabMin();
+			totalCourseMin += s.getCourseMin();
+		}
+		
+		int totalLabs = 0;
+		int totalCourses = 0;
+		for(Assignable a : Assignables) {
+			if(a.isCourse) totalCourses++;
+			else totalLabs++;
+		}
+		
+		int labDifference = totalLabs - totalLabMin;
+		int courseDifference = totalCourses - totalCourseMin;
+		
+		bestLabminPenalty = labDifference < 0 ? 0 : labDifference * pen_labmin;
+		bestCourseminPenalty = courseDifference < 0 ? 0 : courseDifference * pen_coursemin;
 	}
 	
 	/**
