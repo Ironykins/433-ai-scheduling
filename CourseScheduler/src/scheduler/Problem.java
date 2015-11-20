@@ -12,6 +12,8 @@ package scheduler;
 public class Problem {
 	public final Assignable[] Assignables;
 	public final Slot[] Slots;
+	public final int numberOfAssignables;
+	public final int numberOfSlots;
 	
 	//should prob contain this? would this not be different for each state in our tree?
 	public final int pen_coursemin;
@@ -47,6 +49,8 @@ public class Problem {
 	public Problem(Assignable[] assignables, Slot[] slots) {
 		Assignables = assignables;
 		Slots = slots;
+		numberOfAssignables = assignables.length;
+		numberOfSlots = slots.length;
 		
 		//TODO: This is not specified in the input file. Where is it specified?
 		pen_coursemin = 5;
