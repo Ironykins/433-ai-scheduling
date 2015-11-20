@@ -13,6 +13,7 @@ public class Problem {
 	public final Assignable[] Assignables;
 	public final Slot[] Slots;
 	
+	//should prob contain this? would this not be different for each state in our tree?
 	public final int pen_coursemin;
 	public final int pen_labmin;
 	private int bestLabminPenalty;
