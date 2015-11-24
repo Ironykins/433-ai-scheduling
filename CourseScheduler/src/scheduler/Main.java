@@ -11,30 +11,69 @@ import java.io.IOException;
 public class Main {
 
 	/**
+	 * Prints the blurb telling you how to use the program, and exits.
+	 */
+	public static void printUsage() {
+		System.err.println("Usage: CourseScheduler [-pcm <pen_coursemin>] [-plm <pen_labmin>] [-w <weight minFilled> <weight Preferences> <weight Pair> <weight secDiff>] <input filename>");
+		System.exit(1);
+	}
+	/**
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
 		// Weightings of different parts of the Eval function.
-		double wminFilled = 1.0;
-		double wminPref = 1.0;
-		double wminPair = 1.0;
-		double wminSecDiff = 1.0;
+		// These are set relative to one another.
+		//eg. If wminFilled is 0.25 and wminPref is 0.50 then wminFilled is weighted half as much.
+		//The same is true if one is 1.0 and the other is 2.0.
+		double wMinFilled = 1.0;
+		double wPref = 1.0;
+		double wPair = 1.0;
+		double wSecDiff = 1.0;
+		String fileName = "input.txt";
 		
 		// Penalties for not meeting minimum number of courses.
+		// These are just default values.
 		int pen_coursemin = 5;
 		int pen_labmin = 5;
 		
 		Parser parse = new Parser();
 		Problem prob = null;
 		
+		// Parse command line arguments.
+		if(args.length < 1) printUsage();
+		try {
+			for(int i=0;i<args.length-1; i++) {
+				switch(args[i]) {
+					case "-pcm": pen_coursemin = Integer.parseInt(args[++i]); break;
+					case "-plm": pen_labmin = Integer.parseInt(args[++i]); break;
+					case "-w": 
+						wMinFilled = Double.parseDouble(args[++i]);
+						wPref = Double.parseDouble(args[++i]);
+						wPair = Double.parseDouble(args[++i]);
+						wSecDiff = Double.parseDouble(args[++i]);
+						break;
+					default:
+						printUsage();
+				}
+			}
+		}
+		catch(NumberFormatException ex) {
+			printUsage();
+		}
+
+		//Our filename must always be the last argument.
+		fileName = args[args.length-1];
+		
 		// Parse the input file.
 		try {
-			prob = parse.parseFile("input.txt");
+			prob = parse.parseFile(fileName);
 		}
 		catch(IOException ex) {
 			System.out.println(ex.toString());
 			System.exit(1);
 		}
+		
+		//Put our parsed penalties in here.
 		
 		//Print out the problem.
 		//TODO: Remove this when the system is done. It's kinda spammy.

@@ -4,14 +4,11 @@ package scheduler;
  * This represents a slot into which labs and courses can both be scheduled.
  */
 public class Slot {
-	
-	//Question: We should create a time variable?
-	//Konrad Says: Nah. The time only matters for naming purproses.
-	public final String startTime;
-	
 	//Is of the form "MO" or "TU" for courses
 	//or "MO", "TU", and "FR" for Labs
 	public final String day;
+	public final String startTime;
+	
 	public final int id;
 	
 	private int labMax;

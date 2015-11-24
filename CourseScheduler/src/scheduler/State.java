@@ -39,7 +39,7 @@ public class State {
 	}
 	
 	/**
-	 * Gives a string representing the state object.
+	 * Gives a string representing a state.
 	 * This is also used to print out the final (solution) state at the end.
 	 * Conforms to the format shown here: 
 	 * http://pages.cpsc.ucalgary.ca/~denzinge/courses/433-fall2015/assigninput.html
@@ -55,12 +55,12 @@ public class State {
 		}
 		
 		//For each assignment, add a line that pairs it to its slot.
-		//Should be 16 characters before the %s.
 		for(int i=0; i<assign.length; i++) {
 			String name = prob.Assignables[i].name;
 			strb.append(name);
-			for(int j=name.length();j<25;j++)
-				strb.append(' ');
+			
+			//For when tabs are NOT GOOD ENOUGH for lining up data.
+			for(int j=name.length();j<25;j++) strb.append(' ');
 			
 			if(assign[i] != -1) {
 				Slot thisSlot = prob.Slots[assign[i]];
