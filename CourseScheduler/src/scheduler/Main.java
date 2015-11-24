@@ -23,8 +23,8 @@ public class Main {
 	public static void main(String[] args) {
 		// Weightings of different parts of the Eval function.
 		// These are set relative to one another.
-		//eg. If wminFilled is 0.25 and wminPref is 0.50 then wminFilled is weighted half as much.
-		//The same is true if one is 1.0 and the other is 2.0.
+		// eg. If wminFilled is 0.25 and wminPref is 0.50 then wminFilled is weighted half as much.
+		// The same is true if one is 1.0 and the other is 2.0.
 		double wMinFilled = 1.0;
 		double wPref = 1.0;
 		double wPair = 1.0;
@@ -40,6 +40,7 @@ public class Main {
 		Problem prob = null;
 		
 		// Parse command line arguments.
+		// Error handling is done incredibly lazy here. Deal w/ it.
 		if(args.length < 1) printUsage();
 		try {
 			for(int i=0;i<args.length-1; i++) {
@@ -57,7 +58,7 @@ public class Main {
 				}
 			}
 		}
-		catch(NumberFormatException ex) {
+		catch(Exception ex) {
 			printUsage();
 		}
 
@@ -73,7 +74,13 @@ public class Main {
 			System.exit(1);
 		}
 		
-		//Put our parsed penalties in here.
+		//Put our parsed penalties and eval weights in here.
+		prob.setPen_coursemin(pen_coursemin);
+		prob.setPen_labmin(pen_labmin);
+		prob.setwMinFilled(wMinFilled);
+		prob.setwPair(wPair);
+		prob.setwPref(wPref);
+		prob.setwSecDiff(wSecDiff);
 		
 		//Print out the problem.
 		//TODO: Remove this when the system is done. It's kinda spammy.

@@ -15,12 +15,27 @@ public class Problem {
 	public final int numberOfAssignables;
 	public final int numberOfSlots;
 	
-	//should prob contain this? would this not be different for each state in our tree?
-	public int pen_coursemin;
-	public int pen_labmin;
+	//Penalty values and weightings.
+	//God damn it this is so ugly fuck you obama
+	private int pen_coursemin;
+	private int pen_labmin;
 	private int bestLabminPenalty;
 	private int bestCourseminPenalty;
 	
+	private double wMinFilled;
+	private double wPref;
+	private double wPair;
+	private double wSecDiff;
+	
+	public double getwMinFilled() { return wMinFilled; }
+	public void setwMinFilled(double wMinFilled) { this.wMinFilled = wMinFilled; }
+	public double getwPref() { return wPref; }
+	public void setwPref(double wPref) { this.wPref = wPref; }
+	public double getwPair() { return wPair; }
+	public void setwPair(double wPair) { this.wPair = wPair; }
+	public double getwSecDiff() { return wSecDiff; }
+	public void setwSecDiff(double wSecDiff) { this.wSecDiff = wSecDiff; }
+
 	public int getBestLabminPenalty() { return bestLabminPenalty; }
 	public int getBestCourseminPenalty() { return bestCourseminPenalty; }
 
