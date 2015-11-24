@@ -4,7 +4,9 @@ import java.io.IOException;
 
 /**
  * Main Class
- * test comment, please ignore
+ *
+ * Responsible for parsing command line arguments and launching into main program logic.
+ * Also for displaying final output.
  */
 public class Main {
 
@@ -12,31 +14,21 @@ public class Main {
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
+		// Weightings of different parts of the Eval function.
+		double wminFilled = 1.0;
+		double wminPref = 1.0;
+		double wminPair = 1.0;
+		double wminSecDiff = 1.0;
+		
+		// Penalties for not meeting minimum number of courses.
+		int pen_coursemin = 5;
+		int pen_labmin = 5;
+		
+		Parser parse = new Parser();
 		
 		try {
-			Parser parse = new Parser();
 			Problem prob = parse.parseFile("input.txt");
-			
-			System.out.println("Problem Name: " + prob.getName());
-			
-			System.out.println("Slots:");
-			for(Slot s : prob.Slots) {
-				System.out.println(s);
-			}
-			
-			System.out.println("Assignables:");
-			for(Assignable a : prob.Assignables) {
-				System.out.println(a);
-				for(int inc : a.incompatible) 
-					System.out.printf("\tIncompatible With: %s\n", prob.Assignables[inc]);
-
-				for(int inc : a.paired) 
-					System.out.printf("\tPaired With: %s\n", prob.Assignables[inc]);
-				
-				for(int inc : a.unwanted) 
-					System.out.printf("\tUnwanted in: %s\n", prob.Slots[inc]);
-			}
-			
+			System.out.println(prob);			
 		}
 		catch(IOException ex) {
 			System.out.println(ex.toString());

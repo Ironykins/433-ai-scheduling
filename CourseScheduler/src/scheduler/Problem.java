@@ -16,14 +16,18 @@ public class Problem {
 	public final int numberOfSlots;
 	
 	//should prob contain this? would this not be different for each state in our tree?
-	public final int pen_coursemin;
-	public final int pen_labmin;
+	public int pen_coursemin;
+	public int pen_labmin;
 	private int bestLabminPenalty;
 	private int bestCourseminPenalty;
 	
 	public int getBestLabminPenalty() { return bestLabminPenalty; }
 	public int getBestCourseminPenalty() { return bestCourseminPenalty; }
 
+	public int getPen_coursemin() { return pen_coursemin; }
+	public int getPen_labmin() { return pen_labmin; }
+	public void setPen_coursemin(int newpen) { pen_coursemin = newpen; }
+	public void setPen_labmin(int newpen) { pen_labmin = newpen; }
 	
 	//This is the preferences array. Indexed by [assignable][slot].
 	//Can fetch in constant time. Maybe there's a better way to do this. I dunno.
@@ -51,10 +55,6 @@ public class Problem {
 		Slots = slots;
 		numberOfAssignables = assignables.length;
 		numberOfSlots = slots.length;
-		
-		//TODO: This is not specified in the input file. Where is it specified?
-		pen_coursemin = 5;
-		pen_labmin = 5;
 		
 		computeBestMinPenalties();
 	}
@@ -109,5 +109,38 @@ public class Problem {
 			if(Slots[i].day.equals(day) && Slots[i].startTime.equals(time))
 				return i;
 		return -1;
+	}
+	
+	/**
+	 * Returns a human-readable summary of all items in the problem.
+	 */
+	public String toString() {
+		StringBuilder strb = new StringBuilder();
+		strb.append("Problem Name: ");
+		strb.append(name);
+		strb.append('\n');
+		
+		strb.append("Slots:\n");
+		for(Slot s : Slots) {
+			strb.append(s);
+			strb.append('\n');
+		}
+		
+		strb.append("Assignables:\n");
+		for(Assignable a : Assignables) {
+			strb.append(a);
+			strb.append('\n');
+			
+			for(int inc : a.incompatible) 
+				strb.append(String.format("\tIncompatible With: %s\n", Assignables[inc]));
+
+			for(int inc : a.paired) 
+				strb.append(String.format("\tPaired With: %s\n", Assignables[inc]));
+			
+			for(int inc : a.unwanted) 
+				strb.append(String.format("\tUnwanted in: %s\n", Slots[inc]));
+		}
+		
+		return strb.toString();
 	}
 }

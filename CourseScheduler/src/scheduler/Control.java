@@ -25,7 +25,6 @@ public class Control {
 			bestSol = null;
 		}
 		
-		
 		/*
 		 * This function is to be run after set up. It will compute the tree and return the best answer
 		 * @returns State Solution
