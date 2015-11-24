@@ -25,14 +25,29 @@ public class Main {
 		int pen_labmin = 5;
 		
 		Parser parse = new Parser();
+		Problem prob = null;
 		
+		// Parse the input file.
 		try {
-			Problem prob = parse.parseFile("input.txt");
-			System.out.println(prob);			
+			prob = parse.parseFile("input.txt");
 		}
 		catch(IOException ex) {
 			System.out.println(ex.toString());
+			System.exit(1);
 		}
 		
+		//Print out the problem.
+		//TODO: Remove this when the system is done. It's kinda spammy.
+		System.out.println(prob);
+		
+		//Create a search control for our problem.
+		Control searchControl = new Control(prob);
+		
+		//Run the search control to get our final solution.
+		State finalState = searchControl.solve();
+		
+		//Show our solution.
+		System.out.println("Solution:");
+		System.out.println(finalState);		
 	}
 }

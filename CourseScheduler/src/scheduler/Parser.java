@@ -101,6 +101,7 @@ public class Parser {
 	    //Return a new problem with all this information.
 	    Problem prob = new Problem(assignables.toArray(new Assignable[0]), slots.toArray(new Slot[0]));
 	    prob.setName(name);
+	    partAssign.setProb(prob);
 	    prob.setPartAssign(partAssign);
 	    prob.setPreferences(preferences);
 	    return prob;
