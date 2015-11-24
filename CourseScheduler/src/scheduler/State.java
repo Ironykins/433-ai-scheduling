@@ -4,6 +4,12 @@ package scheduler;
  * Represents a node in the and-tree-based search.
  * This is a partial or full assignment of courses with data 
  * attached describing the value.
+ * ############################################################
+ * why are we keeping track of the problem in state?
+ * this seems pretty space inefficient, also it means partasign contains prob contains partasign contains prob....
+ * I think that we should have a state tostring method in prob that takes a state as a parameter
+ * this way we can save on redundancies. or instead just have a function in prob that lets state pull the info we need to print it our properly
+ * 
  */
 public class State {
 	//We may as well keep track of which problem this state is for.
