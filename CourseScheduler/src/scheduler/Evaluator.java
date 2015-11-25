@@ -9,7 +9,36 @@ package scheduler;
  * States and transitions to be evaluated are supplied as arguments.
  */
 public class Evaluator {
-	private Problem prob;
+	//Reference to our problem object.
+	private final Problem prob;
+	
+	//Weightings of different componenets of Eval
+	private double wMinFilled;
+	private double wPref;
+	private double wPair;
+	private double wSecDiff;
+	
+	//Penalty for not meeting coursemin or labmin.
+	private int pen_coursemin;
+	private int pen_labmin;
+	private int pen_section;
+
+	public int getPen_coursemin() { return pen_coursemin; }
+	public int getPen_labmin() { return pen_labmin; }
+	public int getPen_section() { return pen_section; }
+	public void setPen_coursemin(int newpen) { pen_coursemin = newpen; }
+	public void setPen_labmin(int newpen) { pen_labmin = newpen; }
+	public void setPen_section(int newpen) { pen_section = newpen; }
+	
+	//Getters and setters for the above.
+	public double getwMinFilled() { return wMinFilled; }
+	public void setwMinFilled(double wMinFilled) { this.wMinFilled = wMinFilled; }
+	public double getwPref() { return wPref; }
+	public void setwPref(double wPref) { this.wPref = wPref; }
+	public double getwPair() { return wPair; }
+	public void setwPair(double wPair) { this.wPair = wPair; }
+	public double getwSecDiff() { return wSecDiff; }
+	public void setwSecDiff(double wSecDiff) { this.wSecDiff = wSecDiff; }
 	
 	public Evaluator(Problem prob) {
 		this.prob = prob;
@@ -112,5 +141,66 @@ public class Evaluator {
 	// Check that the given assignable is not in an unwanted slot
 	private boolean deltaUnwantedCheck(int aIndex, int sIndex){
 		return prob.Assignables[aIndex].unwanted.contains(sIndex);
+	}
+	
+	/**
+	 * Performs a complete evaluation on a state.
+	 * Takes into account weightings of each evaluated value.
+	 * This can be a double, simply because the weightings can be doubles.
+	 * It feels wrong, but Jorg says this is okay.
+	 * 
+	 * @param state The state to evaluate.
+	 * @return The total eval-value of the state.
+	 */
+	public double eval(State state) {
+		return evalMinFilled(state) * wMinFilled + 
+				evalPref(state) * wPref +
+				evalPair(state) * wPair + 
+				evalSecDiff(state) * wSecDiff;
+	}
+	
+	/**
+	 * Computes the eval-penalty resulting from not meeting the coursemin or labmin 
+	 * requirements on slots.
+	 * 
+	 * @param st The state to evaluate
+	 * @return The total eval-value for this domain.
+	 */
+	public double evalMinFilled(State st) {
+		//TODO: Implement this.
+		return 1;
+	}
+	
+	/**
+	 * Computes the eval-penalty resulting from the assignable/timeslot preferences of professors
+	 * 
+	 * @param st The state to evaluate
+	 * @return The total eval-value for this domain.
+	 */
+	public double evalPref(State st) {
+		//TODO: Implement this.
+		return 1;
+	}
+	
+	/**
+	 * Computes the eval-penalty resulting from not having different sections taught in different slots.
+	 * 
+	 * @param st The state to evaluate
+	 * @return The total eval-value for this domain.
+	 */
+	public double evalSecDiff(State st) {
+		//TODO: Implement this.
+		return 1;
+	}
+	
+	/**
+	 * Computes the eval-penalty resulting from not having paired courses in the same slot.
+	 * 
+	 * @param st The state to evaluate
+	 * @return The total eval-value for this domain.
+	 */
+	public double evalPair(State st) {
+		//TODO: Implement this.
+		return 1;
 	}
 }

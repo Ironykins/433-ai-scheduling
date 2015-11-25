@@ -14,7 +14,7 @@ public class Main {
 	 * Prints the blurb telling you how to use the program, and exits.
 	 */
 	public static void printUsage() {
-		System.err.println("Usage: CourseScheduler [-pcm <pen_coursemin>] [-plm <pen_labmin>] [-w <weight minFilled> <weight Preferences> <weight Pair> <weight secDiff>] <input filename>");
+		System.err.println("Usage: CourseScheduler [-pcm <pen_coursemin>] [-plm <pen_labmin>]  [-ps <pen_section> ] [-w <weight minFilled> <weight Preferences> <weight Pair> <weight secDiff>] <input filename>");
 		System.exit(1);
 	}
 	/**
@@ -35,6 +35,7 @@ public class Main {
 		// These are just default values.
 		int pen_coursemin = 5;
 		int pen_labmin = 5;
+		int pen_section = 5;
 		
 		Parser parse = new Parser();
 		Problem prob = null;
@@ -47,6 +48,7 @@ public class Main {
 				switch(args[i]) {
 					case "-pcm": pen_coursemin = Integer.parseInt(args[++i]); break;
 					case "-plm": pen_labmin = Integer.parseInt(args[++i]); break;
+					case "-ps": pen_section = Integer.parseInt(args[++i]); break;
 					case "-w": 
 						wMinFilled = Double.parseDouble(args[++i]);
 						wPref = Double.parseDouble(args[++i]);
@@ -75,12 +77,16 @@ public class Main {
 		}
 		
 		//Put our parsed penalties and eval weights in here.
-		prob.setPen_coursemin(pen_coursemin);
-		prob.setPen_labmin(pen_labmin);
-		prob.setwMinFilled(wMinFilled);
-		prob.setwPair(wPair);
-		prob.setwPref(wPref);
-		prob.setwSecDiff(wSecDiff);
+		prob.evaluator.setPen_coursemin(pen_coursemin);
+		prob.evaluator.setPen_labmin(pen_labmin);
+		prob.evaluator.setPen_section(pen_section);
+		prob.evaluator.setwMinFilled(wMinFilled);
+		prob.evaluator.setwPair(wPair);
+		prob.evaluator.setwPref(wPref);
+		prob.evaluator.setwSecDiff(wSecDiff);
+		
+		//This needs to be called here because I'm bad at programming.
+		prob.computeBestMinPenalties();
 		
 		//Print out the problem.
 		//TODO: Remove this when the system is done. It's kinda spammy.

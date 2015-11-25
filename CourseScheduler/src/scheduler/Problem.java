@@ -10,39 +10,18 @@ package scheduler;
  * The data here should be static, and assigned when the program parses the input file.
  */
 public class Problem {
+	public final Evaluator evaluator;
 	public final Assignable[] Assignables;
 	public final Slot[] Slots;
 	public final int numberOfAssignables;
 	public final int numberOfSlots;
 	
-	//Penalty values and weightings.
-	//God damn it this is so ugly fuck you obama
-	private int pen_coursemin;
-	private int pen_labmin;
+	//The penalty for Lab and Course Minimum requirements, in the absolute best case.
 	private int bestLabminPenalty;
 	private int bestCourseminPenalty;
-	
-	private double wMinFilled;
-	private double wPref;
-	private double wPair;
-	private double wSecDiff;
-	
-	public double getwMinFilled() { return wMinFilled; }
-	public void setwMinFilled(double wMinFilled) { this.wMinFilled = wMinFilled; }
-	public double getwPref() { return wPref; }
-	public void setwPref(double wPref) { this.wPref = wPref; }
-	public double getwPair() { return wPair; }
-	public void setwPair(double wPair) { this.wPair = wPair; }
-	public double getwSecDiff() { return wSecDiff; }
-	public void setwSecDiff(double wSecDiff) { this.wSecDiff = wSecDiff; }
 
 	public int getBestLabminPenalty() { return bestLabminPenalty; }
 	public int getBestCourseminPenalty() { return bestCourseminPenalty; }
-
-	public int getPen_coursemin() { return pen_coursemin; }
-	public int getPen_labmin() { return pen_labmin; }
-	public void setPen_coursemin(int newpen) { pen_coursemin = newpen; }
-	public void setPen_labmin(int newpen) { pen_labmin = newpen; }
 	
 	//This is the preferences array. Indexed by [assignable][slot].
 	//Can fetch in constant time. Maybe there's a better way to do this. I dunno.
@@ -66,18 +45,20 @@ public class Problem {
 	
 	//We have an unchanging number of assignables and slots. Must be initialized with these.
 	public Problem(Assignable[] assignables, Slot[] slots) {
+		evaluator = new Evaluator(this);
 		Assignables = assignables;
 		Slots = slots;
 		numberOfAssignables = assignables.length;
 		numberOfSlots = slots.length;
-		
-		computeBestMinPenalties();
 	}
+	
 	/**
 	 * Computes the penalties for not meeting the minimum course/lab requirements in the _best_ case.
 	 * Used for Tomas's incremental Eval function.
+	 * 
+	 * Requires that the evaluator knows the pen_coursemin.
 	 */
-	private void computeBestMinPenalties() {		
+	public void computeBestMinPenalties() {		
 		int totalLabMin = 0;
 		int totalCourseMin = 0;
 		for(Slot s : Slots) {
@@ -95,8 +76,8 @@ public class Problem {
 		int labDifference = totalLabs - totalLabMin;
 		int courseDifference = totalCourses - totalCourseMin;
 		
-		bestLabminPenalty = labDifference < 0 ? 0 : labDifference * pen_labmin;
-		bestCourseminPenalty = courseDifference < 0 ? 0 : courseDifference * pen_coursemin;
+		bestLabminPenalty = labDifference < 0 ? 0 : labDifference * evaluator.getPen_labmin();
+		bestCourseminPenalty = courseDifference < 0 ? 0 : courseDifference * evaluator.getPen_coursemin();
 	}
 	
 	/**
