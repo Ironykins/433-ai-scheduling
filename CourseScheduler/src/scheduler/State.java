@@ -10,6 +10,8 @@ package scheduler;
  * I think that we should have a state tostring method in prob that takes a state as a parameter
  * this way we can save on redundancies. or instead just have a function in prob that lets state pull the info we need to print it our properly
  * 
+ * A: I agree that it's not very clean, but there isn't any extra overhead here.
+ * 	  prob is a pointer/reference to a problem object. We are still only storing a single problem object in memory.
  */
 public class State {
 	//We may as well keep track of which problem this state is for.
