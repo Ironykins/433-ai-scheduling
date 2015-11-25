@@ -13,10 +13,10 @@ public class Evaluator {
 	private final Problem prob;
 	
 	//Weightings of different componenets of Eval
-	private double wMinFilled;
-	private double wPref;
-	private double wPair;
-	private double wSecDiff;
+	private double wMinFilled = 1.0;
+	private double wPref = 1.0;
+	private double wPair = 1.0;
+	private double wSecDiff = 1.0;
 	
 	//Penalty for not meeting coursemin or labmin.
 	private int pen_coursemin;
@@ -201,6 +201,73 @@ public class Evaluator {
 	 */
 	public double evalPair(State st) {
 		//TODO: Implement this.
+		return 1;
+	}
+	
+	/**
+	 * Computes the change in eval-values for a given transition.
+	 * 
+	 * @param st The state as it is before the change
+	 * @param aIndex The index of the assignable
+	 * @param sIndex The index of the slot we are assigning to
+	 * @return The change in eval-value. This can be negative.
+	 */
+	public double deltaEval(State st, int aIndex, int sIndex) {
+		return deltaEvalMinFilled(st, aIndex, sIndex) * wMinFilled + 
+				deltaEvalPref(st, aIndex, sIndex) * wPref +
+				deltaEvalPair(st, aIndex, sIndex) * wPair + 
+				deltaEvalSecDiff(st, aIndex, sIndex) * wSecDiff;
+	}
+	
+	/**
+	 * Calculate the change in Eval due to sections of a course being taught together.
+	 * 
+	 * @param st The state as it is before the change
+	 * @param aIndex The index of the assignable
+	 * @param sIndex The index of the slot we are assigning to
+	 * @return The change in eval-value. This can be negative.
+	 */
+	private double deltaEvalSecDiff(State st, int aIndex, int sIndex) {
+		// TODO Auto-generated method stub
+		return 1;
+	}
+	
+	/**
+	 * Calculate the change in Eval due to paired courses.
+	 * 
+	 * @param st The state as it is before the change
+	 * @param aIndex The index of the assignable
+	 * @param sIndex The index of the slot we are assigning to
+	 * @return The change in eval-value. This can be negative.
+	 */
+	private double deltaEvalPair(State st, int aIndex, int sIndex) {
+		// TODO Auto-generated method stub
+		return 1;
+	}
+	
+	/**
+	 * Calculate the change in Eval due to preferences
+	 * 
+	 * @param st The state as it is before the change
+	 * @param aIndex The index of the assignable
+	 * @param sIndex The index of the slot we are assigning to
+	 * @return The change in eval-value. This can be negative.
+	 */
+	private double deltaEvalPref(State st, int aIndex, int sIndex) {
+		// TODO Auto-generated method stub
+		return 1;
+	}
+	
+	/**
+	 * Calculate the change in Eval due to minimum constraints being filled.
+	 * 
+	 * @param st The state as it is before the change
+	 * @param aIndex The index of the assignable
+	 * @param sIndex The index of the slot we are assigning to
+	 * @return The change in eval-value. This can be negative.
+	 */
+	private double deltaEvalMinFilled(State st, int aIndex, int sIndex) {
+		// TODO Auto-generated method stub
 		return 1;
 	}
 }
