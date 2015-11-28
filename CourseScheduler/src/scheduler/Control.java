@@ -30,10 +30,12 @@ public class Control {
 		 * @returns State Solution
 		 */
 		public State solve(){
+			bestSol = stateQueue.peek();
 			//need a way to check if a solution is valid/complete.
 			//will check for that, and then check that its the only element in the list
-			while(stateQueue.peek() != null);
-			expandHead();
+			while(stateQueue.peek() != null)
+				expandHead();
+			
 			return bestSol;
 		}
 		/*
