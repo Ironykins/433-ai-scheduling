@@ -59,10 +59,6 @@ public class Evaluator {
 	 *  @return True if the state is valid. False otherwise.
 	 */
 	//TODO: Add CPSC specific: LEC 9 is at night
-	//500 is at different time then all other 500
-	//813 and 913 TU 18-19
-	//813 can't overlap with any 313 things
-	//913 can't overlap with any 413 things
 	public boolean Constr(State state){
 		if(maxCheck(state) && compatibleCheck(state) && unwantedCheck(state)){
 			return true;
@@ -82,26 +78,6 @@ public class Evaluator {
 		}
 		return false;
 	}
-	
-
-	private boolean unique500(State state){
-		int i = 0;
-		boolean[] seen = new boolean[prob.numberOfSlots];
-		while((state.assign[i] != -1) || (i < state.assign.length )){
-			if((prob.Assignables[i].courseNumber < 600) && (prob.Assignables[i].courseNumber >= 500)){
-				if(seen[state.assign[i]] == true){
-					return false;
-				}
-				seen[state.assign[i]] = true;
-			}
-				
-			
-			i++;
-		}
-		return true;
-	}
-	
-	
 	
 	// Checks the labs and courses are not over the limit of any slot
 	private boolean maxCheck(State state){
@@ -159,6 +135,20 @@ public class Evaluator {
 				deltaCompatibleCheck(state, aIndex, sIndex) && 
 				deltaUnwantedCheck(aIndex, sIndex);
 	}
+
+	
+	// Lecture 9 has to be at night (Delta version)
+	private boolean nightCheckDelta(State state, int aIndex, int sIndex)
+	{
+		if( prob.Assignables[aIndex].sectionNumber == 9)
+		{
+			if(prob.Slots[sIndex].startTime.compareTo(NIGHT_TIME) < 0)
+				return false;
+		}
+		
+		return true;
+	}
+	
 	
 	// Checks the labs or courses will not be over the limit if we assign.
 	private boolean deltaMaxCheck(State state, int aIndex, int sIndex) {
