@@ -17,6 +17,9 @@ public class Assignable {
 	 */
 	public final String name;
 	public final int id;
+	public final int courseNumber;
+	public final int sectionNumber;
+	
 	
 	//false if lab, true if course
 	//This will make it easier to test the constraints
@@ -30,6 +33,8 @@ public class Assignable {
 		incompatible = new Vector<Integer>();
 		unwanted = new Vector<Integer>();
 		paired = new Vector<Integer>();
+		courseNumber = 0;//TODO: really assign these
+		sectionNumber = 0; //TODO: really assign these
 	}
 	
 	//A list of assignable ids that this course is incompatible with

@@ -9,6 +9,8 @@ package scheduler;
  * States and transitions to be evaluated are supplied as arguments.
  */
 public class Evaluator {
+	
+	private final String NIGHT_TIME = "18:00";
 	//Reference to our problem object.
 	private final Problem prob;
 	
@@ -56,12 +58,50 @@ public class Evaluator {
 	 *  @param s The state we are checking for validity
 	 *  @return True if the state is valid. False otherwise.
 	 */
+	//TODO: Add CPSC specific: LEC 9 is at night
+	//500 is at different time then all other 500
+	//813 and 913 TU 18-19
+	//813 can't overlap with any 313 things
+	//913 can't overlap with any 413 things
 	public boolean Constr(State state){
 		if(maxCheck(state) && compatibleCheck(state) && unwantedCheck(state)){
 			return true;
 		}
 		return false;
 	}
+	//Lec 9 at night
+	private boolean nightCheck(State state){
+		int i = 0;
+		while((state.assign[i] != -1) || (i < state.assign.length )){
+			if(( prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse)){
+				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)<= 0){
+					return true;
+				}
+			}
+			i++;
+		}
+		return false;
+	}
+	
+
+	private boolean unique500(State state){
+		int i = 0;
+		boolean[] seen = new boolean[prob.numberOfSlots];
+		while((state.assign[i] != -1) || (i < state.assign.length )){
+			if((prob.Assignables[i].courseNumber < 600) && (prob.Assignables[i].courseNumber >= 500)){
+				if(seen[state.assign[i]] == true){
+					return false;
+				}
+				seen[state.assign[i]] = true;
+			}
+				
+			
+			i++;
+		}
+		return true;
+	}
+	
+	
 	
 	// Checks the labs and courses are not over the limit of any slot
 	private boolean maxCheck(State state){
@@ -152,6 +192,7 @@ public class Evaluator {
 	 * @param state The state to evaluate.
 	 * @return The total eval-value of the state.
 	 */
+
 	public double eval(State state) {
 		return evalMinFilled(state) * wMinFilled + 
 				evalPref(state) * wPref +
