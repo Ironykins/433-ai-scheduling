@@ -28,7 +28,8 @@ public class State {
 	//numOfCourses[i] = the number of courses scheduled in slot i.
 	public int numOfCourses[];
 	public int numOfLabs[];
-	private int value; //AKA the Eval-Value
+	private double value; //AKA the Eval-Value
+
 	private boolean fullSolution;
 
 	//TODO: Function to find lab/course bases on time and day
@@ -54,7 +55,7 @@ public class State {
 	 */
 	public String toString() {
 		StringBuilder strb = new StringBuilder();
-		strb.append(String.format("Eval-Value: %d\n", value));
+		strb.append(String.format("Eval-Value: %f\n", value));
 		
 		//We can only do full output if prob is specified.
 		if(prob == null) {
@@ -82,5 +83,17 @@ public class State {
 		}
 		
 		return strb.toString();
+	}
+	public boolean isFullSolution() {
+		return fullSolution;
+	}
+	public void setFullSolution(boolean fullSolution) {
+		this.fullSolution = fullSolution;
+	}
+	public double getValue() {
+		return value;
+	}
+	public void setValue(double value) {
+		this.value = value;
 	}
 }
