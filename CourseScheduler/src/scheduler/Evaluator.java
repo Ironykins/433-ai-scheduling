@@ -9,6 +9,8 @@ package scheduler;
  * States and transitions to be evaluated are supplied as arguments.
  */
 public class Evaluator {
+	
+	private final String NIGHT_TIME = "18:00";
 	//Reference to our problem object.
 	private final Problem prob;
 	
@@ -56,9 +58,23 @@ public class Evaluator {
 	 *  @param s The state we are checking for validity
 	 *  @return True if the state is valid. False otherwise.
 	 */
+	//TODO: Add CPSC specific: LEC 9 is at night
 	public boolean Constr(State state){
 		if(maxCheck(state) && compatibleCheck(state) && unwantedCheck(state)){
 			return true;
+		}
+		return false;
+	}
+	//Lec 9 at night
+	private boolean nightCheck(State state){
+		int i = 0;
+		while((state.assign[i] != -1) || (i < state.assign.length )){
+			if(( prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse)){
+				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)<= 0){
+					return true;
+				}
+			}
+			i++;
 		}
 		return false;
 	}
@@ -119,6 +135,20 @@ public class Evaluator {
 				deltaCompatibleCheck(state, aIndex, sIndex) && 
 				deltaUnwantedCheck(aIndex, sIndex);
 	}
+
+	
+	// Lecture 9 has to be at night (Delta version)
+	private boolean nightCheckDelta(State state, int aIndex, int sIndex)
+	{
+		if( prob.Assignables[aIndex].sectionNumber == 9)
+		{
+			if(prob.Slots[sIndex].startTime.compareTo(NIGHT_TIME) < 0)
+				return false;
+		}
+		
+		return true;
+	}
+	
 	
 	// Checks the labs or courses will not be over the limit if we assign.
 	private boolean deltaMaxCheck(State state, int aIndex, int sIndex) {
@@ -152,6 +182,7 @@ public class Evaluator {
 	 * @param state The state to evaluate.
 	 * @return The total eval-value of the state.
 	 */
+
 	public double eval(State state) {
 		return evalMinFilled(state) * wMinFilled + 
 				evalPref(state) * wPref +

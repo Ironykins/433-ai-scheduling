@@ -128,6 +128,10 @@ public class Parser {
 				Slot newSlot = new Slot(slotIndex++, m.group(1), m.group(2));
 				newSlot.setCourseMax(Integer.parseInt(m.group(3)));
 				newSlot.setCourseMin(Integer.parseInt(m.group(4)));
+				
+				if( newSlot.day.equals("TU") && newSlot.startTime.equals("11:00"))
+					newSlot.setCourseMax(0);
+				
 				slots.add(newSlot);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
