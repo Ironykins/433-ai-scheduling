@@ -7,7 +7,7 @@ public class Control {
 		private Problem prob; //contains main problem we want to solve
 		private State bestSol; //best running solution, starts as worst possible solution
 		private Stack<State> stateStack; //queue to hold working states of tree
-		
+
 		/**
 		 * Constructor creates new control for solving prob
 		 * puts the partassign as the head of our queue
@@ -30,7 +30,9 @@ public class Control {
 		public State solve(){
 			//need a way to check if a solution is valid/complete.
 			//will check for that, and then check that its the only element in the list
+			int i =0;
 			while(!stateStack.isEmpty()) {
+				System.out.printf("@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\n@@@@@@@@@@@@@@@@@@@@@@@@\n",i++);
 				if(bestSol != null) return bestSol; //TODO: Remove when we switch to AND-TREE based.
 				expandHead();
 			}
@@ -44,24 +46,21 @@ public class Control {
 		 */
 		private void expandHead(){
 			//take the head of our list
-			State ex = stateStack.pop();
+			State st = stateStack.pop();
+
 			
-			//Determine if our state is a full solution.
-			boolean isSolution = prob.evaluator.Constr(ex);
-			ex.setFullSolution(isSolution);
-			
-			if(isSolution) {
+			if(st.isFullSolution() ) {
 				//If it's better than our best, it becomes our new best.
-				if(bestSol == null || bestSol.getValue() > ex.getValue()) 
-					bestSol = ex;
+				if(bestSol == null || bestSol.getValue() > st.getValue()) 
+					bestSol = st;
 			} else {
 				//generate a list of valid child states
 				//add our children to the front of the queue, should probably order them before this
 				/***************
 				 * Here we need to order the children so the first element in the list after we add all of them is the child we want to expand
 				***************/
-				LinkedList<State> children = createChildren(ex);
-				stateStack.addAll(0,children);
+				LinkedList<State> children = createChildren(st);
+				if(children != null) stateStack.addAll(children);
 			}
 		}
 		
@@ -80,7 +79,7 @@ public class Control {
 			//I think it would be more efficient to create a child and then check its eval and constraint as we go
 			
 			//Get first unassigned assignable, all children will assign this assignable
-			int aIndex = 0;
+			int aIndex = -1;
 			for(int i=0;i<st.assign.length;i++)
 				if(st.assign[i] == -1) {
 					aIndex = i;
@@ -88,10 +87,13 @@ public class Control {
 				}
 			
 			//now we want to put it in every available slot.
-			for(int sIndex=0;sIndex<prob.numberOfSlots;sIndex++){
+			if(aIndex ==-1) return null;
+			
+			for(int sIndex=0;sIndex<prob.Slots.length;sIndex++){
 				//if() //if this is a valid assignment
-				if(prob.evaluator.deltaConstr(st, aIndex, sIndex))
-					children.add(st.makeChild(aIndex, sIndex));
+				//if(prob.evaluator.deltaConstr(st, aIndex, sIndex))
+					children.push(st.makeChild(aIndex, sIndex));
+					
 			}
 			
 			return orderChildren(children);

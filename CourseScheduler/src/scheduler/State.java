@@ -16,7 +16,10 @@ package scheduler;
 public class State {
 	//We may as well keep track of which problem this state is for.
 	private Problem prob;
-
+	
+	//static state counter
+	private static long stateCount;
+	
 	public Problem getProb() { return prob; }
 	public void setProb(Problem prob) { this.prob = prob; }
 
@@ -28,8 +31,8 @@ public class State {
 	//numOfCourses[i] = the number of courses scheduled in slot i.
 	public int numOfCourses[];
 	public int numOfLabs[];
-	private double value; //AKA the Eval-Valuenull
-
+	private double value; //AKA the Eval-Value
+	private long stateId;
 	private boolean fullSolution;
 
 	//TODO: Function to find lab/course bases on time and day
@@ -41,10 +44,11 @@ public class State {
 		assign = new int[numAssignables];
 		numOfCourses = new int[numSlots];
 		numOfLabs = new int[numSlots];
-		
+		stateId = stateCount = 0;
 		// Use -1 instead of $.
 		for(int i=0; i<numAssignables; i++)
 			assign[i] = -1;
+		fullSolution = false;
 	}
 	
 	//This creates a deep copy of the current state.
@@ -54,10 +58,11 @@ public class State {
 		this.numOfCourses = new int[parent.numOfCourses.length];
 		this.numOfLabs = new int[parent.numOfLabs.length];
 		this.fullSolution = parent.fullSolution;
-		this.value = value;
+		this.value = parent.getValue();
 		System.arraycopy(parent.assign, 0, this.assign, 0, this.assign.length);
 		System.arraycopy(parent.numOfCourses, 0, this.numOfCourses, 0, this.numOfCourses.length);
 		System.arraycopy(parent.numOfLabs, 0, this.numOfLabs, 0, this.numOfLabs.length);
+		stateId = ++stateCount;
 	}
 	
 	/**
@@ -68,6 +73,7 @@ public class State {
 	 */
 	public String toString() {
 		StringBuilder strb = new StringBuilder();
+		strb.append(String.format("State-ID = : %d\n", stateId));
 		strb.append(String.format("Eval-Value: %f\n", value));
 		
 		//We can only do full output if prob is specified.
@@ -100,9 +106,6 @@ public class State {
 	public boolean isFullSolution() {
 		return fullSolution;
 	}
-	public void setFullSolution(boolean fullSolution) {
-		this.fullSolution = fullSolution;
-	}
 	public double getValue() {
 		return value;
 	}
@@ -119,7 +122,8 @@ public class State {
 	 * @return A brand new state that is the same as this one, except for one new assignment.
 	 */
 	public State makeChild(int aIndex, int sIndex) {
-		// TODO Auto-generated method stub
+		
+		//System.out.println(this.toString());
 		State child = new State(this);
 		if(prob.Assignables[aIndex].isCourse)
 			child.numOfCourses[sIndex]++;
@@ -128,9 +132,14 @@ public class State {
 		
 		child.assign[aIndex] = sIndex;
 		
+		child.fullSolution = (aIndex == assign.length-1 && prob.evaluator.Constr(child)); 
+		
 		//Get the new value of the child.
 		child.setValue(prob.evaluator.deltaEval(this, aIndex, aIndex));
-		
+		/*System.out.println("#######################################################");
+		System.out.println(this.toString());
+		System.out.println(child.toString());
+		System.out.println("#######################################################");*/
 		return child;
 	}
 }
