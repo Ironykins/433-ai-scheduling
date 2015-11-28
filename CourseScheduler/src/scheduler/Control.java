@@ -30,8 +30,10 @@ public class Control {
 		public State solve(){
 			//need a way to check if a solution is valid/complete.
 			//will check for that, and then check that its the only element in the list
-			while(!stateStack.isEmpty())
+			while(!stateStack.isEmpty()) {
+				if(bestSol != null) return bestSol; //TODO: Remove when we switch to AND-TREE based.
 				expandHead();
+			}
 			
 			return bestSol;
 		}
@@ -52,8 +54,6 @@ public class Control {
 				//If it's better than our best, it becomes our new best.
 				if(bestSol == null || bestSol.getValue() > ex.getValue()) 
 					bestSol = ex;
-				
-				
 			} else {
 				//generate a list of valid child states
 				//add our children to the front of the queue, should probably order them before this
@@ -79,7 +79,27 @@ public class Control {
 			//we could generate all children satisfying hard constraints here and check eval in expandHead
 			//I think it would be more efficient to create a child and then check its eval and constraint as we go
 			
-			return children;
+			//Get first unassigned assignable, all children will assign this assignable
+			int aIndex = 0;
+			for(int i=0;i<st.assign.length;i++)
+				if(st.assign[i] == -1) {
+					aIndex = i;
+					break; 
+				}
 			
+			//now we want to put it in every available slot.
+			for(int sIndex=0;sIndex<prob.numberOfSlots;sIndex++){
+				//if() //if this is a valid assignment
+				if(prob.evaluator.deltaConstr(st, aIndex, sIndex))
+					children.add(st.makeChild(aIndex, sIndex));
+			}
+			
+			return orderChildren(children);
+			
+		}
+
+		private LinkedList<State> orderChildren(LinkedList<State> children) {
+			// TODO method to order children somehow. This is where we could change to the OR tree or not
+			return children;
 		}
 }
