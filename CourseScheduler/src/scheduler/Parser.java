@@ -185,10 +185,10 @@ public class Parser {
 			Matcher m = coursePattern.matcher(line);
 			if(m.find()) {
 				String name = m.group(0).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
-				Assignable newCourse = new Assignable(assignableIndex++, name, true);
+				Assignable newCourse = new Assignable(assignableIndex++, name, true, Integer.parseInt(m.group(3)));
 				assignables.add(newCourse);
 			}
-			else { //If the line is not whitespace and we can't parse it, we have a problem.	
+			else { //If the line is not whitespace and we can't parse it, we have a problem.
 	    		if (line.trim().length() == 0) return;
     			throw new IOException(String.format("Could not parse line as course: %s", line));
 			}
@@ -206,7 +206,10 @@ public class Parser {
 			if(m.find()) {
 				//Groups: 1: Course code 2: Course Number 3: Lecture Number (NULL=LEC 01) 4: Lab/Tut Number
 				String name = m.group(0).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
-				Assignable newLab = new Assignable(assignableIndex++, name, false);
+				int courseId = 1;
+				if(m.group(3) != null) courseId = Integer.parseInt(m.group(3));
+				Assignable newLab = new Assignable(assignableIndex++, name, false, courseId);
+				newLab.setLabNumber(Integer.parseInt(m.group(4)));
 				assignables.add(newLab);
 				String courseName = String.format("%s %s LEC %s", m.group(1), m.group(2), m.group(3) != null ? m.group(3) : "01");
 				

@@ -17,24 +17,22 @@ public class Assignable {
 	 */
 	public final String name;
 	public final int id;
-	public final int courseNumber;
 	public final int sectionNumber;
-	
+	private int labNumber = 0;
 	
 	//false if lab, true if course
 	//This will make it easier to test the constraints
 	//And help decide if we inc a slot's course # or lab #
 	public final boolean isCourse;
 	
-	public Assignable(int id, String name, boolean isCourse) {
+	public Assignable(int id, String name, boolean isCourse, int sectionNumber) {
 		this.id = id;
 		this.name = name;
 		this.isCourse = isCourse;
+		this.sectionNumber = sectionNumber;
 		incompatible = new Vector<Integer>();
 		unwanted = new Vector<Integer>();
 		paired = new Vector<Integer>();
-		courseNumber = 0;//TODO: really assign these
-		sectionNumber = 0; //TODO: really assign these
 	}
 	
 	//A list of assignable ids that this course is incompatible with
@@ -56,5 +54,13 @@ public class Assignable {
         Assignable other = (Assignable) toCompare;
         if(!other.name.equals(this.name)) return false;
         return true;
+	}
+
+	public int getLabNumber() {
+		return labNumber;
+	}
+
+	public void setLabNumber(int labNumber) {
+		this.labNumber = labNumber;
 	}
 }
