@@ -7,7 +7,7 @@ public class Control {
 		private Problem prob; //contains main problem we want to solve
 		private State bestSol; //best running solution, starts as worst possible solution
 		private Stack<State> stateStack; //queue to hold working states of tree
-
+		private int headsPopped =0;
 		/**
 		 * Constructor creates new control for solving prob
 		 * puts the partassign as the head of our queue
@@ -30,13 +30,17 @@ public class Control {
 		public State solve(){
 			//need a way to check if a solution is valid/complete.
 			//will check for that, and then check that its the only element in the list
-			int i =0;
+			int maxStates = 0;
 			while(!stateStack.isEmpty()) {
-				System.out.printf("@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\n@@@@@@@@@@@@@@@@@@@@@@@@\n",i++);
-				if(bestSol != null) return bestSol; //TODO: Remove when we switch to AND-TREE based.
+				//this turns it into an or tree
+				//if(bestSol != null) break;
+				if(stateStack.size()>maxStates) maxStates = stateStack.size();
+				if(headsPopped % 10000000 == 0) System.out.printf("@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\nMax States in the list :%d\n@@@@@@@@@@@@@@@@@@@@@@@@\n bestSol?: %b\n",headsPopped,maxStates,(bestSol == null));
+
 				expandHead();
+				headsPopped++;
 			}
-			
+			System.out.printf("max states in the list = %d\nwe popped %d heads\n",maxStates,headsPopped);
 			return bestSol;
 		}
 		
@@ -51,8 +55,10 @@ public class Control {
 			
 			if(st.isFullSolution() ) {
 				//If it's better than our best, it becomes our new best.
-				if(bestSol == null || bestSol.getValue() > st.getValue()) 
+				if(bestSol == null || bestSol.getValue() > st.getValue()) {
 					bestSol = st;
+					System.out.printf("Best Solution Found!\n%s\nHeads popped = %d\nStates in list = %d", bestSol.toString(),headsPopped,stateStack.size());
+				}
 			} else {
 				//generate a list of valid child states
 				//add our children to the front of the queue, should probably order them before this
@@ -91,7 +97,7 @@ public class Control {
 			
 			for(int sIndex=0;sIndex<prob.Slots.length;sIndex++){
 				//if() //if this is a valid assignment
-				//if(prob.evaluator.deltaConstr(st, aIndex, sIndex))
+				if(prob.evaluator.deltaConstr(st, aIndex, sIndex))
 					children.push(st.makeChild(aIndex, sIndex));
 					
 			}
