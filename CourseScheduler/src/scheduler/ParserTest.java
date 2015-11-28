@@ -25,58 +25,58 @@ public class ParserTest {
     public void setUp() {
     	//I'm sorry this is horrible.
     	//Java doesn't have multi line strings and I just
-    	String testCase = String.join("\n"
-			, "Name:"
-            , "ShortExample"
-            , ""
-            , "Course slots:"
-            , "MO, 8:00, 3, 2"
-            , "MO,9:00,3,2"
-            , "TU, 9:30, 2,  1"
-            , ""
-            , "Lab slots:"
-            , "MO, 8:00, 4, 2"
-            , "TU, 10:00,2,1"
-            , "FR, 10:00, 2, 1"
-            , ""
-            , "Courses:"
-            , "CPSC 433 LEC 01"
-            , "CPSC 433 LEC 02"
-            , "SENG 311  LEC  01"
-            , "CPSC 567 LEC 01"
-            , ""
-            , "Labs:"
-            , "CPSC 433 LEC 01 TUT 01"
-            , "CPSC 433 LEC  02 LAB   02"
-            , "SENG 311 LEC 01 TUT 01"
-            , "CPSC 567 TUT 01"
-            , ""
-            , "Not compatible:"
-            , "CPSC 433 LEC 01 TUT 01, CPSC 433 LEC 02 LAB 02"
-            , "CPSC 567 LEC 01, CPSC 433 LEC 01"
-            , "CPSC 567 LEC 01, CPSC 433 LEC 02"
-            , "CPSC 567 TUT 01, CPSC 433 LEC 02"
-            , "CPSC 433 LEC 01, CPSC 567 TUT 01"
-            , ""
-            , "Unwanted:"
-            , "CPSC 433 LEC 01, MO, 8:00"
-            , ""
-            , "Preferences:"
-            , "TU, 9:30, CPSC 433 LEC 01, 10"
-            , "MO, 8:00, CPSC 433 LEC 01 TUT 01, 3"
-            , "TU, 9:30, CPSC 433 LEC 02, 10"
-            , "TU, 10:00, CPSC 433 LEC 01 TUT 01, 5"
-            , "MO, 8:00, CPSC 433 LEC 02 LAB 02, 1"
-            , "MO, 9:00, CPSC 433 LEC 02 LAB 02, 7"
-            , ""
-            , "Pair:"
-            , "SENG 311 LEC 01, CPSC 567  LEC    01"
-            , ""
-            , "Partial assignments:"
-            , "SENG 311 LEC 01, MO, 8:00"
-            , "SENG 311 LEC 01 TUT 01, FR, 10:00"
-    	);
-    	
+    	String testCase = new StringBuilder()
+			.append("Name:\n")
+            .append("ShortExample\n")
+            .append("\n")
+            .append("Course slots:\n")
+            .append("MO, 8:00, 3, 2\n")
+            .append("MO,9:00,3,2\n")
+            .append("TU, 9:30, 2,  1\n")
+            .append("\n")
+            .append("Lab slots:\n")
+            .append("MO, 8:00, 4, 2\n")
+            .append("TU, 10:00,2,1\n")
+            .append("FR, 10:00, 2, 1\n")
+            .append("\n")
+            .append("Courses:\n")
+            .append("CPSC 433 LEC 01\n")
+            .append("CPSC 433 LEC 02\n")
+            .append("SENG 311  LEC  01\n")
+            .append("CPSC 567 LEC 01\n")
+            .append("\n")
+            .append("Labs:\n")
+            .append("CPSC 433 LEC 01 TUT 01\n")
+            .append("CPSC 433 LEC  02 LAB   02\n")
+            .append("SENG 311 LEC 01 TUT 01\n")
+            .append("CPSC 567 TUT 01\n")
+            .append("\n")
+            .append("Not compatible:\n")
+            .append("CPSC 433 LEC 01 TUT 01, CPSC 433 LEC 02 LAB 02\n")
+            .append("CPSC 567 LEC 01, CPSC 433 LEC 01\n")
+            .append("CPSC 567 LEC 01, CPSC 433 LEC 02\n")
+            .append("CPSC 567 TUT 01, CPSC 433 LEC 02\n")
+            .append("CPSC 433 LEC 01, CPSC 567 TUT 01\n")
+            .append("\n")
+            .append("Unwanted:\n")
+            .append("CPSC 433 LEC 01, MO, 8:00\n")
+            .append("\n")
+            .append("Preferences:\n")
+            .append("TU, 9:30, CPSC 433 LEC 01, 10\n")
+            .append("MO, 8:00, CPSC 433 LEC 01 TUT 01, 3\n")
+            .append("TU, 9:30, CPSC 433 LEC 02, 10\n")
+            .append("TU, 10:00, CPSC 433 LEC 01 TUT 01, 5\n")
+            .append("MO, 8:00, CPSC 433 LEC 02 LAB 02, 1\n")
+            .append("MO, 9:00, CPSC 433 LEC 02 LAB 02, 7\n")
+            .append("\n")
+            .append("Pair:\n")
+            .append("SENG 311 LEC 01, CPSC 567  LEC    01\n")
+            .append("\n")
+            .append("Partial assignments:\n")
+            .append("SENG 311 LEC 01, MO, 8:00\n")
+            .append("SENG 311 LEC 01 TUT 01, FR, 10:00\n")
+            .toString();
+  	
     	StringReader sr= new StringReader(testCase); // Wrap up the string
 		BufferedReader br= new BufferedReader(sr); // Wrap it DEEPER.
 		

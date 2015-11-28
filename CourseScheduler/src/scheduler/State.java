@@ -28,7 +28,8 @@ public class State {
 	//numOfCourses[i] = the number of courses scheduled in slot i.
 	public int numOfCourses[];
 	public int numOfLabs[];
-	private int value; //AKA the Eval-Value
+	private double value; //AKA the Eval-Valuenull
+
 	private boolean fullSolution;
 
 	//TODO: Function to find lab/course bases on time and day
@@ -46,6 +47,19 @@ public class State {
 			assign[i] = -1;
 	}
 	
+	//This creates a deep copy of the current state.
+	private State(State parent) {
+		this.assign = new int[parent.assign.length];
+		this.prob = parent.prob;
+		this.numOfCourses = new int[parent.numOfCourses.length];
+		this.numOfLabs = new int[parent.numOfLabs.length];
+		this.fullSolution = parent.fullSolution;
+		this.value = value;
+		System.arraycopy(parent.assign, 0, this.assign, 0, this.assign.length);
+		System.arraycopy(parent.numOfCourses, 0, this.numOfCourses, 0, this.numOfCourses.length);
+		System.arraycopy(parent.numOfLabs, 0, this.numOfLabs, 0, this.numOfLabs.length);
+	}
+	
 	/**
 	 * Gives a string representing a state.
 	 * This is also used to print out the final (solution) state at the end.
@@ -54,7 +68,7 @@ public class State {
 	 */
 	public String toString() {
 		StringBuilder strb = new StringBuilder();
-		strb.append(String.format("Eval-Value: %d\n", value));
+		strb.append(String.format("Eval-Value: %f\n", value));
 		
 		//We can only do full output if prob is specified.
 		if(prob == null) {
@@ -82,5 +96,41 @@ public class State {
 		}
 		
 		return strb.toString();
+	}
+	public boolean isFullSolution() {
+		return fullSolution;
+	}
+	public void setFullSolution(boolean fullSolution) {
+		this.fullSolution = fullSolution;
+	}
+	public double getValue() {
+		return value;
+	}
+	public void setValue(double value) {
+		this.value = value;
+	}
+	
+	/**
+	 * Make some babies.
+	 * Note: This does not evaluate the validity of the transition!
+	 * 
+	 * @param aIndex The assignable we are assigning
+	 * @param i The slot we're assigning it to.
+	 * @return A brand new state that is the same as this one, except for one new assignment.
+	 */
+	public State makeChild(int aIndex, int sIndex) {
+		// TODO Auto-generated method stub
+		State child = new State(this);
+		if(prob.Assignables[aIndex].isCourse)
+			child.numOfCourses[sIndex]++;
+		else
+			child.numOfLabs[sIndex]++;
+		
+		child.assign[aIndex] = sIndex;
+		
+		//Get the new value of the child.
+		child.setValue(prob.evaluator.deltaEval(this, aIndex, aIndex));
+		
+		return child;
 	}
 }
