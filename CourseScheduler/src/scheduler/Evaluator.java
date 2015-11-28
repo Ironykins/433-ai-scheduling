@@ -54,18 +54,18 @@ public class Evaluator {
 	 *  -max number of labs has not been exceeded
 	 *  -any course is not scheduled at the same time as an incompatible course
 	 *  -any course is not in an unwanted slot
+	 *  -any LEC 9 courses are scheduled at night (after 6pm)
 	 *  
 	 *  @param s The state we are checking for validity
 	 *  @return True if the state is valid. False otherwise.
 	 */
-	//TODO: Add CPSC specific: LEC 9 is at night
 	public boolean Constr(State state){
-		if(maxCheck(state) && compatibleCheck(state) && unwantedCheck(state)){
+		if(maxCheck(state) && compatibleCheck(state) && unwantedCheck(state) && nightCheck(state) ){
 			return true;
 		}
 		return false;
 	}
-	//Lec 9 at night
+	//Checks that any assignables with LEC 9 are scheduled after 18:00 (NIGHT_TIME)
 	private boolean nightCheck(State state){
 		int i = 0;
 		while((state.assign[i] != -1) || (i < state.assign.length )){
@@ -133,12 +133,13 @@ public class Evaluator {
 	public boolean deltaConstr(State state, int aIndex, int sIndex){
 		return deltaMaxCheck(state, aIndex, sIndex) && 
 				deltaCompatibleCheck(state, aIndex, sIndex) && 
-				deltaUnwantedCheck(aIndex, sIndex);
+				deltaUnwantedCheck(aIndex, sIndex) &&
+				deltaNightCheck(state, aIndex, sIndex);
 	}
 
 	
 	// Lecture 9 has to be at night (Delta version)
-	private boolean nightCheckDelta(State state, int aIndex, int sIndex)
+	private boolean deltaNightCheck(State state, int aIndex, int sIndex)
 	{
 		if( prob.Assignables[aIndex].sectionNumber == 9)
 		{
@@ -198,8 +199,43 @@ public class Evaluator {
 	 * @return The total eval-value for this domain.
 	 */
 	public double evalMinFilled(State st) {
-		//TODO: Implement this.
-		return 1;
+		int missingCourses = 0;
+		int missingLabs = 0;
+		for(int i = 0; i < prob.numberOfSlots; i++){
+			if((prob.Slots[i].getCourseMin() > st.numOfCourses[i])){
+				missingCourses += (prob.Slots[i].getCourseMin() - st.numOfCourses[i]);
+			}
+			if(((prob.Slots[i].getLabMin() > st.numOfLabs[i]))){
+				missingLabs += (prob.Slots[i].getLabMin() - st.numOfLabs[i]);
+			}
+		}
+		Pair remaining = countRemaining(st);
+		int missingTotal = 0;
+		if(missingCourses > remaining.first){
+			missingTotal += (missingCourses - remaining.first)*pen_coursemin;
+		}
+		if(missingLabs > remaining.second){
+			missingTotal += (missingLabs - remaining.second)*pen_labmin;
+		}
+		return missingTotal;
+	}
+	
+	private Pair countRemaining(State st){
+		int courses = 0;
+		int labs = 0;
+		for(int i =0; i < prob.numberOfAssignables; i++){
+			if(st.assign[i] == -1){
+				if(prob.Assignables[i].isCourse){
+					courses++;
+				}else{
+					labs++;
+				}
+			}
+			
+		}
+		
+		Pair left = new Pair(courses, labs);
+		return left;
 	}
 	
 	/**
