@@ -1,15 +1,13 @@
 package scheduler;
 
+import java.util.Stack;
 import java.util.LinkedList;
 
 public class Control {
-
-		//contains main poblem we want to solve
-		private Problem prob;
-		//best running solution, starts as worst possible solution
-		private State bestSol;
+		private Problem prob; //contains main problem we want to solve
+		private State bestSol; //best running solution, starts as worst possible solution
 		//queue to hold working states of tree
-		private LinkedList<State> stateQueue;
+		private Stack<State> stateStack;
 		
 		/*
 		 * Constructor creates new control for solving prob
@@ -20,8 +18,8 @@ public class Control {
 		 */
 		public Control(Problem prob){
 			this.prob = prob;
-			stateQueue = new LinkedList<State>();
-			stateQueue.addFirst(prob.getPartAssign());
+			stateStack = new Stack<State>();
+			stateStack.push(prob.getPartAssign());
 			bestSol = null;
 		}
 		
@@ -30,10 +28,10 @@ public class Control {
 		 * @returns State Solution
 		 */
 		public State solve(){
-			bestSol = stateQueue.peek();
+			bestSol = stateStack.peek();
 			//need a way to check if a solution is valid/complete.
 			//will check for that, and then check that its the only element in the list
-			while(stateQueue.peek() != null)
+			while(!stateStack.isEmpty())
 				expandHead();
 			
 			return bestSol;
@@ -44,14 +42,14 @@ public class Control {
 		 */
 		private void expandHead(){
 			//take the head of our list
-			State ex = stateQueue.removeFirst();
+			State ex = stateStack.pop();
 			//generate a list of valid child states
 			LinkedList<State> children = createChildren(ex);
 			//add our children to the front of the queue, should probably order them before this
 			/***************
 			 * Here we need to order the children so the first element in the list after we add all of them is the child we want to expand
 			***************/
-			stateQueue.addAll(0,children);
+			stateStack.addAll(0,children);
 			
 		}
 		
