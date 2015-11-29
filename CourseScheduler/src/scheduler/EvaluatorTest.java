@@ -70,7 +70,7 @@ public class EvaluatorTest{
 		
 		
 	}
-	
+/*	
 	@Test
 	public void evalsConstr(){
 		assertTrue(testEval.Constr(testState));
@@ -89,6 +89,6 @@ public class EvaluatorTest{
 		assertTrue(testEval.compatibleCheck(testState));
 	}
 	
-	
+	*/
 
 }
