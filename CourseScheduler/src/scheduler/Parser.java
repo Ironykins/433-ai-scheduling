@@ -308,10 +308,13 @@ public class Parser {
 					
 					//813 should inherit all things incompatible with anything 313.
 					//Same for 913 and 413
-					if(a1.name.contains("313"))
-						incompatible813.add(a1.id, a2.id);
-					if(a1.name.contains("413"))
-						incompatible913.add(a1.id, a2.id);
+					if(a1.name.contains("313")) {
+						incompatible813.add(a1.id);
+						incompatible813.add(a2.id);
+					} else if(a1.name.contains("413")) {
+						incompatible913.add(a1.id);
+						incompatible913.add(a2.id);
+					}
 				}
 				else
 					throw new IllegalStateException(String.format("Tried to add %s to incompatible, but one of the assignables does not exist!", line));
