@@ -168,7 +168,6 @@ public class Evaluator {
 		for(int i=0; i<prob.Assignables[aIndex].incompatible.size();i++){
 			if(state.assign[prob.Assignables[aIndex].incompatible.elementAt(i)] == sIndex) return false;
 		}
-
 		return true;
 	}
 
