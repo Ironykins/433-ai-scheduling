@@ -92,6 +92,12 @@ public class Main {
 		//TODO: Remove this when the system is done. It's kinda spammy.
 		System.out.println(prob);
 		
+		//Do some initial checking on our partAssign.
+		if(!prob.evaluator.Constr(prob.getPartAssign())) {
+			System.out.println("Partial Assignment is Invalid\n");
+			System.exit(1);
+		}
+		
 		//Create a search control for our problem.
 		Control searchControl = new Control(prob);
 		

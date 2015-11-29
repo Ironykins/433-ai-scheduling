@@ -24,13 +24,16 @@ public class Evaluator {
 	private int pen_coursemin;
 	private int pen_labmin;
 	private int pen_section;
-
+	private int pen_notpaired;
+	
 	public int getPen_coursemin() { return pen_coursemin; }
 	public int getPen_labmin() { return pen_labmin; }
 	public int getPen_section() { return pen_section; }
+	public int getPen_notpaired() { return pen_notpaired; }
 	public void setPen_coursemin(int newpen) { pen_coursemin = newpen; }
 	public void setPen_labmin(int newpen) { pen_labmin = newpen; }
 	public void setPen_section(int newpen) { pen_section = newpen; }
+	public void setPen_notpaired(int newpen) { pen_notpaired = newpen; }
 	
 	//Getters and setters for the above.
 	public double getwMinFilled() { return wMinFilled; }
@@ -67,14 +70,12 @@ public class Evaluator {
 	}
 	//Checks that any assignables with LEC 9 are scheduled after 18:00 (NIGHT_TIME)
 	private boolean nightCheck(State state){
-		int i = 0;
-		while((state.assign[i] != -1) || (i < state.assign.length )){
+		for(int i = 0;i<state.assign.length;i++){
 			if(( prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse)){
-				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)<= 0){
+				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)>= 0){
 					return true;
 				}
 			}
-			i++;
 		}
 		return false;
 	}
@@ -93,8 +94,8 @@ public class Evaluator {
 	// Checks that the all of the currently scheduled assignables are compatible with each other
 	private boolean compatibleCheck(State state){
 		for(int i = 0; i < prob.numberOfAssignables; i++){
-			for( int incompatible : prob.Assignables[i].incompatible){
-				if(state.assign[incompatible] == state.assign[i]){
+			for(int j = 0; j<prob.Assignables[i].incompatible.size();j++){
+				if(state.assign[j] == state.assign[i]){
 					return false;
 				}
 			}
@@ -105,7 +106,7 @@ public class Evaluator {
 	// Check that all assignables are not in an unwanted slot
 	private boolean unwantedCheck(State state){
 		for(int i = 0; i < prob.numberOfAssignables; i++){
-			if( prob.Assignables[i].unwanted.contains(state.assign[i])){
+			if(prob.Assignables[i].unwanted.contains(state.assign[i])){
 				return false;
 			}
 		}
@@ -245,20 +246,54 @@ public class Evaluator {
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
 	 */
-	public double evalPref(State st) {
-		//TODO: Implement this.
-		return 1;
+	public double evalPref(State st)
+	{
+		double dPrefTotal = 0;
+		int iIndex = 0;
+		
+		while( iIndex < st.assign.length )
+		{
+			if( st.assign[iIndex] == -1 )
+			{
+				iIndex++;
+				continue;
+			}
+			
+			dPrefTotal += prob.getPreferences()[iIndex][st.assign[iIndex]];
+			
+			iIndex++;
+		}
+		
+		return dPrefTotal;
 	}
 	
+	
 	/**
-	 * Computes the eval-penalty resulting from not having different sections taught in different slots.
+	 * Computes the eval-penalty resulting from having different sections taught in the same slot.
 	 * 
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
 	 */
-	public double evalSecDiff(State st) {
-		//TODO: Implement this.
-		return 1;
+	public double evalSecDiff(State st) 
+	{
+		double dSecDiffTotal = 0;
+		int iIndex = 0;
+		
+		while( iIndex < st.assign.length )
+		{
+			if( st.assign[iIndex] == -1 )
+			{
+				iIndex++;
+				continue;
+			}
+			
+			// TODO figure this shit out
+			//dSecDiffTotal;
+			
+			iIndex++;
+		}
+		
+		return dSecDiffTotal;
 	}
 	
 	/**
@@ -267,9 +302,34 @@ public class Evaluator {
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
 	 */
-	public double evalPair(State st) {
-		//TODO: Implement this.
-		return 1;
+	public double evalPair(State st)
+	{
+		double dPairTotal = 0;
+		int iIndex = 0;
+		
+		// Loop through the current states assigned courses/labs
+		while( iIndex < st.assign.length )
+		{
+			// If this course/lab hasn't been assigned, ignore it
+			if( st.assign[iIndex] == -1 )
+			{
+				iIndex++;
+				continue;
+			}
+			
+			// Loop through this course/labs Pair vector, for each pairing check if it's paired
+			for( int iPairIndex = 0; iPairIndex < prob.Assignables[iIndex].paired.size(); iPairIndex++ )
+			{
+				int iPair = prob.Assignables[iIndex].paired.get( iPairIndex );
+				
+				if( st.assign[iIndex] == st.assign[iPair] )
+					dPairTotal++;
+			}
+			
+			iIndex++;
+		}		
+		
+		return ((dPairTotal/2) * pen_notpaired);
 	}
 	
 	/**
@@ -295,8 +355,10 @@ public class Evaluator {
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
 	 */
-	private double deltaEvalSecDiff(State st, int aIndex, int sIndex) {
-		// TODO Auto-generated method stub
+	private double deltaEvalSecDiff(State st, int aIndex, int sIndex)
+	{
+		
+		
 		return 1;
 	}
 	
