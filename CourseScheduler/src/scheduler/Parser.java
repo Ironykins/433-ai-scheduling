@@ -32,6 +32,7 @@ public class Parser {
 	private Vector<Assignable> assignables;
 	private Vector<Slot> slots;
 	private Vector<Integer> eveningTestIds; //CPSC 813 and 913 and stuff.
+	private Vector<Integer> fourthYearCourses; //All 500-level courses.
 	private String name;
 	private State partAssign;
 	private int[][] preferences;
@@ -40,6 +41,7 @@ public class Parser {
 		assignables = new Vector<Assignable>();
 		slots = new Vector<Slot>();
 		eveningTestIds = new Vector<Integer>();
+		fourthYearCourses = new Vector<Integer>();
 		
 		//Matches and extracts lines of the form: DD, HH:MM, INT, INT
 		slotPattern = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9]*)[\\s]*,[\\s]*([0-9]*)[\\s]*$");
@@ -122,8 +124,12 @@ public class Parser {
 		
 		//913 gets all of 413's incompatibilities
 		//813 gets all of 313's incompatibilities
-		//Check constr for partassign somewhere
+		
 		//All 500 level courses should be incompatible with one another
+		for(int id : fourthYearCourses) {
+			prob.Assignables[id].incompatible.addAll(fourthYearCourses);
+			prob.Assignables[id].incompatible.remove(id);
+		}
 		
 		//Check if we have a full solution.
 		if(!Arrays.asList(partAssign.assign).contains(-1))
@@ -217,6 +223,10 @@ public class Parser {
 				// Matches and extracts lines of the form: CourseCode, CourseNum, LEC, LecNum
 				if(m.group(1).equals("813") || m.group(1).equals("913"))
 					eveningTestIds.add(newCourse.id);
+				
+				//If it's a 500 level course
+				if(m.group(1).charAt(0) == '5')
+					fourthYearCourses.add(newCourse.id);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.
 	    		if (line.trim().length() == 0) return;
