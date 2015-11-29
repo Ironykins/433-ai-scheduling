@@ -246,24 +246,13 @@ public class Evaluator {
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
 	 */
-	public double evalPref(State st)
-	{
-		double dPrefTotal = 0;
-		int iIndex = 0;
-		
-		while( iIndex < st.assign.length )
-		{
-			if( st.assign[iIndex] == -1 )
-			{
-				iIndex++;
-				continue;
+	public double evalPref(State st){
+		double dPrefTotal = 0;		
+		for(int i = 0; i < prob.numberOfAssignables; i++){
+			if( st.assign[i] != -1 ){
+				dPrefTotal += prob.getPreferences()[i][st.assign[i]];
 			}
-			
-			dPrefTotal += prob.getPreferences()[iIndex][st.assign[iIndex]];
-			
-			iIndex++;
 		}
-		
 		return dPrefTotal;
 	}
 	
@@ -274,42 +263,23 @@ public class Evaluator {
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
 	 */
-	public double evalSecDiff(State st) 
-	{
+	public double evalSecDiff(State st) {
 		double dSecDiffTotal = 0;
-		int iIndexOuter = 0;
-		
-		while( iIndexOuter < st.assign.length )
-		{
-			if( ( st.assign[iIndexOuter] == -1 ) || ( !prob.Assignables[iIndexOuter].isCourse ) )
-			{
-				iIndexOuter++;
-				continue;
-			}
-		
-			int iIndexInner = 0;
-			
-			while( iIndexInner < st.assign.length )
-			{
-				if( ( st.assign[iIndexInner] == -1 ) || (iIndexInner == iIndexOuter) )
-				{
-					iIndexInner++;
-					continue;
-				}
-				
-				if( st.assign[iIndexInner] == st.assign[iIndexOuter] )
-				{
-					if( prob.Assignables[iIndexOuter].name.substring(0, 8) == prob.Assignables[iIndexInner].name.substring(0, 8) )
-						dSecDiffTotal++;
-				}
-					
-				iIndexInner++;
+
+		for(int i = 0; i < prob.numberOfAssignables; i++){
+			if(( st.assign[i] != -1) && (prob.Assignables[i].isCourse)){
+				for(int j = 0; j < prob.numberOfAssignables; j++){
+					if(( st.assign[j] == st.assign[i] ) && (i != j)){
+						if( prob.Assignables[i].name.substring(0, 8) == prob.Assignables[j].name.substring(0, 8) ){
+							dSecDiffTotal++;
+						}
+					}
+				}	
 			}
 			
-			iIndexOuter++;
 		}
 		
-		return dSecDiffTotal;
+		return dSecDiffTotal*pen_section;
 	}
 	
 	/**
@@ -318,34 +288,23 @@ public class Evaluator {
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
 	 */
-	public double evalPair(State st)
-	{
-		double dPairTotal = 0;
-		int iIndex = 0;
-		
+	public double evalPair(State st){
+		double notPaired = 0;		
 		// Loop through the current states assigned courses/labs
-		while( iIndex < st.assign.length )
-		{
+		for(int i = 0; i < prob.numberOfAssignables; i++){
 			// If this course/lab hasn't been assigned, ignore it
-			if( st.assign[iIndex] == -1 )
-			{
-				iIndex++;
-				continue;
+			if( st.assign[i] != -1 ){
+				// Loop through this course/labs Pair vector, for each pairing check if it's paired
+				for( int j = 0; j < prob.Assignables[i].paired.size(); j++ ){
+					int iPair = prob.Assignables[i].paired.get( j );
+					if( st.assign[i] != st.assign[iPair] ){
+						notPaired++;
+					}
+				}
 			}
-			
-			// Loop through this course/labs Pair vector, for each pairing check if it's paired
-			for( int iPairIndex = 0; iPairIndex < prob.Assignables[iIndex].paired.size(); iPairIndex++ )
-			{
-				int iPair = prob.Assignables[iIndex].paired.get( iPairIndex );
-				
-				if( st.assign[iIndex] == st.assign[iPair] )
-					dPairTotal++;
-			}
-			
-			iIndex++;
 		}		
 		
-		return ((dPairTotal/2) * pen_notpaired);
+		return ((notPaired/2) * pen_notpaired);
 	}
 	
 	/**
@@ -373,8 +332,15 @@ public class Evaluator {
 	 * @return The change in eval-value. This can be negative.
 	 */
 	private double deltaEvalSecDiff(State st, int aIndex, int sIndex){
-		// TODO
-		return 1;
+		double dSecDiffTotal = 0.0;
+		for(int j = 0; j < prob.numberOfAssignables; j++){
+			if(( st.assign[j] == sIndex ) && (aIndex != j)){
+				if( prob.Assignables[aIndex].name.substring(0, 8) == prob.Assignables[j].name.substring(0, 8) ){
+					dSecDiffTotal++;
+				}
+			}
+		}		
+		return dSecDiffTotal;
 	}
 	
 	/**
@@ -386,8 +352,16 @@ public class Evaluator {
 	 * @return The change in eval-value. This can be negative.
 	 */
 	private double deltaEvalPair(State st, int aIndex, int sIndex) {
-		// TODO Auto-generated method stub
-		return 1;
+		double notPaired = 0;		
+		// Loop through the current states assigned courses/labs
+			// Loop through this course/labs Pair vector, for each pairing check if it's paired
+			for( int j = 0; j < prob.Assignables[aIndex].paired.size(); j++ ){
+				int iPair = prob.Assignables[aIndex].paired.get( j );
+				if( sIndex != st.assign[iPair] ){
+					notPaired++;
+				}
+			}		
+		return ((notPaired/2) * pen_notpaired);
 	}
 	
 	/**
@@ -398,10 +372,10 @@ public class Evaluator {
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
 	 */
-	private double deltaEvalPref(State st, int aIndex, int sIndex) {
-		// TODO Auto-generated method stub
-		return 1;
+	private double deltaEvalPref(State st, int aIndex, int sIndex) {		
+		return prob.getPreferences()[aIndex][sIndex];
 	}
+
 	
 	/**
 	 * Calculate the change in Eval due to minimum constraints being filled.
@@ -412,7 +386,26 @@ public class Evaluator {
 	 * @return The change in eval-value. This can be negative.
 	 */
 	private double deltaEvalMinFilled(State st, int aIndex, int sIndex) {
-		// TODO Auto-generated method stub
-		return 1;
+		/*int missingCourses = 0;
+		int missingLabs = 0;
+		for(int i = 0; i < prob.numberOfSlots; i++){
+			if((prob.Slots[i].getCourseMin() > st.numOfCourses[i])){
+				missingCourses += (prob.Slots[i].getCourseMin() - st.numOfCourses[i]);
+			}
+			if(((prob.Slots[i].getLabMin() > st.numOfLabs[i]))){
+				missingLabs += (prob.Slots[i].getLabMin() - st.numOfLabs[i]);
+			}
+		}
+		Pair remaining = countRemaining(st);
+		int missingTotal = 0;
+		if(missingCourses > remaining.first){
+			missingTotal += (missingCourses - remaining.first)*pen_coursemin;
+		}
+		if(missingLabs > remaining.second){
+			missingTotal += (missingLabs - remaining.second)*pen_labmin;
+		}
+		return missingTotal;*/
+		return 0;
 	}
+	
 }
