@@ -63,7 +63,7 @@ public class Evaluator {
 	 *  @return True if the state is valid. False otherwise.
 	 */
 	public boolean Constr(State state){
-		System.out.println(state.toString());
+		//System.out.println(state.toString());
 		System.out.printf("Constr Check\n############\nStateID = %d\nmaxCheck: %b\ncompatibleCheck: %b\nunwantedCheck: %b\nnightCheck: %b\n",state.stateId,maxCheck(state),compatibleCheck(state),unwantedCheck(state),nightCheck(state));
 		return (maxCheck(state) && compatibleCheck(state) && unwantedCheck(state) && nightCheck(state) );
 
@@ -163,12 +163,12 @@ public class Evaluator {
 	}
 	
 	// Checks that the all of the currently scheduled assignables are compatible with the given assignable
-	private  boolean deltaCompatibleCheck(State state, int aIndex, int sIndex){
-		for(int i=0; i<state.assign.length; i++)
-			//If an assignment has the same slot, it can't be incompatible with this assignable.
-			if(state.assign[i] == sIndex && prob.Assignables[i].unwanted.contains(aIndex))
-				return false;
-				
+
+	private boolean deltaCompatibleCheck(State state, int aIndex, int sIndex){
+		for(int i=0; i<prob.Assignables[aIndex].incompatible.size();i++){
+			if(state.assign[prob.Assignables[aIndex].incompatible.elementAt(i)] == sIndex) return false;
+		}
+
 		return true;
 	}
 

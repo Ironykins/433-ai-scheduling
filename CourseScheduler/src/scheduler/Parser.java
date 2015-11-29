@@ -31,7 +31,10 @@ public class Parser {
 	//Later cast to arrays.
 	private Vector<Assignable> assignables;
 	private Vector<Slot> slots;
-	private Vector<Integer> eveningTestIds; //CPSC 813 and 913 and stuff.
+	private int cpsc813id = -1;
+	private int cpsc913id = -1;
+	private Vector<Integer> incompatible813;
+	private Vector<Integer> incompatible913;
 	private Vector<Integer> fourthYearCourses; //All 500-level courses.
 	private String name;
 	private State partAssign;
@@ -40,8 +43,9 @@ public class Parser {
 	public Parser() {
 		assignables = new Vector<Assignable>();
 		slots = new Vector<Slot>();
-		eveningTestIds = new Vector<Integer>();
 		fourthYearCourses = new Vector<Integer>();
+		incompatible813 = new Vector<Integer>();
+		incompatible913 = new Vector<Integer>();
 		
 		//Matches and extracts lines of the form: DD, HH:MM, INT, INT
 		slotPattern = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9]*)[\\s]*,[\\s]*([0-9]*)[\\s]*$");
@@ -118,12 +122,13 @@ public class Parser {
 	private void postProcess(Problem prob) {
 		//Add 813 and 913 -> TU 18:00 - 19:00 to partassign
 		int slotId = prob.getSlotId("TU", "18:00");
-		for(int id : eveningTestIds) {
-			partAssign.assign[id] = slotId;
-		}
 		
-		//913 gets all of 413's incompatibilities
-		//813 gets all of 313's incompatibilities
+		if(cpsc813id != -1) partAssign.assign[cpsc813id] = slotId;
+		if(cpsc913id != -1) partAssign.assign[cpsc913id] = slotId;
+		
+		//913 is incompatible with 413 incompatibilities.
+		for(int id : incompatible813) prob.Assignables[cpsc813id].incompatible.add(id);
+		for(int id : incompatible913) prob.Assignables[cpsc913id].incompatible.add(id);
 		
 		//All 500 level courses should be incompatible with one another
 		for(int id : fourthYearCourses) {
@@ -133,7 +138,7 @@ public class Parser {
 		
 		//Check if we have a full solution.
 		if(!Arrays.asList(partAssign.assign).contains(-1))
-			partAssign.setIsFullSolution(true);
+			partAssign.setIsFullSolution(false);
 			
 		//Initialize its value.
 		partAssign.setValue(prob.evaluator.eval(partAssign));
@@ -220,9 +225,8 @@ public class Parser {
 				Assignable newCourse = new Assignable(assignableIndex++, name, true, Integer.parseInt(m.group(3)));
 				assignables.add(newCourse);
 				
-				// Matches and extracts lines of the form: CourseCode, CourseNum, LEC, LecNum
-				if(m.group(1).equals("813") || m.group(1).equals("913"))
-					eveningTestIds.add(newCourse.id);
+				if(m.group(1).equals("813")) cpsc813id = newCourse.id;
+				if(m.group(1).equals("913")) cpsc913id = newCourse.id;
 				
 				//If it's a 500 level course
 				if(m.group(1).charAt(0) == '5')
@@ -252,8 +256,6 @@ public class Parser {
 				newLab.setLabNumber(Integer.parseInt(m.group(4)));
 				assignables.add(newLab);
 				String courseName = String.format("%s %s LEC %s", m.group(1), m.group(2), m.group(3) != null ? m.group(3) : "01");
-				
-				
 				
 				//Find the related lecture. Make them both incompatible with one another.
 				boolean found = false;
@@ -290,7 +292,6 @@ public class Parser {
 				Assignable a1 = null;
 				Assignable a2 = null;
 				
-				//First, see if a slot like this one already exists.
 				for(Assignable ass : assignables) {
 					String name1 = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 					String name2 = m.group(2).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
@@ -304,6 +305,13 @@ public class Parser {
 				if(a1 != null && a2 != null) {
 					a1.incompatible.add(a2.id);
 					a2.incompatible.add(a1.id);
+					
+					//813 should inherit all things incompatible with anything 313.
+					//Same for 913 and 413
+					if(a1.name.contains("313"))
+						incompatible813.add(a1.id, a2.id);
+					if(a1.name.contains("413"))
+						incompatible913.add(a1.id, a2.id);
 				}
 				else
 					throw new IllegalStateException(String.format("Tried to add %s to incompatible, but one of the assignables does not exist!", line));
