@@ -279,37 +279,20 @@ public class Evaluator {
 	public double evalSecDiff(State st) 
 	{
 		double dSecDiffTotal = 0;
-		int iIndexOuter = 0;
+		int iIndex = 0;
 		
-		while( iIndexOuter < st.assign.length )
+		while( iIndex < st.assign.length )
 		{
-			if( ( st.assign[iIndexOuter] == -1 ) || ( !prob.Assignables[iIndexOuter].isCourse ) )
+			if( st.assign[iIndex] == -1 )
 			{
-				iIndexOuter++;
+				iIndex++;
 				continue;
 			}
-		
-			int iIndexInner = 0;
 			
-			while( iIndexInner < st.assign.length )
-			{
-				if( ( st.assign[iIndexInner] == -1 ) || (iIndexInner == iIndexOuter) )
-				{
-					iIndexInner++;
-					continue;
-				}
-				
-				if( st.assign[iIndexInner] == st.assign[iIndexOuter] )
-				{
-					if( prob.Assignables[iIndexOuter].name.substring(0, 8) == prob.Assignables[iIndexInner].name.substring(0, 8) )
-						dSecDiffTotal++;
-				}
-					
-				iIndexInner++;
-			}
+			// TODO figure this shit out
+			dSecDiffTotal;
 			
-			
-			iIndexOuter++;
+			iIndex++;
 		}
 		
 		return dSecDiffTotal;
@@ -376,7 +359,8 @@ public class Evaluator {
 	 */
 	private double deltaEvalSecDiff(State st, int aIndex, int sIndex)
 	{
-		// TODO Auto-generated method stub
+		
+		
 		return 1;
 	}
 	
@@ -388,9 +372,8 @@ public class Evaluator {
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
 	 */
-	private double deltaEvalPair(State st, int aIndex, int sIndex) 
-	{
-		
+	private double deltaEvalPair(State st, int aIndex, int sIndex) {
+		// TODO Auto-generated method stub
 		return 1;
 	}
 	
