@@ -106,6 +106,9 @@ public class State {
 	public boolean isFullSolution() {
 		return fullSolution;
 	}
+	public void setIsFullSolution(boolean fullSolution) {
+		this.fullSolution= fullSolution ;
+	}
 	public double getValue() {
 		return value;
 	}
