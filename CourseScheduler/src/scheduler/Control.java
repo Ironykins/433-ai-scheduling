@@ -52,22 +52,23 @@ public class Control {
 			//take the head of our list
 			//System.out.println("States: "+ stateStack.size());
 			State st = stateStack.pop();
-
 			
-			if(st.isFullSolution() ) {
-				//If it's better than our best, it becomes our new best.
-				if(bestSol == null || bestSol.getValue() > st.getValue()) {
+			//If it's worse than our current best we just ignore it
+			if(bestSol == null || bestSol.getValue() > st.getValue()) {
+				
+				if(st.isFullSolution() ){
 					bestSol = st;
 					System.out.printf("Best Solution Found!\n%s\nHeads popped = %d\nStates in list = %d\n", bestSol.toString(),headsPopped,stateStack.size());
+				} else {
+					//generate a list of valid child states
+					//add our children to the front of the queue, should probably order them before this
+					/***************
+					 * Here we need to order the children so the first element in the list after we add all of them is the child we want to expand
+					***************/
+					System.out.printf("current heads val = %d",st.getValue());
+					LinkedList<State> children = createChildren(st);
+					if(children != null) stateStack.addAll(children);
 				}
-			} else {
-				//generate a list of valid child states
-				//add our children to the front of the queue, should probably order them before this
-				/***************
-				 * Here we need to order the children so the first element in the list after we add all of them is the child we want to expand
-				***************/
-				LinkedList<State> children = createChildren(st);
-				if(children != null) stateStack.addAll(children);
 			}
 		}
 		
