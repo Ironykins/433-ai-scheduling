@@ -63,23 +63,21 @@ public class Evaluator {
 	 *  @return True if the state is valid. False otherwise.
 	 */
 	public boolean Constr(State state){
-		if(maxCheck(state) && compatibleCheck(state) && unwantedCheck(state) && nightCheck(state) ){
-			return true;
-		}
-		return false;
+		System.out.println(state.toString());
+		System.out.printf("Constr Check\n############\nStateID = %d\nmaxCheck: %b\ncompatibleCheck: %b\nunwantedCheck: %b\nnightCheck: %b\n",state.stateId,maxCheck(state),compatibleCheck(state),unwantedCheck(state),nightCheck(state));
+		return (maxCheck(state) && compatibleCheck(state) && unwantedCheck(state) && nightCheck(state) );
+
 	}
 	//Checks that any assignables with LEC 9 are scheduled after 18:00 (NIGHT_TIME)
 	private boolean nightCheck(State state){
-		int i = 0;
-		while((state.assign[i] != -1) || (i < state.assign.length )){
-			if(( prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse)){
+		for(int i = 0; i<state.assign.length; i++){
+			if( (prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse) && (state.assign[i] != -1)){
 				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)<= 0){
-					return true;
+					return false;
 				}
 			}
-			i++;
 		}
-		return false;
+		return true;
 	}
 	
 	// Checks the labs and courses are not over the limit of any slot
@@ -96,8 +94,9 @@ public class Evaluator {
 	// Checks that the all of the currently scheduled assignables are compatible with each other
 	private boolean compatibleCheck(State state){
 		for(int i = 0; i < prob.numberOfAssignables; i++){
-			for( int incompatible : prob.Assignables[i].incompatible){
-				if(state.assign[incompatible] == state.assign[i]){
+			for(int j = 0; j<prob.Assignables[i].incompatible.size();j++){
+				int k = prob.Assignables[i].incompatible.elementAt(j);
+				if(state.assign[k] == state.assign[i] && state.assign[i] != -1){
 					return false;
 				}
 			}
@@ -108,7 +107,7 @@ public class Evaluator {
 	// Check that all assignables are not in an unwanted slot
 	private boolean unwantedCheck(State state){
 		for(int i = 0; i < prob.numberOfAssignables; i++){
-			if( prob.Assignables[i].unwanted.contains(state.assign[i])){
+			if(prob.Assignables[i].unwanted.contains(state.assign[i])){
 				return false;
 			}
 		}
@@ -271,7 +270,7 @@ public class Evaluator {
 	
 	
 	/**
-	 * Computes the eval-penalty resulting from not having different sections taught in different slots.
+	 * Computes the eval-penalty resulting from having different sections taught in the same slot.
 	 * 
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
@@ -290,7 +289,7 @@ public class Evaluator {
 			}
 			
 			// TODO figure this shit out
-			dSecDiffTotal;
+			//dSecDiffTotal;
 			
 			iIndex++;
 		}
