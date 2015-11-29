@@ -81,7 +81,7 @@ public class Evaluator {
 	}
 	
 	// Checks the labs and courses are not over the limit of any slot
-	public boolean maxCheck(State state){
+	private boolean maxCheck(State state){
 		for (int i = 0; i< prob.numberOfSlots; i++){
 			if((state.numOfCourses[i] > prob.Slots[i].getCourseMax()) ||
 				(state.numOfLabs[i] > prob.Slots[i].getLabMax())){
@@ -92,7 +92,7 @@ public class Evaluator {
 	}
 	
 	// Checks that the all of the currently scheduled assignables are compatible with each other
-	public boolean compatibleCheck(State state){
+	private boolean compatibleCheck(State state){
 		for(int i = 0; i < prob.numberOfAssignables; i++){
 			for(int j = 0; j<prob.Assignables[i].incompatible.size();j++){
 				int k = prob.Assignables[i].incompatible.elementAt(j);
@@ -105,7 +105,7 @@ public class Evaluator {
 	}
 
 	// Check that all assignables are not in an unwanted slot
-	public boolean unwantedCheck(State state){
+	private boolean unwantedCheck(State state){
 		for(int i = 0; i < prob.numberOfAssignables; i++){
 			if(prob.Assignables[i].unwanted.contains(state.assign[i])){
 				return false;
