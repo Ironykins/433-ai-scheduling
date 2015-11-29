@@ -70,14 +70,12 @@ public class Evaluator {
 	}
 	//Checks that any assignables with LEC 9 are scheduled after 18:00 (NIGHT_TIME)
 	private boolean nightCheck(State state){
-		int i = 0;
-		while((state.assign[i] != -1) || (i < state.assign.length )){
+		for(int i = 0;i<state.assign.length;i++){
 			if(( prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse)){
-				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)<= 0){
+				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)>= 0){
 					return true;
 				}
 			}
-			i++;
 		}
 		return false;
 	}
@@ -96,8 +94,8 @@ public class Evaluator {
 	// Checks that the all of the currently scheduled assignables are compatible with each other
 	private boolean compatibleCheck(State state){
 		for(int i = 0; i < prob.numberOfAssignables; i++){
-			for( int incompatible : prob.Assignables[i].incompatible){
-				if(state.assign[incompatible] == state.assign[i]){
+			for(int j = 0; j<prob.Assignables[i].incompatible.size();j++){
+				if(state.assign[j] == state.assign[i]){
 					return false;
 				}
 			}
@@ -108,7 +106,7 @@ public class Evaluator {
 	// Check that all assignables are not in an unwanted slot
 	private boolean unwantedCheck(State state){
 		for(int i = 0; i < prob.numberOfAssignables; i++){
-			if( prob.Assignables[i].unwanted.contains(state.assign[i])){
+			if(prob.Assignables[i].unwanted.contains(state.assign[i])){
 				return false;
 			}
 		}
@@ -271,7 +269,7 @@ public class Evaluator {
 	
 	
 	/**
-	 * Computes the eval-penalty resulting from not having different sections taught in different slots.
+	 * Computes the eval-penalty resulting from having different sections taught in the same slot.
 	 * 
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
@@ -290,7 +288,7 @@ public class Evaluator {
 			}
 			
 			// TODO figure this shit out
-			dSecDiffTotal;
+			//dSecDiffTotal;
 			
 			iIndex++;
 		}
