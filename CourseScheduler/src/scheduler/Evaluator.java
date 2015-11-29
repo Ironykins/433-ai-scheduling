@@ -131,7 +131,8 @@ public class Evaluator {
 	 *  @return True if the assignment can be made without violating hard constraints.
 	 */
 	public boolean deltaConstr(State state, int aIndex, int sIndex){
-		return deltaMaxCheck(state, aIndex, sIndex) && 
+	
+		return  deltaMaxCheck(state, aIndex, sIndex) && 
 				deltaCompatibleCheck(state, aIndex, sIndex) && 
 				deltaUnwantedCheck(aIndex, sIndex) &&
 				deltaNightCheck(state, aIndex, sIndex);
@@ -143,7 +144,7 @@ public class Evaluator {
 	{
 		if( prob.Assignables[aIndex].sectionNumber == 9)
 		{
-			if(prob.Slots[sIndex].startTime.compareTo(NIGHT_TIME) < 0)
+			if(prob.Slots[sIndex].startTime.compareTo(NIGHT_TIME) <= 0)
 				return false;
 		}
 		
@@ -171,7 +172,7 @@ public class Evaluator {
 
 	// Check that the given assignable is not in an unwanted slot
 	private boolean deltaUnwantedCheck(int aIndex, int sIndex){
-		return prob.Assignables[aIndex].unwanted.contains(sIndex);
+		return !(prob.Assignables[aIndex].unwanted.contains(sIndex));
 	}
 	
 	/**
