@@ -155,15 +155,15 @@ public class Evaluator {
 	
 	
 	// Checks the labs or courses will not be over the limit if we assign.
-	private boolean deltaMaxCheck(State state, int aIndex, int sIndex) {
+	private  boolean deltaMaxCheck(State state, int aIndex, int sIndex) {
 		if(prob.Assignables[aIndex].isCourse)
-			return state.numOfCourses[sIndex] < prob.Slots[sIndex].getCourseMax();
+			return (state.numOfCourses[sIndex]+1) <= prob.Slots[sIndex].getCourseMax();
 		else
 			return state.numOfLabs[sIndex] < prob.Slots[sIndex].getLabMax();
 	}
 	
 	// Checks that the all of the currently scheduled assignables are compatible with the given assignable
-	private boolean deltaCompatibleCheck(State state, int aIndex, int sIndex){
+	private  boolean deltaCompatibleCheck(State state, int aIndex, int sIndex){
 		for(int i=0; i<state.assign.length; i++)
 			//If an assignment has the same slot, it can't be incompatible with this assignable.
 			if(state.assign[i] == sIndex && prob.Assignables[i].unwanted.contains(aIndex))
@@ -173,7 +173,7 @@ public class Evaluator {
 	}
 
 	// Check that the given assignable is not in an unwanted slot
-	private boolean deltaUnwantedCheck(int aIndex, int sIndex){
+	private  boolean deltaUnwantedCheck(int aIndex, int sIndex){
 		return !(prob.Assignables[aIndex].unwanted.contains(sIndex));
 	}
 	

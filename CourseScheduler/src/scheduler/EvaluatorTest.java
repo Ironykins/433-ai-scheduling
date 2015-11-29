@@ -100,6 +100,27 @@ public class EvaluatorTest{
 		testState.assign = new int[]{0,1,2,3,4};
 		assertFalse(testEval.Constr(testState));
 	}
+	
+	@Test
+	public void evalsConstr5(){
+
+		testState.assign = new int[]{-1,-1,-1,-1,4};
+		assertTrue(testEval.deltaConstr(testState, 2, 3));
+	}
+	@Test
+	public void evalsConstr6(){
+
+		testState.assign = new int[]{-1,-1,-1,-1,4};
+		assertFalse(testEval.deltaConstr(testState, 2, 2));
+	}
+	
+	@Test
+	public void evalsConstr7(){
+
+		testState.assign = new int[]{0,-1,-1,-1,4};
+		testState.numOfCourses[0] = 1;
+		assertFalse(testEval.deltaConstr(testState, 2, 0));
+	}
 /*	@Test
 	public void evalsMaxCheck(){
 		assertTrue(testEval.maxCheck(testState));
