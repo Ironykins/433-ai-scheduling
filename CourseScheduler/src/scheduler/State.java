@@ -57,7 +57,7 @@ public class State {
 		this.prob = parent.prob;
 		this.numOfCourses = new int[parent.numOfCourses.length];
 		this.numOfLabs = new int[parent.numOfLabs.length];
-		this.fullSolution = parent.fullSolution;
+		this.fullSolution = false;
 		this.value = parent.getValue();
 		System.arraycopy(parent.assign, 0, this.assign, 0, this.assign.length);
 		System.arraycopy(parent.numOfCourses, 0, this.numOfCourses, 0, this.numOfCourses.length);

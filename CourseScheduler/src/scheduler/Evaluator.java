@@ -63,16 +63,16 @@ public class Evaluator {
 	 *  @return True if the state is valid. False otherwise.
 	 */
 	public boolean Constr(State state){
-		if(maxCheck(state) && compatibleCheck(state) && unwantedCheck(state) && nightCheck(state) ){
-			return true;
-		}
-		return false;
+		System.out.println(state.toString());
+		System.out.printf("Constr Check\n############\nStateID = %d\nmaxCheck: %b\ncompatibleCheck: %b\nunwantedCheck: %b\nnightCheck: %b\n",state.stateId,maxCheck(state),compatibleCheck(state),unwantedCheck(state),nightCheck(state));
+		return (maxCheck(state) && compatibleCheck(state) && unwantedCheck(state) && nightCheck(state) );
+
 	}
 	//Checks that any assignables with LEC 9 are scheduled after 18:00 (NIGHT_TIME)
 	private boolean nightCheck(State state){
-		for(int i = 0;i<state.assign.length;i++){
-			if((state.assign[i] != -1) && ( prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse)){
-				if(!(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)>= 0)){
+		for(int i = 0; i<state.assign.length; i++){
+			if( (prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse) && (state.assign[i] != -1)){
+				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)<= 0){
 					return false;
 				}
 			}
@@ -95,7 +95,8 @@ public class Evaluator {
 	private boolean compatibleCheck(State state){
 		for(int i = 0; i < prob.numberOfAssignables; i++){
 			for(int j = 0; j<prob.Assignables[i].incompatible.size();j++){
-				if(state.assign[j] == state.assign[i]){
+				int k = prob.Assignables[i].incompatible.elementAt(j);
+				if(state.assign[k] == state.assign[i] && state.assign[i] != -1){
 					return false;
 				}
 			}
