@@ -14,7 +14,7 @@ public class Main {
 	 * Prints the blurb telling you how to use the program, and exits.
 	 */
 	public static void printUsage() {
-		System.err.println("Usage: CourseScheduler [-pcm <pen_coursemin>] [-plm <pen_labmin>]  [-ps <pen_section> ] [-w <weight minFilled> <weight Preferences> <weight Pair> <weight secDiff>] <input filename>");
+		System.err.println("Usage: CourseScheduler [-pcm <pen_coursemin>] [-plm <pen_labmin>]  [-ps <pen_section> ] [-pnp <pen_notpaired>] [-w <weight minFilled> <weight Preferences> <weight Pair> <weight secDiff>] <input filename>");
 		System.exit(1);
 	}
 	/**
@@ -36,6 +36,7 @@ public class Main {
 		int pen_coursemin = 5;
 		int pen_labmin = 5;
 		int pen_section = 5;
+		int pen_notpaired = 5;
 		
 		Parser parse = new Parser();
 		Problem prob = null;
@@ -49,6 +50,7 @@ public class Main {
 					case "-pcm": pen_coursemin = Integer.parseInt(args[++i]); break;
 					case "-plm": pen_labmin = Integer.parseInt(args[++i]); break;
 					case "-ps": pen_section = Integer.parseInt(args[++i]); break;
+					case "-pnp": pen_notpaired = Integer.parseInt(args[++i]); break;
 					case "-w": 
 						wMinFilled = Double.parseDouble(args[++i]);
 						wPref = Double.parseDouble(args[++i]);
@@ -80,6 +82,7 @@ public class Main {
 		prob.evaluator.setPen_coursemin(pen_coursemin);
 		prob.evaluator.setPen_labmin(pen_labmin);
 		prob.evaluator.setPen_section(pen_section);
+		prob.evaluator.setPen_notpaired(pen_notpaired);
 		prob.evaluator.setwMinFilled(wMinFilled);
 		prob.evaluator.setwPair(wPair);
 		prob.evaluator.setwPref(wPref);
