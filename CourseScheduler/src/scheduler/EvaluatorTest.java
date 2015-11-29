@@ -37,7 +37,7 @@ public class EvaluatorTest{
 		slots[4] = new Slot(4, "TU", "08:00");
 		
 		slots[0].setCourseMax(1);
-		slots[0].setCourseMin(0);
+
 		slots[0].setLabMax(1);
 		slots[0].setLabMin(0);
 		
