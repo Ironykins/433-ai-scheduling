@@ -32,7 +32,7 @@ public class State {
 	public int numOfCourses[];
 	public int numOfLabs[];
 	private double value; //AKA the Eval-Value
-	private long stateId;
+	public long stateId;
 	private boolean fullSolution;
 
 	//TODO: Function to find lab/course bases on time and day

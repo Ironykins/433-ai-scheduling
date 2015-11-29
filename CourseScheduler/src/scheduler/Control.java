@@ -33,9 +33,9 @@ public class Control {
 			int maxStates = 0;
 			while(!stateStack.isEmpty()) {
 				//this turns it into an or tree
-				//if(bestSol != null) break;
+				if(bestSol != null) break;
 				if(stateStack.size()>maxStates) maxStates = stateStack.size();
-				if(headsPopped % 10000000 == 0) System.out.printf("@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\nMax States in the list :%d\n@@@@@@@@@@@@@@@@@@@@@@@@\n bestSol?: %b\n",headsPopped,maxStates,(bestSol == null));
+				if(headsPopped % 10000000 == 0) System.out.printf("@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\nMax States in the list :%d\nbestSol?: %b\n@@@@@@@@@@@@@@@@@@@@@@@@\n",headsPopped,maxStates,!(bestSol == null));
 
 				expandHead();
 				headsPopped++;
@@ -50,6 +50,7 @@ public class Control {
 		 */
 		private void expandHead(){
 			//take the head of our list
+			//System.out.println("States: "+ stateStack.size());
 			State st = stateStack.pop();
 
 			
@@ -94,7 +95,7 @@ public class Control {
 			
 			//now we want to put it in every available slot.
 			if(aIndex ==-1) return null;
-			
+			//System.out.printf("State Number : %d\n%s\n",st.stateId,st.toString());
 			for(int sIndex=0;sIndex<prob.Slots.length;sIndex++){
 				//if() //if this is a valid assignment
 				if(prob.evaluator.deltaConstr(st, aIndex, sIndex))
