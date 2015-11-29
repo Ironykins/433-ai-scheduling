@@ -65,7 +65,7 @@ public class Control {
 					/***************
 					 * Here we need to order the children so the first element in the list after we add all of them is the child we want to expand
 					***************/
-					System.out.printf("current heads val = %d",st.getValue());
+					System.out.printf("current heads val = %f\n",st.getValue());
 					LinkedList<State> children = createChildren(st);
 					if(children != null) stateStack.addAll(children);
 				}

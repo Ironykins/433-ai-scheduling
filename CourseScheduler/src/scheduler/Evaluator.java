@@ -357,7 +357,8 @@ public class Evaluator {
 	 * @return The change in eval-value. This can be negative.
 	 */
 	public double deltaEval(State st, int aIndex, int sIndex) {
-		return deltaEvalMinFilled(st, aIndex, sIndex) * wMinFilled + 
+		return  st.getValue() +
+				deltaEvalMinFilled(st, aIndex, sIndex) * wMinFilled + 
 				deltaEvalPref(st, aIndex, sIndex) * wPref +
 				deltaEvalPair(st, aIndex, sIndex) * wPair + 
 				deltaEvalSecDiff(st, aIndex, sIndex) * wSecDiff;
@@ -371,10 +372,8 @@ public class Evaluator {
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
 	 */
-	private double deltaEvalSecDiff(State st, int aIndex, int sIndex)
-	{
-		
-		
+	private double deltaEvalSecDiff(State st, int aIndex, int sIndex){
+		// TODO
 		return 1;
 	}
 	
