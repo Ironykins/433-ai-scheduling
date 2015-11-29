@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Arrays;
 import java.util.Vector;
 
 /**
@@ -30,6 +31,7 @@ public class Parser {
 	//Later cast to arrays.
 	private Vector<Assignable> assignables;
 	private Vector<Slot> slots;
+	private Vector<Integer> eveningTestIds; //CPSC 813 and 913 and stuff.
 	private String name;
 	private State partAssign;
 	private int[][] preferences;
@@ -37,6 +39,7 @@ public class Parser {
 	public Parser() {
 		assignables = new Vector<Assignable>();
 		slots = new Vector<Slot>();
+		eveningTestIds = new Vector<Integer>();
 		
 		//Matches and extracts lines of the form: DD, HH:MM, INT, INT
 		slotPattern = Pattern.compile("^([A-Z]{2})[\\s]*,[\\s]*([0-9]{1,2}:[0-9]{2})[\\s]*,[\\s]*([0-9]*)[\\s]*,[\\s]*([0-9]*)[\\s]*$");
@@ -104,9 +107,32 @@ public class Parser {
 	    partAssign.setProb(prob);
 	    prob.setPartAssign(partAssign);
 	    prob.setPreferences(preferences);
+	    postProcess(prob);
 	    return prob;
 	}
 	
+	//Does some post-processing on the problem.
+	//Most of these are to address annoying little bits of the problem spec.
+	private void postProcess(Problem prob) {
+		//Add 813 and 913 -> TU 18:00 - 19:00 to partassign
+		int slotId = prob.getSlotId("TU", "18:00");
+		for(int id : eveningTestIds) {
+			partAssign.assign[id] = slotId;
+		}
+		
+		//913 gets all of 413's incompatibilities
+		//813 gets all of 313's incompatibilities
+		//Check constr for partassign somewhere
+		//All 500 level courses should be incompatible with one another
+		
+		//Check if we have a full solution.
+		if(!Arrays.asList(partAssign.assign).contains(-1))
+			partAssign.setIsFullSolution(true);
+			
+		//Initialize its value.
+		partAssign.setValue(prob.evaluator.eval(partAssign));
+	}
+
 	//Parse the name field of the input.
 	private void parseName(BufferedReader br) throws IOException {
 		String line;
@@ -187,6 +213,10 @@ public class Parser {
 				String name = m.group(0).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 				Assignable newCourse = new Assignable(assignableIndex++, name, true, Integer.parseInt(m.group(3)));
 				assignables.add(newCourse);
+				
+				// Matches and extracts lines of the form: CourseCode, CourseNum, LEC, LecNum
+				if(m.group(1).equals("813") || m.group(1).equals("913"))
+					eveningTestIds.add(newCourse.id);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.
 	    		if (line.trim().length() == 0) return;
@@ -212,6 +242,8 @@ public class Parser {
 				newLab.setLabNumber(Integer.parseInt(m.group(4)));
 				assignables.add(newLab);
 				String courseName = String.format("%s %s LEC %s", m.group(1), m.group(2), m.group(3) != null ? m.group(3) : "01");
+				
+				
 				
 				//Find the related lecture. Make them both incompatible with one another.
 				boolean found = false;
