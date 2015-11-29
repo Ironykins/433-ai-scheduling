@@ -138,7 +138,7 @@ public class State implements Comparable<State> {
 		child.fullSolution = (aIndex == assign.length-1 && prob.evaluator.Constr(child)); 
 		
 		//Get the new value of the child.
-		child.setValue(prob.evaluator.deltaEval(this, aIndex, aIndex));
+		child.setValue(prob.evaluator.deltaEval(this, aIndex, sIndex));
 		/*System.out.println("#######################################################");
 		System.out.println(this.toString());
 		System.out.println(child.toString());
