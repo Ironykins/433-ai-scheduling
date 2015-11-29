@@ -386,7 +386,7 @@ public class Evaluator {
 	 * @return The change in eval-value. This can be negative.
 	 */
 	private double deltaEvalMinFilled(State st, int aIndex, int sIndex) {
-		/*int missingCourses = 0;
+		int missingCourses = 0;
 		int missingLabs = 0;
 		for(int i = 0; i < prob.numberOfSlots; i++){
 			if((prob.Slots[i].getCourseMin() > st.numOfCourses[i])){
@@ -397,14 +397,20 @@ public class Evaluator {
 			}
 		}
 		Pair remaining = countRemaining(st);
-		int missingTotal = 0;
-		if(missingCourses > remaining.first){
-			missingTotal += (missingCourses - remaining.first)*pen_coursemin;
-		}
-		if(missingLabs > remaining.second){
-			missingTotal += (missingLabs - remaining.second)*pen_labmin;
-		}
-		return missingTotal;*/
+		if(prob.Assignables[aIndex].isCourse){
+			if(missingCourses > remaining.first){
+				if(prob.Slots[sIndex].getCourseMin() <= st.numOfCourses[sIndex]){
+					return pen_coursemin;
+				}
+			}
+		}else{
+			if(missingLabs > remaining.second){
+				if(prob.Slots[sIndex].getLabMin() <= st.numOfLabs[sIndex]){
+					return pen_labmin;
+				}
+			}
+			
+		}			
 		return 0;
 	}
 	
