@@ -47,7 +47,6 @@ public class Control {
 		
 		/**
 		 * function takes the head of the list, creates its children, adds them to the front of the list
-		 * TODO:
 		 */
 		private void expandHead(){
 			//take the head of our list
@@ -77,7 +76,6 @@ public class Control {
 		 * function takes a state and creates a list of children states
 		 * @param state the state to be expanded
 		 * @return The children created as a result of the expansion.
-		 * TODO:
 		 */
 		private LinkedList<State> createChildren(State st){
 			//declare the list of children to return
