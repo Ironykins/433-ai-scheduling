@@ -70,14 +70,14 @@ public class Evaluator {
 	}
 	//Checks that any assignables with LEC 9 are scheduled after 18:00 (NIGHT_TIME)
 	private boolean nightCheck(State state){
-		for(int i = 0;i<state.assign.length;i++){
-			if(( prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse)){
-				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)>= 0){
-					return true;
+		for(int i = 0; i<state.assign.length; i++){
+			if( (prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse) && (state.assign[i] != -1)){
+				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)<= 0){
+					return false;
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	// Checks the labs and courses are not over the limit of any slot
