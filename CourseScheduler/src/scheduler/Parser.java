@@ -123,12 +123,14 @@ public class Parser {
 		//Add 813 and 913 -> TU 18:00 - 19:00 to partassign
 		int slotId = prob.getSlotId("TU", "18:00");
 		
-		if(cpsc813id != -1) partAssign.assign[cpsc813id] = slotId;
-		if(cpsc913id != -1) partAssign.assign[cpsc913id] = slotId;
-		
-		//913 is incompatible with 413 incompatibilities.
-		for(int id : incompatible813) prob.Assignables[cpsc813id].incompatible.add(id);
-		for(int id : incompatible913) prob.Assignables[cpsc913id].incompatible.add(id);
+		if(cpsc813id != -1) {
+			partAssign.assign[cpsc813id] = slotId;
+			for(int id : incompatible813) prob.Assignables[cpsc813id].incompatible.add(id);
+		}
+		if(cpsc913id != -1) {
+			partAssign.assign[cpsc913id] = slotId;
+			for(int id : incompatible913) prob.Assignables[cpsc913id].incompatible.add(id);
+		}
 		
 		//All 500 level courses should be incompatible with one another
 		for(int id : fourthYearCourses) {
