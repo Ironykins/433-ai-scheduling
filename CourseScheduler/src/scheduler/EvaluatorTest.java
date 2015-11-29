@@ -26,6 +26,7 @@ public class EvaluatorTest{
 		assignables[4] = new Assignable(4,"CPSC 321 LEC 01 LAB 01",false,1);
 		
 		assignables[3].incompatible.add(4);
+		assignables[4].incompatible.add(3);
 		assignables[0].paired.add(1);
 		assignables[2].unwanted.add(2);
 		
@@ -64,18 +65,63 @@ public class EvaluatorTest{
 		
 		testState = new State(assignables.length, slots.length);
 		
-		testState.assign = new int[]{0,1,3,2,4};
-		
 		testEval = new Evaluator(testProb);
 		
 		
 	}
-/*	
+
 	@Test
 	public void evalsConstr(){
+
+		testState.assign = new int[]{0,1,3,2,4};
 		assertTrue(testEval.Constr(testState));
 	}
+	
+
 	@Test
+	public void evalsConstr2(){
+
+		testState.assign = new int[]{0,0,0,0,0};
+		assertFalse(testEval.Constr(testState));
+	}
+	
+
+	@Test
+	public void evalsConstr3(){
+
+		testState.assign = new int[]{0,2,1,4,4};
+		assertFalse(testEval.Constr(testState));
+	}
+	
+
+	@Test
+	public void evalsConstr4(){
+
+		testState.assign = new int[]{0,1,2,3,4};
+		assertFalse(testEval.Constr(testState));
+	}
+	
+	@Test
+	public void evalsConstr5(){
+
+		testState.assign = new int[]{-1,-1,-1,-1,4};
+		assertTrue(testEval.deltaConstr(testState, 2, 3));
+	}
+	@Test
+	public void evalsConstr6(){
+
+		testState.assign = new int[]{-1,-1,-1,-1,4};
+		assertFalse(testEval.deltaConstr(testState, 2, 2));
+	}
+	
+	@Test
+	public void evalsConstr7(){
+
+		testState.assign = new int[]{0,-1,-1,-1,4};
+		testState.numOfCourses[0] = 1;
+		assertFalse(testEval.deltaConstr(testState, 2, 0));
+	}
+/*	@Test
 	public void evalsMaxCheck(){
 		assertTrue(testEval.maxCheck(testState));
 	}@Test
