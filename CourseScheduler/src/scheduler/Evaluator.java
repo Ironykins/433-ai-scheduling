@@ -64,7 +64,7 @@ public class Evaluator {
 	 */
 	public boolean Constr(State state){
 		//System.out.println(state.toString());
-		System.out.printf("Constr Check\n############\nStateID = %d\nmaxCheck: %b\ncompatibleCheck: %b\nunwantedCheck: %b\nnightCheck: %b\n",state.stateId,maxCheck(state),compatibleCheck(state),unwantedCheck(state),nightCheck(state));
+		//System.out.printf("Constr Check\n############\nStateID = %d\nmaxCheck: %b\ncompatibleCheck: %b\nunwantedCheck: %b\nnightCheck: %b\n",state.stateId,maxCheck(state),compatibleCheck(state),unwantedCheck(state),nightCheck(state));
 		return (maxCheck(state) && compatibleCheck(state) && unwantedCheck(state) && nightCheck(state) );
 
 	}

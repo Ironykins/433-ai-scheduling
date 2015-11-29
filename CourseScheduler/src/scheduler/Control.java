@@ -34,9 +34,14 @@ public class Control {
 			int maxStates = 0;
 			while(!stateStack.isEmpty()) {
 				//this turns it into an or tree
-				if(bestSol != null) break;
+				//if(bestSol != null) break;
 				if(stateStack.size()>maxStates) maxStates = stateStack.size();
-				if(headsPopped % 10000000 == 0) System.out.printf("@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\nMax States in the list :%d\nbestSol?: %b\n@@@@@@@@@@@@@@@@@@@@@@@@\n",headsPopped,maxStates,!(bestSol == null));
+				if(headsPopped % 10000000 == 0) System.out.printf(
+						"@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\nMax States in the list :%d\nbestSol: %d\t%f\n@@@@@@@@@@@@@@@@@@@@@@@@\n"
+						,headsPopped
+						,maxStates
+						,(bestSol == null) ? -1:bestSol.stateId
+						,(bestSol == null) ? -1:bestSol.getValue());
 
 				expandHead();
 				headsPopped++;
@@ -50,7 +55,7 @@ public class Control {
 		 */
 		private void expandHead(){
 			//take the head of our list
-			//System.out.println("States: "+ stateStack.size());
+			//System.out.println("States left in list: "+ stateStack.size());
 			State st = stateStack.pop();
 			
 			//If it's worse than our current best we just ignore it
@@ -58,14 +63,14 @@ public class Control {
 				
 				if(st.isFullSolution() ){
 					bestSol = st;
-					System.out.printf("Best Solution Found!\n%s\nHeads popped = %d\nStates in list = %d\n", bestSol.toString(),headsPopped,stateStack.size());
+					System.out.printf("Better Solution Found!\n%s\nHeads popped = %d\nStates in list = %d\n", bestSol.toString(),headsPopped,stateStack.size());
 				} else {
 					//generate a list of valid child states
 					//add our children to the front of the queue, should probably order them before this
 					/***************
 					 * Here we need to order the children so the first element in the list after we add all of them is the child we want to expand
 					***************/
-					System.out.printf("current heads val = %f\n",st.getValue());
+					//System.out.printf("current heads val = %f\n",st.getValue());
 					LinkedList<State> children = createChildren(st);
 					if(children != null) stateStack.addAll(children);
 				}
@@ -94,10 +99,7 @@ public class Control {
 				}
 			//System.out.println(aIndex);
 			//now we want to put it in every available slot.
-			if(aIndex == -1) return null;
-			if(aIndex == prob.numberOfAssignables-1)
-				System.out.printf("State Number : %d\n%s\n",st.stateId,st.toString());
-			
+			if(aIndex == -1) return null;		
 			for(int sIndex=0;sIndex<prob.Slots.length;sIndex++){
 				//if this is a valid assignment
 				if(prob.evaluator.deltaConstr(st, aIndex, sIndex))
