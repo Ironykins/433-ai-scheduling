@@ -1,5 +1,6 @@
 package scheduler;
 
+import java.util.Collections;
 import java.util.Stack;
 import java.util.LinkedList;
 
@@ -112,6 +113,8 @@ public class Control {
 
 		private LinkedList<State> orderChildren(LinkedList<State> children) {
 			// TODO method to order children somehow. This is where we could change to the OR tree or not
+			if(bestSol == null)
+				Collections.sort(children);
 			return children;
 		}
 }

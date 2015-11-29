@@ -13,7 +13,7 @@ package scheduler;
  * A: I agree that it's not very clean, but there isn't any extra overhead here.
  * 	  prob is a pointer/reference to a problem object. We are still only storing a single problem object in memory.
  */
-public class State {
+public class State implements Comparable<State> {
 	//We may as well keep track of which problem this state is for.
 	private Problem prob;
 	
@@ -144,5 +144,12 @@ public class State {
 		System.out.println(child.toString());
 		System.out.println("#######################################################");*/
 		return child;
+	}
+	
+	@Override
+	public int compareTo(State other) {
+        if (this.value - other.getValue() > 0) return 1;
+        else if(this.value - other.getValue() < 0) return -1;
+        else return 0;
 	}
 }
