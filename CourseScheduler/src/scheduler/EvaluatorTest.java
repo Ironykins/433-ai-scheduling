@@ -73,11 +73,20 @@ public class EvaluatorTest{
 	
 	@Test
 	public void evalsConstr(){
-		//assertTrue(testEval.Constr(testState));
-	//	assertTrue(testEval.maxCheck(testState));
-		//assertTrue(testEval.nightCheck(testState));
-	//	assertTrue(testEval.unwantedCheck(testState));
-//		assertTrue(testEval.compatibleCheck(testState));
+		assertTrue(testEval.Constr(testState));
+	}
+	@Test
+	public void evalsMaxCheck(){
+		assertTrue(testEval.maxCheck(testState));
+	}@Test
+	public void evalsNightCheck(){
+		assertTrue(testEval.nightCheck(testState));
+	}@Test
+	public void evalsUnwantedCheck(){
+		assertTrue(testEval.unwantedCheck(testState));
+	}@Test
+	public void evalsCompatibleCheck(){
+		assertTrue(testEval.compatibleCheck(testState));
 	}
 	
 	
