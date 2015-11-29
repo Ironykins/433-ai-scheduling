@@ -92,12 +92,14 @@ public class Control {
 					aIndex = i;
 					break; 
 				}
-			
+			//System.out.println(aIndex);
 			//now we want to put it in every available slot.
-			if(aIndex ==-1) return null;
-			//System.out.printf("State Number : %d\n%s\n",st.stateId,st.toString());
+			if(aIndex == -1) return null;
+			if(aIndex == prob.numberOfAssignables-1)
+				System.out.printf("State Number : %d\n%s\n",st.stateId,st.toString());
+			
 			for(int sIndex=0;sIndex<prob.Slots.length;sIndex++){
-				//if() //if this is a valid assignment
+				//if this is a valid assignment
 				if(prob.evaluator.deltaConstr(st, aIndex, sIndex))
 					children.push(st.makeChild(aIndex, sIndex));
 					
