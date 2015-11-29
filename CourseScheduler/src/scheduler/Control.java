@@ -1,5 +1,6 @@
 package scheduler;
 
+import java.util.Collections;
 import java.util.Stack;
 import java.util.LinkedList;
 
@@ -46,7 +47,6 @@ public class Control {
 		
 		/**
 		 * function takes the head of the list, creates its children, adds them to the front of the list
-		 * TODO:
 		 */
 		private void expandHead(){
 			//take the head of our list
@@ -76,7 +76,6 @@ public class Control {
 		 * function takes a state and creates a list of children states
 		 * @param state the state to be expanded
 		 * @return The children created as a result of the expansion.
-		 * TODO:
 		 */
 		private LinkedList<State> createChildren(State st){
 			//declare the list of children to return
@@ -112,6 +111,8 @@ public class Control {
 
 		private LinkedList<State> orderChildren(LinkedList<State> children) {
 			// TODO method to order children somehow. This is where we could change to the OR tree or not
+			if(bestSol == null)
+				Collections.sort(children);
 			return children;
 		}
 }
