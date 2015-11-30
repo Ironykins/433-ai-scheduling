@@ -71,7 +71,7 @@ public class Evaluator {
 	//Checks that any assignables with LEC 9 are scheduled after 18:00 (NIGHT_TIME)
 	private boolean nightCheck(State state){
 		for(int i = 0; i<state.assign.length; i++){
-			if( (prob.Assignables[i].sectionNumber == 9) && (prob.Assignables[i].isCourse) && (state.assign[i] != -1)){
+			if( (prob.Assignables[i].isEvening()) && (prob.Assignables[i].isCourse) && (state.assign[i] != -1)){
 				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)<= 0){
 					return false;
 				}
@@ -144,7 +144,7 @@ public class Evaluator {
 	// Lecture 9 has to be at night (Delta version)
 	private boolean deltaNightCheck(State state, int aIndex, int sIndex)
 	{
-		if( prob.Assignables[aIndex].sectionNumber == 9)
+		if( prob.Assignables[aIndex].isEvening())
 		{
 			if(prob.Slots[sIndex].startTime.compareTo(NIGHT_TIME) <= 0)
 				return false;

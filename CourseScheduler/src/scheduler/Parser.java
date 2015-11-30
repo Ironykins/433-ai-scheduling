@@ -231,8 +231,11 @@ public class Parser {
 				if(m.group(1).equals("913")) cpsc913id = newCourse.id;
 				
 				//If it's a 500 level course
-				if(m.group(1).charAt(0) == '5')
+				if(m.group(2).charAt(0) == '5')
 					fourthYearCourses.add(newCourse.id);
+				
+				if(m.group(3).charAt(0) == '9')
+					newCourse.setEvening(true);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.
 	    		if (line.trim().length() == 0) return;
@@ -258,6 +261,9 @@ public class Parser {
 				newLab.setLabNumber(Integer.parseInt(m.group(4)));
 				assignables.add(newLab);
 				String courseName = String.format("%s %s LEC %s", m.group(1), m.group(2), m.group(3) != null ? m.group(3) : "01");
+				
+				if(m.group(3) != null && m.group(3).charAt(0) == '9')
+					newLab.setEvening(true);
 				
 				//Find the related lecture. Make them both incompatible with one another.
 				boolean found = false;
