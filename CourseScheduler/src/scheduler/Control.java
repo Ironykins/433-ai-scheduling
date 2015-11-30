@@ -8,7 +8,8 @@ public class Control {
 		private Problem prob; //contains main problem we want to solve
 		private State bestSol; //best running solution, starts as worst possible solution
 		private Stack<State> stateStack; //queue to hold working states of tree
-		private int headsPopped =1;
+		private long headsPopped =1;
+		private long numBests = 0;
 		/**
 		 * Constructor creates new control for solving prob
 		 * puts the partassign as the head of our queue
@@ -59,11 +60,12 @@ public class Control {
 			State st = stateStack.pop();
 			
 			//If it's worse than our current best we just ignore it
-			if(bestSol == null || bestSol.getValue() > st.getValue()) {
-				
+			if(bestSol == null || bestSol.getValue() >= st.getValue()) {
 				if(st.isFullSolution() ){
+					numBests++;
+					//double oldBest = (bestSol != null) ? bestSol.getValue(): (double) 10000000;
 					bestSol = st;
-					System.out.printf("Better Solution Found!\n%s\nHeads popped = %d\nStates in list = %d\n", bestSol.toString(),headsPopped,stateStack.size());
+					if(numBests % 1000000 == 0) System.out.printf("Improvements = %d\nBest Eval = %f\n", numBests,bestSol.getValue());
 				} else {
 					//generate a list of valid child states
 					//add our children to the front of the queue, should probably order them before this

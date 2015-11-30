@@ -18,7 +18,7 @@ public class State implements Comparable<State> {
 	private Problem prob;
 	
 	//static state counter
-	private static long stateCount;
+	public static long stateCount;
 	
 	public Problem getProb() { return prob; }
 	public void setProb(Problem prob) { this.prob = prob; }
@@ -44,7 +44,7 @@ public class State implements Comparable<State> {
 		assign = new int[numAssignables];
 		numOfCourses = new int[numSlots];
 		numOfLabs = new int[numSlots];
-		stateId = stateCount = 0;
+		stateId = stateCount = 0L;
 		// Use -1 instead of $.
 		for(int i=0; i<numAssignables; i++)
 			assign[i] = -1;
@@ -62,7 +62,7 @@ public class State implements Comparable<State> {
 		System.arraycopy(parent.assign, 0, this.assign, 0, this.assign.length);
 		System.arraycopy(parent.numOfCourses, 0, this.numOfCourses, 0, this.numOfCourses.length);
 		System.arraycopy(parent.numOfLabs, 0, this.numOfLabs, 0, this.numOfLabs.length);
-		stateId = ++stateCount;
+		stateId = stateCount = stateCount + 1000000L;
 	}
 	
 	/**
