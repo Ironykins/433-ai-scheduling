@@ -19,6 +19,7 @@ public class Assignable {
 	public final int id;
 	public final int sectionNumber;
 	private int labNumber = 0;
+	private boolean isEvening;
 	
 	//false if lab, true if course
 	//This will make it easier to test the constraints
@@ -62,5 +63,13 @@ public class Assignable {
 
 	public void setLabNumber(int labNumber) {
 		this.labNumber = labNumber;
+	}
+
+	public boolean isEvening() {
+		return isEvening;
+	}
+
+	public void setEvening(boolean isEvening) {
+		this.isEvening = isEvening;
 	}
 }
