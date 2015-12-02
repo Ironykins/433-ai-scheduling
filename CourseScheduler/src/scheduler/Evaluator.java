@@ -270,7 +270,7 @@ public class Evaluator {
 			if(( st.assign[i] != -1) && (prob.Assignables[i].isCourse)){
 				for(int j = 0; j < prob.numberOfAssignables; j++){
 					if(( st.assign[j] == st.assign[i] ) && (i != j)){
-						if( prob.Assignables[i].name.substring(0, 8) == prob.Assignables[j].name.substring(0, 8) ){
+						if( prob.Assignables[i].name.substring(0, 8).equals(prob.Assignables[j].name.substring(0, 8)) ){
 							dSecDiffTotal++;
 						}
 					}
@@ -335,7 +335,7 @@ public class Evaluator {
 		double dSecDiffTotal = 0.0;
 		for(int j = 0; j < prob.numberOfAssignables; j++){
 			if(( st.assign[j] == sIndex ) && (aIndex != j)){
-				if( prob.Assignables[aIndex].name.substring(0, 8) == prob.Assignables[j].name.substring(0, 8) ){
+				if( prob.Assignables[aIndex].name.substring(0, 8).equals(prob.Assignables[j].name.substring(0, 8)) ){
 					dSecDiffTotal++;
 				}
 			}
