@@ -33,6 +33,10 @@ public class Problem {
 		this.preferences = preferences; 
 	}
 	
+	//Here's the hack to get around time slots that overlap but are not the same slot.
+	//Keep a 2d array of boolean values. overlap[i][j] == true iff slot i and slot j overlap.
+	public final boolean[][] overlap;
+	
 	//The partial assignment for this problem. Serves as our starting state.
 	private State partAssign;
 	public State getPartAssign() { return partAssign; }
@@ -50,6 +54,7 @@ public class Problem {
 		Slots = slots;
 		numberOfAssignables = assignables.length;
 		numberOfSlots = slots.length;
+		overlap = new boolean[slots.length][slots.length];
 	}
 	
 	/**

@@ -96,7 +96,8 @@ public class Evaluator {
 		for(int i = 0; i < prob.numberOfAssignables; i++){
 			for(int j = 0; j<prob.Assignables[i].incompatible.size();j++){
 				int k = prob.Assignables[i].incompatible.elementAt(j);
-				if(state.assign[k] == state.assign[i] && state.assign[i] != -1){
+				//If they are assigned to the same slot, or the slots overlap.
+				if((state.assign[k] == state.assign[i] || prob.overlap[state.assign[k]][state.assign[i]]) && state.assign[i] != -1){
 					return false;
 				}
 			}
@@ -163,10 +164,15 @@ public class Evaluator {
 	}
 	
 	// Checks that the all of the currently scheduled assignables are compatible with the given assignable
-
 	private boolean deltaCompatibleCheck(State state, int aIndex, int sIndex){
 		for(int i=0; i<prob.Assignables[aIndex].incompatible.size();i++){
-			if(state.assign[prob.Assignables[aIndex].incompatible.elementAt(i)] == sIndex) return false;
+			int incompatibleIndex = state.assign[prob.Assignables[aIndex].incompatible.elementAt(i)];
+			if(incompatibleIndex != -1) {
+				if(incompatibleIndex == sIndex) return false;
+				
+				//Don't assign into overlapping slots if they're incompatible.
+				if(prob.overlap[incompatibleIndex][sIndex]) return false;
+			}
 		}
 		return true;
 	}
