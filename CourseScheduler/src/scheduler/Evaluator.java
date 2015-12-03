@@ -268,6 +268,8 @@ public class Evaluator {
 	 * 
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
+	 * 
+	 * TODO: Make this work with overlapping slots.
 	 */
 	public double evalSecDiff(State st) {
 		double dSecDiffTotal = 0;
@@ -293,6 +295,8 @@ public class Evaluator {
 	 * 
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
+	 * 
+	 * TODO: Make this work with overlapping slots.
 	 */
 	public double evalPair(State st){
 		double notPaired = 0;		
@@ -336,6 +340,8 @@ public class Evaluator {
 	 * @param aIndex The index of the assignable
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
+	 * 
+	 * TODO: Make this work with overlapping slots.
 	 */
 	private double deltaEvalSecDiff(State st, int aIndex, int sIndex){
 		double dSecDiffTotal = 0.0;
@@ -356,6 +362,8 @@ public class Evaluator {
 	 * @param aIndex The index of the assignable
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
+	 * 
+	 * TODO: Make this work with overlapping slots.
 	 */
 	private double deltaEvalPair(State st, int aIndex, int sIndex) {
 		double notPaired = 0;		

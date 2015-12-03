@@ -34,8 +34,6 @@ public class State implements Comparable<State> {
 	private double value; //AKA the Eval-Value
 	public long stateId;
 	private boolean fullSolution;
-
-	//TODO: Function to find lab/course bases on time and day
 	
 	//Need to specify the number of assignables and number of slots.
 	//Because having a pointer to a problem object is technically optional.

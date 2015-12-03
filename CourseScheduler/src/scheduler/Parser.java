@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Vector;
 
 /**
@@ -120,6 +121,22 @@ public class Parser {
 	//Does some post-processing on the problem.
 	//Most of these are to address annoying little bits of the problem spec.
 	private void postProcess(Problem prob) {
+		Hashtable<String,String> tuThOverlaps = new Hashtable<String,String>();
+		//Figure out which slots overlap.
+		//This is really, really gross and expensive. (And could be optimized.)
+		//But it is only run once so it's not a huge target for optimization.
+		//And it is not well defined in the spec so I'd rather not waste effort on it.
+		for(Slot slot1 : prob.Slots)
+			for(Slot slot2 : prob.Slots) {
+				//If it's the same slot, it overlaps.
+				if(slot1.day.equals(slot2.day) && slot1.startTime.equals(slot2.startTime)) {
+					prob.overlap[slot1.id][slot2.id] = true;
+					prob.overlap[slot2.id][slot1.id] = true;
+				}
+				
+				
+			}
+		
 		//Add 813 and 913 -> TU 18:00 - 19:00 to partassign
 		int slotId = prob.getSlotId("TU", "18:00");
 		
@@ -181,7 +198,7 @@ public class Parser {
 	}
 	
 	//Lines of format: 
-	//Day, Start time, coursemax, coursemin
+	//Day, Start time, labmax, labmin
 	//MO, 8:00, 3, 2
 	private void parseLabSlots(BufferedReader br) throws IOException {
 		String line;
@@ -190,13 +207,15 @@ public class Parser {
 			if(m.find()) {
 				boolean found = false;
 				//First, see if a slot like this one already exists.
-				for(Slot s : slots) {
-					//If this slot already exists, just use it.
-					if(s.day.equals(m.group(1)) && s.startTime.equals(m.group(2))) { 
-						s.setLabMax(Integer.parseInt(m.group(3)));
-						s.setLabMin(Integer.parseInt(m.group(4)));
-						found = true;
-						break;
+				if(!m.group(1).equals("TU")) { //TU/TH slots for labs are all different.
+					for(Slot s : slots) {
+						//If this slot already exists, just use it.
+						if(s.day.equals(m.group(1)) && s.startTime.equals(m.group(2))) { 
+							s.setLabMax(Integer.parseInt(m.group(3)));
+							s.setLabMin(Integer.parseInt(m.group(4)));
+							found = true;
+							break;
+						}
 					}
 				}
 				
@@ -338,6 +357,7 @@ public class Parser {
 	//Lines of format:
 	//Assignable Name, Day, Time
 	//CPSC 433 LEC 01, MO, 8:00
+	//TODO: Make this work with overlapping slots.
 	private void parseUnwanted(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
@@ -378,6 +398,7 @@ public class Parser {
 	
 	//Lines of format:
 	//Day, Time, Assignable Name, Preference Value
+	//TODO: Make this work with overlapping slots.
 	private void parsePreferences(BufferedReader br) throws IOException {
 		String line;
 		preferences = new int[assignableIndex][slotIndex];
@@ -461,6 +482,7 @@ public class Parser {
 	
 	//Lines of format:
 	//Assignable Name, Day, Time
+	//TODO: Make this work with overlapping slots.
 	private void parsePartassign(BufferedReader br) throws IOException {
 		String line;
 		partAssign = new State(assignableIndex, slotIndex);
