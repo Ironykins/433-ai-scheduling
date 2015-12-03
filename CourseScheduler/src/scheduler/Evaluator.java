@@ -268,16 +268,15 @@ public class Evaluator {
 	 * 
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
-	 * 
-	 * TODO: Make this work with overlapping slots.
 	 */
 	public double evalSecDiff(State st) {
 		double dSecDiffTotal = 0;
 
 		for(int i = 0; i < prob.numberOfAssignables; i++){
-			if(( st.assign[i] != -1) && (prob.Assignables[i].isCourse)){
+			if(( st.assign[i] != -1) && (prob.Assignables[i].isCourse)) {
 				for(int j = 0; j < prob.numberOfAssignables; j++){
-					if(( st.assign[j] == st.assign[i] ) && (i != j)){
+					//Slots can be the same, or slots can overlap. Both apply the penalty.
+					if(i != j && st.assign[j] != -1 && ( st.assign[j] == st.assign[i] || prob.overlap[st.assign[j]][st.assign[i]] )){
 						if( prob.Assignables[i].name.substring(0, 8).equals(prob.Assignables[j].name.substring(0, 8)) ){
 							dSecDiffTotal++;
 						}
@@ -295,8 +294,6 @@ public class Evaluator {
 	 * 
 	 * @param st The state to evaluate
 	 * @return The total eval-value for this domain.
-	 * 
-	 * TODO: Make this work with overlapping slots.
 	 */
 	public double evalPair(State st){
 		double notPaired = 0;		
@@ -307,7 +304,7 @@ public class Evaluator {
 				// Loop through this course/labs Pair vector, for each pairing check if it's paired
 				for( int j = 0; j < prob.Assignables[i].paired.size(); j++ ){
 					int iPair = prob.Assignables[i].paired.get( j );
-					if( st.assign[i] != st.assign[iPair] ){
+					if( st.assign[i] != st.assign[iPair] && st.assign[iPair] != -1 && !prob.overlap[st.assign[i]][st.assign[iPair]] ){
 						notPaired++;
 					}
 				}
@@ -340,13 +337,15 @@ public class Evaluator {
 	 * @param aIndex The index of the assignable
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
-	 * 
-	 * TODO: Make this work with overlapping slots.
 	 */
 	private double deltaEvalSecDiff(State st, int aIndex, int sIndex){
 		double dSecDiffTotal = 0.0;
+		if(!prob.Assignables[aIndex].isCourse) return 0; //Only apply this penalty to courses.
+		
 		for(int j = 0; j < prob.numberOfAssignables; j++){
-			if(( st.assign[j] == sIndex ) && (aIndex != j)){
+			if(prob.Assignables[j].isCourse && ( st.assign[j] == sIndex  || (st.assign[j] != -1 && prob.overlap[st.assign[j]][sIndex]) ) && (aIndex != j)) {
+				
+				//Compare the course name to see if they're equal.
 				if( prob.Assignables[aIndex].name.substring(0, 8).equals(prob.Assignables[j].name.substring(0, 8)) ){
 					dSecDiffTotal++;
 				}
@@ -356,14 +355,12 @@ public class Evaluator {
 	}
 	
 	/**
-	 * Calculate the change in Eval due to paired courses.
+	 * Calculate the change in Eval due to paired courses/labs
 	 * 
 	 * @param st The state as it is before the change
 	 * @param aIndex The index of the assignable
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
-	 * 
-	 * TODO: Make this work with overlapping slots.
 	 */
 	private double deltaEvalPair(State st, int aIndex, int sIndex) {
 		double notPaired = 0;		
@@ -371,7 +368,7 @@ public class Evaluator {
 			// Loop through this course/labs Pair vector, for each pairing check if it's paired
 			for( int j = 0; j < prob.Assignables[aIndex].paired.size(); j++ ){
 				int iPair = prob.Assignables[aIndex].paired.get( j );
-				if( sIndex != st.assign[iPair] ){
+				if( sIndex != st.assign[iPair] || (st.assign[iPair] != -1 && !prob.overlap[sIndex][st.assign[iPair]]) ){
 					notPaired++;
 				}
 			}		

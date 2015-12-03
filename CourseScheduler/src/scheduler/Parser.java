@@ -194,7 +194,7 @@ public class Parser {
 		//All 500 level courses should be incompatible with one another
 		for(int id : fourthYearCourses) {
 			prob.Assignables[id].incompatible.addAll(fourthYearCourses);
-			prob.Assignables[id].incompatible.remove(id);
+			prob.Assignables[id].incompatible.remove(new Integer(id));
 		}
 		
 		//Check if we have a full solution.
