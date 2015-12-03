@@ -77,6 +77,10 @@ public class Main {
 			System.out.println(ex.toString());
 			System.exit(1);
 		}
+		catch(IllegalStateException ex) {
+			System.out.printf("Error while parsing file: \n%s\n", ex.getMessage());
+			System.exit(1);
+		}
 		
 		//Put our parsed penalties and eval weights in here.
 		prob.evaluator.setPen_coursemin(pen_coursemin);

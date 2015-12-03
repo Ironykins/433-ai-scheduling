@@ -104,7 +104,7 @@ public class Parser {
 		    	case "Partial assignments:": parsePartassign(br); break;
 		    	default: //If the line is not whitespace and we can't parse it, we have a problem.
 		    		if (trimmed.length() > 0)
-		    			throw new IOException(String.format("Could not parse line: %s", line));
+		    			throw new IllegalStateException(String.format("Could not parse line: %s", line));
 	    	}
 	    }
 	    
@@ -399,7 +399,6 @@ public class Parser {
 	//Lines of format:
 	//Assignable Name, Day, Time
 	//CPSC 433 LEC 01, MO, 8:00
-	//TODO: Make this work with overlapping slots.
 	private void parseUnwanted(BufferedReader br) throws IOException {
 		String line;
 		while((line = br.readLine()) != null) {
@@ -408,28 +407,36 @@ public class Parser {
 			if(m.find()) {
 				//Group1 contains assignable name. Group2 contains day. Group 3 contains time.
 				
+				Assignable thisAssign = null;
+				for(Assignable ass : assignables) {
+					String name = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
+					if(ass.name.equals(name)) {
+						thisAssign = ass;
+						break;
+					}
+				}
+				
+				if(thisAssign == null)
+					throw new IllegalStateException(String.format("Tried to add %s to unwanted, but assignable does not exist!", line));
+				
 				int slotIndex = -1;
 				for(Slot s : slots) {
 					if(s.day.equals(m.group(2)) && s.startTime.equals(m.group(3))) {
-						slotIndex = s.id;
+						//Make sure we're assigning to a course slot or a lab slot, depending on the assignable type.
+						//This is done because multiple slots can have the exact same day and start time, and still be different.
+						//Yeah I want to put bleach on my own eyeballs too.
+						if(thisAssign.isCourse && s.getCourseMax() > 0 || !thisAssign.isCourse && s.getLabMax() > 0)
+							slotIndex = s.id;
+						else { //The sample input is assigning preferences to invalid pairings. Swallow the problem.
+							slotIndex = slotIndex == -1 ? s.id : slotIndex; 
+						}
 					}
 				}
 				
 				if(slotIndex == -1) 
 					throw new IllegalStateException(String.format("Tried to add %s to unwanted, but slot does not exist!", line));
 				
-				boolean found = false;
-				for(Assignable ass : assignables) {
-					String name = m.group(1).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
-					if(ass.name.equals(name)) {
-						ass.unwanted.add(slotIndex);
-						found = true;
-						break;
-					}
-				}
-				
-				if(!found)
-					throw new IllegalStateException(String.format("Tried to add %s to unwanted, but assignable does not exist!", line));
+				thisAssign.unwanted.add(slotIndex);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;
@@ -440,7 +447,6 @@ public class Parser {
 	
 	//Lines of format:
 	//Day, Time, Assignable Name, Preference Value
-	//TODO: Make this work with overlapping slots.
 	private void parsePreferences(BufferedReader br) throws IOException {
 		String line;
 		preferences = new int[assignableIndex][slotIndex];
@@ -451,29 +457,36 @@ public class Parser {
 			if(m.find()) {
 				//Group1 contains day, 2 contains time, 3 contains assignable, 4 contains value.
 				
-				//Find our slot.
-				int sid = -1;
-				for(Slot s : slots) {
-					if(s.day.equals(m.group(1)) && s.startTime.equals(m.group(2))) {
-						sid = s.id;
-					}
-				}
-				
 				//Find our assignable.
 				int aid = -1;
+				boolean isCourse = false;
 				for(Assignable ass : assignables) {
 					String name = m.group(3).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 					if(ass.name.equals(name)) {
 						aid = ass.id;
+						isCourse = ass.isCourse;
 						break;
 					}
 				}
-				
-				if(sid == -1) 
-					throw new IllegalStateException(String.format("Could not add pair %s to preferences. Could not find slot.", line));
+
 				if(aid == -1)
 					throw new IllegalStateException(String.format("Could not add pair %s to preferences. Could not find assignable.", line));
 				
+				//Find our slot.
+				int sid = -1;
+				for(Slot s : slots) {
+					if(s.day.equals(m.group(1)) && s.startTime.equals(m.group(2))) {
+						if(isCourse && s.getCourseMax() > 0 || !isCourse && s.getLabMax() > 0)
+							sid = s.id;
+						else { //The sample input is assigning preferences to invalid pairings. Swallow the problem.
+							sid = sid == -1 ? s.id : sid; 
+						}
+					}
+				}
+
+				if(sid == -1) 
+					throw new IllegalStateException(String.format("Could not add pair %s to preferences. Could not find slot.", line));
+
 				preferences[aid][sid] = Integer.parseInt(m.group(4));
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
@@ -524,7 +537,6 @@ public class Parser {
 	
 	//Lines of format:
 	//Assignable Name, Day, Time
-	//TODO: Make this work with overlapping slots.
 	private void parsePartassign(BufferedReader br) throws IOException {
 		String line;
 		partAssign = new State(assignableIndex, slotIndex);
@@ -550,7 +562,10 @@ public class Parser {
 				int slotIndex = -1;
 				for(Slot s : slots) {
 					if(s.day.equals(m.group(2)) && s.startTime.equals(m.group(3))) {
-						slotIndex = s.id;
+						//Make sure we check that it's the correct slot with that exact day and time.
+						//Fuck me with a fork.
+						if(toAssign.isCourse && s.getCourseMax() > 0 || !toAssign.isCourse && s.getLabMax() > 0)
+							slotIndex = s.id;
 					}
 				}
 				
