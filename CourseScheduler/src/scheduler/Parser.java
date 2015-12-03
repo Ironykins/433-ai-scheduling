@@ -142,8 +142,8 @@ public class Parser {
 				//For two slots to overlap, either they must be on the same day, or one must be on friday and the other on monday.
 				//Holy hot hamburgers I haven't written code this ugly since high school.
 				if (! (slot1.day.equals(slot2.day) 
-					|| slot1.day.equals("FR") && slot2.day.equals("MO")
-					|| slot1.day.equals("MO") && slot2.day.equals("FR") ))
+					|| slot1.day.equals("FR") && slot2.day.equals("MO") && slot2.getLabMax() == 0
+					|| slot1.day.equals("MO") && slot2.day.equals("FR") && slot1.getLabMax() == 0))
 						continue;
 				
 				//If the start times are the same, they overlap.
@@ -247,27 +247,12 @@ public class Parser {
 		while((line = br.readLine()) != null) {
 			Matcher m = slotPattern.matcher(line);
 			if(m.find()) {
-				boolean found = false;
-				//First, see if a slot like this one already exists.
-				if(!m.group(1).equals("TU")) { //TU/TH slots for labs are all different.
-					for(Slot s : slots) {
-						//If this slot already exists, just use it.
-						if(s.day.equals(m.group(1)) && s.startTime.equals(m.group(2))) { 
-							s.setLabMax(Integer.parseInt(m.group(3)));
-							s.setLabMin(Integer.parseInt(m.group(4)));
-							found = true;
-							break;
-						}
-					}
-				}
-				
-				//If the slot doesn't exist, add it.
-				if(!found) { 
-					Slot newSlot = new Slot(slotIndex++, m.group(1), m.group(2));
-					newSlot.setLabMax(Integer.parseInt(m.group(3)));
-					newSlot.setLabMin(Integer.parseInt(m.group(4)));
-					slots.add(newSlot);
-				}
+				//All lab slots must be different from all course slots.
+				//Even if they have the same day and time. (And duration.)
+				Slot newSlot = new Slot(slotIndex++, m.group(1), m.group(2));
+				newSlot.setLabMax(Integer.parseInt(m.group(3)));
+				newSlot.setLabMin(Integer.parseInt(m.group(4)));
+				slots.add(newSlot);
 			}
 			else { //If the line is not whitespace and we can't parse it, we have a problem.	
 	    		if (line.trim().length() == 0) return;
@@ -295,6 +280,7 @@ public class Parser {
 				if(m.group(2).charAt(0) == '5')
 					fourthYearCourses.add(newCourse.id);
 				
+				//Evening Course
 				if(m.group(3).charAt(0) == '9')
 					newCourse.setEvening(true);
 			}
