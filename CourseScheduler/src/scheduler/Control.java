@@ -114,7 +114,9 @@ public class Control {
 		}
 
 		private LinkedList<State> orderChildren(LinkedList<State> children) {
-			// TODO method to order children somehow. This is where we could change to the OR tree or not
+			// TODO Is this a good method to order the children? We're adding O(nlogn) at every single node expansion.
+			// Might be faster to scrap this and just run through the tree in a suboptimal order.
+			// Then again, it might not be.
 			if(bestSol == null)
 				Collections.sort(children);
 			return children;

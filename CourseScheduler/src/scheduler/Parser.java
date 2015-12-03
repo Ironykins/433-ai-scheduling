@@ -139,8 +139,12 @@ public class Parser {
 		//And it is not well defined in the spec so I'd rather not waste effort on it.
 		for(Slot slot1 : prob.Slots) {
 			for(Slot slot2 : prob.Slots) {
-				//Must be on the same day to overlap.
-				if(!slot1.day.equals(slot2.day)) continue;
+				//For two slots to overlap, either they must be on the same day, or one must be on friday and the other on monday.
+				//Holy hot hamburgers I haven't written code this ugly since high school.
+				if (! (slot1.day.equals(slot2.day) 
+					|| slot1.day.equals("FR") && slot2.day.equals("MO")
+					|| slot1.day.equals("MO") && slot2.day.equals("FR") ))
+						continue;
 				
 				//If the start times are the same, they overlap.
 				if(slot1.startTime.equals(slot2.startTime)) {
@@ -148,6 +152,9 @@ public class Parser {
 					prob.overlap[slot2.id][slot1.id] = true;
 					continue;
 				}
+				
+				//Only go past here if we're working with TU/TH.
+				if(!slot1.day.equals("TU")) continue;
 				
 				//If the hour of the start time is the same, they overlap.
 				//This is sorta hacky, but it's 100% legit for our cases.
