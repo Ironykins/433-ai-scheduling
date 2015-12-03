@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -115,28 +115,63 @@ public class Parser {
 	    prob.setPartAssign(partAssign);
 	    prob.setPreferences(preferences);
 	    postProcess(prob);
+	    processOverlaps(prob);
 	    return prob;
+	}
+	
+	//Fill the overlap array of prob.
+	//Used for the stupid overlapping course and lab slots on TU/TH.
+	private void processOverlaps(Problem prob) {
+		//Some hard-coded overlapping slot times. Keys are lab times.  Values are course times.
+		//These are only valid for TU/TH, of course.
+		HashMap<String, String> overlaps = new HashMap<String,String>();
+		overlaps.put("10:00", "9:30");
+		overlaps.put("12:00", "11:00");
+		overlaps.put("13:00", "12:30");
+		overlaps.put("15:00", "14:30");
+		overlaps.put("16:00", "15:30");
+		overlaps.put("18:00", "17:00");
+		overlaps.put("19:00", "18:30");
+		
+		//Figure out which slots overlap.
+		//This is really, really gross and expensive. (And could be optimized.)
+		//But it is only run once so it's not a huge target for optimization.
+		//And it is not well defined in the spec so I'd rather not waste effort on it.
+		for(Slot slot1 : prob.Slots) {
+			for(Slot slot2 : prob.Slots) {
+				//Must be on the same day to overlap.
+				if(!slot1.day.equals(slot2.day)) continue;
+				
+				//If the start times are the same, they overlap.
+				if(slot1.startTime.equals(slot2.startTime)) {
+					prob.overlap[slot1.id][slot2.id] = true;
+					prob.overlap[slot2.id][slot1.id] = true;
+					continue;
+				}
+				
+				//If the hour of the start time is the same, they overlap.
+				//This is sorta hacky, but it's 100% legit for our cases.
+				if(slot1.startTime.substring(0, slot1.startTime.indexOf(':')).equals(
+						slot2.startTime.substring(0,slot2.startTime.indexOf(':')))) {
+					prob.overlap[slot1.id][slot2.id] = true;
+					prob.overlap[slot2.id][slot1.id] = true;
+					continue;
+				}
+
+				//We define the remaining overlaps rigorously.
+				//Make sure to link them both ways.
+				if(overlaps.containsKey(slot1.startTime) && overlaps.get(slot1.startTime).equals(slot2.startTime)) {
+					prob.overlap[slot1.id][slot2.id] = true;
+					prob.overlap[slot2.id][slot1.id] = true;
+					continue;
+				}
+			}
+		}
 	}
 	
 	//Does some post-processing on the problem.
 	//Most of these are to address annoying little bits of the problem spec.
 	private void postProcess(Problem prob) {
-		Hashtable<String,String> tuThOverlaps = new Hashtable<String,String>();
-		//Figure out which slots overlap.
-		//This is really, really gross and expensive. (And could be optimized.)
-		//But it is only run once so it's not a huge target for optimization.
-		//And it is not well defined in the spec so I'd rather not waste effort on it.
-		for(Slot slot1 : prob.Slots)
-			for(Slot slot2 : prob.Slots) {
-				//If it's the same slot, it overlaps.
-				if(slot1.day.equals(slot2.day) && slot1.startTime.equals(slot2.startTime)) {
-					prob.overlap[slot1.id][slot2.id] = true;
-					prob.overlap[slot2.id][slot1.id] = true;
-				}
-				
-				
-			}
-		
 		//Add 813 and 913 -> TU 18:00 - 19:00 to partassign
 		int slotId = prob.getSlotId("TU", "18:00");
 		
