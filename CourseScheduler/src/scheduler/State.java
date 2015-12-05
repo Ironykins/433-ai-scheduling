@@ -136,11 +136,12 @@ public class State implements Comparable<State> {
 		child.fullSolution = (aIndex == assign.length-1 && prob.evaluator.Constr(child)); 
 		
 		//Get the new value of the child.
+		System.out.println("#######################################################");
+		System.out.println("Parent Node Evals\n" +prob.evaluator.eval(this) + "\n");
 		child.setValue(prob.evaluator.deltaEval(this, aIndex, sIndex));
-		/*System.out.println("#######################################################");
-		System.out.println(this.toString());
+		System.out.println("recalc Eval = " + prob.evaluator.eval(child));
 		System.out.println(child.toString());
-		System.out.println("#######################################################");*/
+		System.out.println("#######################################################");
 		return child;
 	}
 	

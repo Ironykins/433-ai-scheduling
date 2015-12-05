@@ -103,12 +103,14 @@ public class Problem {
 	 * 
 	 * @param day The day of the slot eg. 'MO'
 	 * @param time The starting time of the slot. eg. '8:00'
+	 * @param isCourse Whether the slot is for courses or labs.
 	 * @return The index of the slot. -1 if we can't find it.
 	 */
-	public int getSlotId(String day, String time) {
+	public int getSlotId(String day, String time, boolean isCourse) {
 		for(int i=0; i<Slots.length; i++)
 			if(Slots[i].day.equals(day) && Slots[i].startTime.equals(time))
-				return i;
+				if(Slots[i].getCourseMax() > 0 && isCourse || Slots[i].getLabMax() > 0 && !isCourse)
+					return i;
 		return -1;
 	}
 	

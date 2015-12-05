@@ -193,10 +193,12 @@ public class Evaluator {
 	 */
 
 	public double eval(State state) {
-		return evalMinFilled(state) * wMinFilled + 
-				evalPref(state) * wPref +
-				evalPair(state) * wPair + 
-				evalSecDiff(state) * wSecDiff;
+		double minFilled = evalMinFilled(state) * wMinFilled;
+		double Pref	= evalPref(state) * wPref;
+		double Pair = evalPair(state) * wPair;
+		double secDiff = evalSecDiff(state) * wSecDiff;
+		System.out.printf("Values for Node\nminFilled = %f\nPref = %f\nPair = %f\nsecDif = %f\n\n",minFilled,Pref,Pair,secDiff);
+		return minFilled + Pref + Pair + secDiff;
 	}
 	
 	/**
@@ -288,8 +290,7 @@ public class Evaluator {
 					}
 				}	
 			}
-			
-		}
+		} //Weeee
 		
 		return dSecDiffTotal*pen_section;
 	}
@@ -328,11 +329,12 @@ public class Evaluator {
 	 * @return The change in eval-value. This can be negative.
 	 */
 	public double deltaEval(State st, int aIndex, int sIndex) {
-		return  st.getValue() +
-				deltaEvalMinFilled(st, aIndex, sIndex) * wMinFilled + 
-				deltaEvalPref(st, aIndex, sIndex) * wPref +
-				deltaEvalPair(st, aIndex, sIndex) * wPair + 
-				deltaEvalSecDiff(st, aIndex, sIndex) * wSecDiff;
+		double DminFilled = deltaEvalMinFilled(st, aIndex, sIndex) * wMinFilled;
+		double Dpref = deltaEvalPref(st, aIndex, sIndex) * wPref ;
+		double Dpair = deltaEvalPair(st, aIndex, sIndex) * wPair ;
+		double DsecDiff = deltaEvalSecDiff(st, aIndex, sIndex) * wSecDiff;
+		System.out.printf("Delta Values for new Node\nParent val = %f\nDminFilled = %f\nDPref = %f\nDPair = %f\nDsecDif = %f\n\n", st.getValue(),DminFilled,Dpref,Dpair,DsecDiff);
+		return  st.getValue() + DminFilled + Dpref + Dpair + DsecDiff;
 	}
 	
 	/**
@@ -356,7 +358,7 @@ public class Evaluator {
 				}
 			}
 		}		
-		return dSecDiffTotal;
+		return dSecDiffTotal * pen_section;
 	}
 	
 	/**
@@ -373,11 +375,11 @@ public class Evaluator {
 			// Loop through this course/labs Pair vector, for each pairing check if it's paired
 			for( int j = 0; j < prob.Assignables[aIndex].paired.size(); j++ ){
 				int iPair = prob.Assignables[aIndex].paired.get( j );
-				if( sIndex != st.assign[iPair] || (st.assign[iPair] != -1 && !prob.overlap[sIndex][st.assign[iPair]]) ){
+				if( st.assign[iPair] != -1 &&  (sIndex != st.assign[iPair] || !prob.overlap[sIndex][st.assign[iPair]]) ){
 					notPaired++;
 				}
 			}		
-		return ((notPaired/2) * pen_notpaired);
+		return (notPaired * pen_notpaired);
 	}
 	
 	/**
