@@ -197,9 +197,10 @@ public class Parser {
 			prob.Assignables[id].incompatible.remove(new Integer(id));
 		}
 		
-		//Check if we have a full solution.
-		if(!Arrays.asList(partAssign.assign).contains(-1))
-			partAssign.setIsFullSolution(true);
+		//Check if we have a full solution
+		partAssign.setIsFullSolution(true);
+		for(int i : partAssign.assign)
+			if(i == -1) partAssign.setIsFullSolution(false);
 			
 		//Initialize its value.
 		partAssign.setValue(prob.evaluator.eval(partAssign));
