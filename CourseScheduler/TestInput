@@ -5,16 +5,15 @@ Course slots:
 MO, 8:00, 2, 1
 MO, 9:00, 2, 0
 MO, 10:00, 2, 1
-MO, 16:00, 2, 0
-MO, 17:00, 2, 1
-MO, 18:00, 2, 0
+MO, 11:00, 2, 0
+MO, 12:00, 2, 1
 
 Lab slots:
 
 Courses:
 CPSC 433 LEC 01
-CPSC 433 LEC 02
-CPSC 433 LEC 03
+CPSC 434 LEC 01
+CPSC 435 LEC 01
 
 Labs:
 
