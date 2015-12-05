@@ -23,6 +23,8 @@ public class Control {
 			startState.setValue(prob.evaluator.eval(startState));
 			stateStack.push(startState);
 			bestSol = null;
+			System.out.printf("Part Assign eval value = %f\n",startState.getValue());
+			System.out.printf("Part Assign:\n%s\n", startState.toString());
 		}
 		
 		/**
