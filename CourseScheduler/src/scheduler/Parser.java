@@ -180,7 +180,7 @@ public class Parser {
 	//Most of these are to address annoying little bits of the problem spec.
 	private void postProcess(Problem prob) {
 		//Add 813 and 913 -> TU 18:00 - 19:00 to partassign
-		int slotId = prob.getSlotId("TU", "18:00");
+		int slotId = prob.getSlotId("TU", "18:00", true);
 		
 		if(cpsc813id != -1) {
 			partAssign.assign[cpsc813id] = slotId;

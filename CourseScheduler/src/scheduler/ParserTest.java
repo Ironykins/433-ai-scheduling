@@ -95,9 +95,21 @@ public class ParserTest {
     	assertEquals(parsedProb.getName(), "ShortExample");
     }
     
+    @Test
+    public void parsesOverlap() {
+    	for(int i=0; i<parsedProb.Slots.length; i++)
+    		for(int j=0; j<parsedProb.Slots.length; j++) {
+    			assertEquals(parsedProb.overlap[i][j], parsedProb.overlap[j][i]);
+    		}
+    	
+    	int slot1 = parsedProb.getSlotId("TU", "9:30", false);
+    	int slot2 = parsedProb.getSlotId("TU", "10:00", true);
+    	assertEquals(true, parsedProb.overlap[slot1][slot2]);
+    }
+    
 	@Test
 	public void parsesSlots() {
-		assertEquals(parsedProb.Slots.length, 5);
+		assertEquals(6, parsedProb.Slots.length);
 		
 		for(Slot s : parsedProb.Slots) {
 			assertNotNull(s.day);
