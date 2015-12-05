@@ -282,10 +282,12 @@ public class Evaluator {
 		for(int i = 0; i < prob.numberOfAssignables; i++){
 			if(( st.assign[i] != -1) && (prob.Assignables[i].isCourse)) {
 				for(int j = 0; j < prob.numberOfAssignables; j++){
-					//Slots can be the same, or slots can overlap. Both apply the penalty.
-					if(i != j && st.assign[j] != -1 && ( st.assign[j] == st.assign[i] || prob.overlap[st.assign[j]][st.assign[i]] )){
-						if( prob.Assignables[i].name.substring(0, 8).equals(prob.Assignables[j].name.substring(0, 8)) ){
-							dSecDiffTotal++;
+					if(( st.assign[j] != -1) && (prob.Assignables[j].isCourse)) {
+						//Slots can be the same, or slots can overlap. Both apply the penalty.
+						if(i != j && st.assign[j] != -1 && ( st.assign[j] == st.assign[i] || prob.overlap[st.assign[j]][st.assign[i]] )){
+							if( prob.Assignables[i].name.substring(0, 8).equals(prob.Assignables[j].name.substring(0, 8)) ){
+								dSecDiffTotal++;
+							}
 						}
 					}
 				}	
@@ -350,6 +352,7 @@ public class Evaluator {
 		if(!prob.Assignables[aIndex].isCourse) return 0; //Only apply this penalty to courses.
 		
 		for(int j = 0; j < prob.numberOfAssignables; j++){
+			//If another course is assigned to the same slot
 			if(prob.Assignables[j].isCourse && ( st.assign[j] == sIndex  || (st.assign[j] != -1 && prob.overlap[st.assign[j]][sIndex]) ) && (aIndex != j)) {
 				
 				//Compare the course name to see if they're equal.
@@ -357,7 +360,7 @@ public class Evaluator {
 					dSecDiffTotal++;
 				}
 			}
-		}		
+		}
 		return dSecDiffTotal * pen_section;
 	}
 	
@@ -372,13 +375,13 @@ public class Evaluator {
 	private double deltaEvalPair(State st, int aIndex, int sIndex) {
 		double notPaired = 0;		
 		// Loop through the current states assigned courses/labs
-			// Loop through this course/labs Pair vector, for each pairing check if it's paired
-			for( int j = 0; j < prob.Assignables[aIndex].paired.size(); j++ ){
-				int iPair = prob.Assignables[aIndex].paired.get( j );
-				if( st.assign[iPair] != -1 &&  (sIndex != st.assign[iPair] || !prob.overlap[sIndex][st.assign[iPair]]) ){
-					notPaired++;
-				}
-			}		
+		// Loop through this course/labs Pair vector, for each pairing check if it's paired
+		for( int j = 0; j < prob.Assignables[aIndex].paired.size(); j++ ){
+			int iPair = prob.Assignables[aIndex].paired.get( j );
+			if( st.assign[iPair] != -1 &&  (sIndex != st.assign[iPair] || !prob.overlap[sIndex][st.assign[iPair]]) ){
+				notPaired++;
+			}
+		}
 		return (notPaired * pen_notpaired);
 	}
 	
