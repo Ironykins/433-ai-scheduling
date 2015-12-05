@@ -23,6 +23,9 @@ public class Control {
 			startState.setValue(prob.evaluator.eval(startState));
 			stateStack.push(startState);
 			bestSol = null;
+			if(startState.isFullSolution())
+				bestSol = startState;
+			
 		}
 		
 		/**
