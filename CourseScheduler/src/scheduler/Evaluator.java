@@ -281,7 +281,7 @@ public class Evaluator {
 
 		for(int i = 0; i < prob.numberOfAssignables; i++){
 			if(( st.assign[i] != -1) && (prob.Assignables[i].isCourse)) {
-				for(int j = 0; j < prob.numberOfAssignables; j++){
+				for(int j = i; j < prob.numberOfAssignables; j++){
 					if(( st.assign[j] != -1) && (prob.Assignables[j].isCourse)) {
 						//Slots can be the same, or slots can overlap. Both apply the penalty.
 						if(i != j && st.assign[j] != -1 && ( st.assign[j] == st.assign[i] || prob.overlap[st.assign[j]][st.assign[i]] )){
