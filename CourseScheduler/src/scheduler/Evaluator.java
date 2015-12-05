@@ -376,11 +376,11 @@ public class Evaluator {
 			// Loop through this course/labs Pair vector, for each pairing check if it's paired
 			for( int j = 0; j < prob.Assignables[aIndex].paired.size(); j++ ){
 				int iPair = prob.Assignables[aIndex].paired.get( j );
-				if( sIndex != st.assign[iPair] || (st.assign[iPair] != -1 && !prob.overlap[sIndex][st.assign[iPair]]) ){
+				if( st.assign[iPair] != -1 &&  (sIndex != st.assign[iPair] || !prob.overlap[sIndex][st.assign[iPair]]) ){
 					notPaired++;
 				}
 			}		
-		return ((notPaired/2) * pen_notpaired);
+		return (notPaired * pen_notpaired);
 	}
 	
 	/**
