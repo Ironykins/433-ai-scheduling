@@ -403,7 +403,7 @@ public class Evaluator {
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
 	 */
-	private double deltaEvalMinFilled(State st, int aIndex, int sIndex) {
+	public double deltaEvalMinFilled(State st, int aIndex, int sIndex) {
 		int missingCourses = 0;
 		int missingLabs = 0;
 		

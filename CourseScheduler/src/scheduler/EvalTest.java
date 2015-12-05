@@ -22,8 +22,8 @@ public class EvalTest {
 	public void init (){
 		assignables[0] = new Assignable(0,"CPSC 123 LEC 01",true,1);
 		assignables[1] = new Assignable(1,"CPSC 213 LEC 01 TUT 02",false,1);
-		assignables[2] = new Assignable(2,"CPSC 313 LEC 01",true,1);
-		assignables[3] = new Assignable(3,"CPSC 321 LEC 01",true,1);
+		assignables[2] = new Assignable(2,"CPSC 123 LEC 02",true,1);
+		assignables[3] = new Assignable(3,"CPSC 123 LEC 03",true,1);
 		assignables[4] = new Assignable(4,"CPSC 321 LEC 01 LAB 01",false,1);
 		
 
@@ -123,6 +123,24 @@ public class EvalTest {
 		
 		testState.assign = new int[]{-1,-1,-1,-1,-1};
 		assertEquals(0.0, testEval.deltaEvalMinFilled(testState, 0, 0), .001);
+	}
+	
+	@Test
+	public void secDiff(){
+			
+			
+		testProb = new Problem(assignables, slots);		
+		testState = new State(assignables.length, slots.length);		
+		testEval = new Evaluator(testProb);	
+		
+		testEval.setPen_section(1);
+		testState.assign = new int[]{-1,-1,-1,-1,-1};
+		assertEquals(2.0, testEval.evalMinFilled(testState), .001);
+		
+		testState.numOfCourses[1] = 3;
+		testState.numOfLabs[1] = 2;
+		testState.assign = new int[]{1,1,1,1,1};
+		assertEquals(4.0, testEval.evalMinFilled(testState), .001);
 	}
 /*	
 
