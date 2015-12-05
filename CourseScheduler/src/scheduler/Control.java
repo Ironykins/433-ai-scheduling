@@ -36,7 +36,7 @@ public class Control {
 			while(!stateStack.isEmpty()) {
 				//this turns it into an or tree
 				//if(bestSol != null) break;
-				//if(stateStack.size()>maxStates) maxStates = stateStack.size();
+				if(stateStack.size()>maxStates) maxStates = stateStack.size();
 				/*if(headsPopped % 10000000 == 0) System.out.printf(
 						"@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\nMax States in the list :%d\nbestSol: %d\t%f\n@@@@@@@@@@@@@@@@@@@@@@@@\n"
 						,headsPopped

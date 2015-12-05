@@ -115,6 +115,7 @@ public class Main {
 			System.out.println("No solution was found.");
 		else {
 			System.out.println("Solution:");
+			System.out.println("straight evaluated value = " + prob.evaluator.eval(finalState));
 			System.out.println(finalState);
 		}
 	}
