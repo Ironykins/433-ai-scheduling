@@ -14,7 +14,8 @@ public class Main {
 	 * Prints the blurb telling you how to use the program, and exits.
 	 */
 	public static void printUsage() {
-		System.err.println("Usage: CourseScheduler [-pcm <pen_coursemin>] [-plm <pen_labmin>]  [-ps <pen_section> ] [-pnp <pen_notpaired>] [-w <weight minFilled> <weight Preferences> <weight Pair> <weight secDiff>] <input filename>");
+		System.err.println("Usage: CourseScheduler [-pcm <pen_coursemin>] [-plm <pen_labmin>]  [-psd <pen_section> ] [-ppa <pen_notpaired>] \n" +
+				"\t\t[-wmf <weight minFilled>] [-wpr <weight Preferences>] [-wpa <weight Pair>] [-wsd <weight secDiff>] <input filename>");
 		System.exit(1);
 	}
 	/**
@@ -49,14 +50,12 @@ public class Main {
 				switch(args[i]) {
 					case "-pcm": pen_coursemin = Integer.parseInt(args[++i]); break;
 					case "-plm": pen_labmin = Integer.parseInt(args[++i]); break;
-					case "-ps": pen_section = Integer.parseInt(args[++i]); break;
-					case "-pnp": pen_notpaired = Integer.parseInt(args[++i]); break;
-					case "-w": 
-						wMinFilled = Double.parseDouble(args[++i]);
-						wPref = Double.parseDouble(args[++i]);
-						wPair = Double.parseDouble(args[++i]);
-						wSecDiff = Double.parseDouble(args[++i]);
-						break;
+					case "-psd": pen_section = Integer.parseInt(args[++i]); break;
+					case "-ppa": pen_notpaired = Integer.parseInt(args[++i]); break;
+					case "-wmf": wMinFilled = Double.parseDouble(args[++i]); break;
+					case "-wpr": wPref = Double.parseDouble(args[++i]); break;
+					case "-wpa": wPair = Double.parseDouble(args[++i]); break;
+					case "-wsd": wSecDiff = Double.parseDouble(args[++i]); break;
 					default:
 						printUsage();
 				}
@@ -112,7 +111,11 @@ public class Main {
 		State finalState = searchControl.solve();
 		
 		//Show our solution.
-		System.out.println("Solution:");
-		System.out.println(finalState);		
+		if(finalState == null)
+			System.out.println("No solution was found.");
+		else {
+			System.out.println("Solution:");
+			System.out.println(finalState);
+		}
 	}
 }
