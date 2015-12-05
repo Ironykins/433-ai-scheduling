@@ -228,6 +228,11 @@ public class Evaluator {
 		return missingTotal;
 	}
 	
+	/**
+	 * Counts the number of courses and labs that are unassigned.
+	 * @param st The state we are checking.
+	 * @return A tuple of (unassignedCourses, unassignedLabs)
+	 */
 	private Pair countRemaining(State st){
 		int courses = 0;
 		int labs = 0;
