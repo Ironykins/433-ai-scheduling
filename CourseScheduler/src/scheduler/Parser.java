@@ -180,7 +180,7 @@ public class Parser {
 	//Most of these are to address annoying little bits of the problem spec.
 	private void postProcess(Problem prob) {
 		//Add 813 and 913 -> TU 18:00 - 19:00 to partassign
-		int slotId = prob.getSlotId("TU", "18:00");
+		int slotId = prob.getSlotId("TU", "18:00", true);
 		
 		if(cpsc813id != -1) {
 			partAssign.assign[cpsc813id] = slotId;
@@ -197,9 +197,10 @@ public class Parser {
 			prob.Assignables[id].incompatible.remove(new Integer(id));
 		}
 		
-		//Check if we have a full solution.
-		if(!Arrays.asList(partAssign.assign).contains(-1))
-			partAssign.setIsFullSolution(false);
+		//Check if we have a full solution
+		partAssign.setIsFullSolution(true);
+		for(int i : partAssign.assign)
+			if(i == -1) partAssign.setIsFullSolution(false);
 			
 		//Initialize its value.
 		partAssign.setValue(prob.evaluator.eval(partAssign));
