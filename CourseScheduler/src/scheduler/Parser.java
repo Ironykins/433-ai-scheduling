@@ -184,6 +184,7 @@ public class Parser {
 		
 		if(cpsc813id != -1) {
 			partAssign.assign[cpsc813id] = slotId;
+			
 			for(int id : incompatible813) prob.Assignables[cpsc813id].incompatible.add(id);
 		}
 		if(cpsc913id != -1) {
@@ -199,8 +200,11 @@ public class Parser {
 		
 		//Check if we have a full solution
 		partAssign.setIsFullSolution(true);
-		for(int i : partAssign.assign)
-			if(i == -1) partAssign.setIsFullSolution(false);
+		for(int i : partAssign.assign) 
+			if(i == -1) {
+				partAssign.setIsFullSolution(false);
+				break;
+			}
 			
 		//Initialize its value.
 		partAssign.setValue(prob.evaluator.eval(partAssign));

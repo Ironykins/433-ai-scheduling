@@ -290,8 +290,7 @@ public class Evaluator {
 					}
 				}	
 			}
-			
-		}
+		} //Weeee
 		
 		return dSecDiffTotal*pen_section;
 	}
