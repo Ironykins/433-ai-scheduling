@@ -199,7 +199,7 @@ public class Parser {
 		
 		//Check if we have a full solution.
 		if(!Arrays.asList(partAssign.assign).contains(-1))
-			partAssign.setIsFullSolution(false);
+			partAssign.setIsFullSolution(true);
 			
 		//Initialize its value.
 		partAssign.setValue(prob.evaluator.eval(partAssign));
