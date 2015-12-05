@@ -60,7 +60,7 @@ public class State implements Comparable<State> {
 		System.arraycopy(parent.assign, 0, this.assign, 0, this.assign.length);
 		System.arraycopy(parent.numOfCourses, 0, this.numOfCourses, 0, this.numOfCourses.length);
 		System.arraycopy(parent.numOfLabs, 0, this.numOfLabs, 0, this.numOfLabs.length);
-		stateId = stateCount = stateCount + 1000000L;
+		stateId = stateCount = stateCount + 1;
 	}
 	
 	/**

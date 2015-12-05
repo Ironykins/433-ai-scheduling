@@ -37,12 +37,12 @@ public class Control {
 				//this turns it into an or tree
 				//if(bestSol != null) break;
 				if(stateStack.size()>maxStates) maxStates = stateStack.size();
-				if(headsPopped % 10000000 == 0) System.out.printf(
+				/*if(headsPopped % 10000000 == 0) System.out.printf(
 						"@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\nMax States in the list :%d\nbestSol: %d\t%f\n@@@@@@@@@@@@@@@@@@@@@@@@\n"
 						,headsPopped
 						,maxStates
 						,(bestSol == null) ? -1:bestSol.stateId
-						,(bestSol == null) ? -1:bestSol.getValue());
+						,(bestSol == null) ? -1:bestSol.getValue());*/
 
 				expandHead();
 				headsPopped++;
@@ -60,12 +60,12 @@ public class Control {
 			State st = stateStack.pop();
 			
 			//If it's worse than our current best we just ignore it
-			if(bestSol == null || bestSol.getValue() >= st.getValue()) {
+			if(bestSol == null || bestSol.getValue() > st.getValue()) {
 				if(st.isFullSolution() ){
 					numBests++;
 					//double oldBest = (bestSol != null) ? bestSol.getValue(): (double) 10000000;
 					bestSol = st;
-					if(numBests % 1000000 == 0) System.out.printf("Improvements = %d\nBest Eval = %f\n", numBests,bestSol.getValue());
+					System.out.printf("Improvements = %d\nBest Delta Eval = %f\nOne Time Eval = %f\n\n", numBests,bestSol.getValue(),prob.evaluator.eval(bestSol));
 				} else {
 					//generate a list of valid child states
 					//add our children to the front of the queue, should probably order them before this
