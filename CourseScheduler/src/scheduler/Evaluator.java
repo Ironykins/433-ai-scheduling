@@ -404,6 +404,8 @@ public class Evaluator {
 	private double deltaEvalMinFilled(State st, int aIndex, int sIndex) {
 		int missingCourses = 0;
 		int missingLabs = 0;
+		
+		//Find the number of courses and labs that we still need to assign to meet minimums
 		for(int i = 0; i < prob.numberOfSlots; i++){
 			if((prob.Slots[i].getCourseMin() > st.numOfCourses[i])){
 				missingCourses += (prob.Slots[i].getCourseMin() - st.numOfCourses[i]);
@@ -412,7 +414,13 @@ public class Evaluator {
 				missingLabs += (prob.Slots[i].getLabMin() - st.numOfLabs[i]);
 			}
 		}
+		
+		//Find the number of unassigned courses and labs.
 		Pair remaining = countRemaining(st);
+		
+		//If we're assigning a course, and the number of missing courses is greater than
+		//the number of courses left to assign, we get worse by pen_coursemin.
+		//Similar for pen_labmin.
 		if(prob.Assignables[aIndex].isCourse){
 			if(missingCourses > remaining.first){
 				if(prob.Slots[sIndex].getCourseMin() <= st.numOfCourses[sIndex]){
