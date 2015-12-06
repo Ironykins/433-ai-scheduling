@@ -427,13 +427,13 @@ public class Evaluator {
 		//the number of courses left to assign, we get worse by pen_coursemin.
 		//Similar for pen_labmin.
 		if(prob.Assignables[aIndex].isCourse){
-			if(missingCourses > remaining.first){
+			if(missingCourses >= remaining.first){
 				if(prob.Slots[sIndex].getCourseMin() <= st.numOfCourses[sIndex]){
 					return pen_coursemin;
 				}
 			}
 		}else{
-			if(missingLabs > remaining.second){
+			if(missingLabs >= remaining.second){
 				if(prob.Slots[sIndex].getLabMin() <= st.numOfLabs[sIndex]){
 					return pen_labmin;
 				}
