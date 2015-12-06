@@ -64,6 +64,7 @@ public class Control {
 			//If it's worse than our current best we just ignore it
 			if(bestSol == null || bestSol.getValue() > st.getValue()) {
 				if(st.isFullSolution() ){
+					System.out.println("ding");
 					numBests++;
 					//double oldBest = (bestSol != null) ? bestSol.getValue(): (double) 10000000;
 					bestSol = st;
@@ -74,7 +75,7 @@ public class Control {
 					/***************
 					 * Here we need to order the children so the first element in the list after we add all of them is the child we want to expand
 					***************/
-					//System.out.printf("current heads val = %f\n",st.getValue());
+					//System.out.printf("current head number = %d\n",st.stateId);
 					LinkedList<State> children = createChildren(st);
 					if(children != null) stateStack.addAll(children);
 				}
