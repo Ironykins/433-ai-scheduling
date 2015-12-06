@@ -1,9 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project CourseScheduler">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
+<project basedir="." default="build" name="CourseScheduler">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    <path id="CourseScheduler.classpath">
+        <pathelement location="bin"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+        <delete file="CourseScheduler.jar"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-project,create_run_jar" name="build"/>
+
+    <!-- Builds the Project-->
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="CourseScheduler.classpath"/>
+            <not>
+                <filename name="**/*Test*"/>
+            </not>
+        </javac>
+    </target>
+
+    <!-- Creates a runnable JAR file -->
     <target name="create_run_jar">
-        <jar destfile="CourseScheduler.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="./CourseScheduler.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="scheduler.Main"/>
                 <attribute name="Class-Path" value="."/>
