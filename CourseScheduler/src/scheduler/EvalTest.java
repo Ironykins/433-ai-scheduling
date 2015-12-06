@@ -142,6 +142,24 @@ public class EvalTest {
 		testState.assign = new int[]{0,1,2,3,4};
 		assertEquals(0.0, testEval.evalSecDiff(testState), .001);
 	}
+	
+	@Test
+	public void deltaSecDiff(){
+			
+			
+		testProb = new Problem(assignables, slots);		
+		testState = new State(assignables.length, slots.length);		
+		testEval = new Evaluator(testProb);	
+		
+		testEval.setPen_section(1);
+		testState.assign = new int[]{1,1,-1,1,1};
+		assertEquals(2.0, testEval.deltaEvalSecDiff(testState,2,1), .001);
+		
+		testState.numOfCourses[1] = 3;
+		testState.numOfLabs[1] = 2;
+		testState.assign = new int[]{0,1,-1,3,4};
+		assertEquals(0.0, testEval.deltaEvalSecDiff(testState, 2, 2), .001);
+	}
 /*	
 
 	@Test
