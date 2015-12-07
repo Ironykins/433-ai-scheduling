@@ -147,8 +147,8 @@ public class State implements Comparable<State> {
 	
 	@Override
 	public int compareTo(State other) {
-        if (this.value - other.getValue() > 0) return -1;
-        else if(this.value - other.getValue() < 0) return 1;
+        if (this.value - other.getValue() > 0) return 1;
+        else if(this.value - other.getValue() < 0) return -1;
         else return 0;
 	}
 }
