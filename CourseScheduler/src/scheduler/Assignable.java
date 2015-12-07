@@ -46,7 +46,7 @@ public class Assignable {
 	public final Vector<Integer> paired;
 	
 	public String toString() {
-		return String.format("Id: %d, Name: %s, Type: %s", id, name, isCourse ? "Course" : "Lab");
+		return String.format("Id: %d, Name: %s, Type: %s, Evening: %s", id, name, isCourse ? "Course" : "Lab", isEvening ? "Yes" : "No");
 	}
 	
 	//We need to be able to compare assignables. Two of them are equal if they have the same name.

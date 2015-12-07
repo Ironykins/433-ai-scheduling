@@ -11,6 +11,7 @@ package scheduler;
 public class Evaluator {
 	
 	private final String NIGHT_TIME = "18:00";
+	private final int NIGHT_HOUR = 18;
 	//Reference to our problem object.
 	private final Problem prob;
 	
@@ -72,7 +73,8 @@ public class Evaluator {
 	private boolean nightCheck(State state){
 		for(int i = 0; i<state.assign.length; i++){
 			if( (prob.Assignables[i].isEvening()) && (prob.Assignables[i].isCourse) && (state.assign[i] != -1)){
-				if(prob.Slots[state.assign[i]].startTime.compareTo(NIGHT_TIME)<= 0){
+				int hourDigit = Integer.parseInt(prob.Slots[state.assign[i]].startTime.substring(0,prob.Slots[state.assign[i]].startTime.indexOf(':')));
+				if(hourDigit < NIGHT_HOUR){
 					return false;
 				}
 			}
@@ -97,7 +99,7 @@ public class Evaluator {
 			for(int j = 0; j<prob.Assignables[i].incompatible.size();j++){
 				int k = prob.Assignables[i].incompatible.elementAt(j);
 				//If they are assigned to the same slot, or the slots overlap.
-				if((state.assign[k] == state.assign[i] || ( state.assign[i] != -1 && state.assign[k] != -1 && prob.overlap[state.assign[k]][state.assign[i]]))){
+				if((state.assign[i] != -1 && state.assign[k] != -1 && (state.assign[k] == state.assign[i] || prob.overlap[state.assign[k]][state.assign[i]]))){
 					return false;
 				}
 			}
@@ -147,7 +149,8 @@ public class Evaluator {
 	{
 		if( prob.Assignables[aIndex].isEvening())
 		{
-			if(prob.Slots[sIndex].startTime.compareTo(NIGHT_TIME) <= 0)
+			int hourDigit = Integer.parseInt(prob.Slots[sIndex].startTime.substring(0,prob.Slots[sIndex].startTime.indexOf(':')));
+			if(hourDigit < NIGHT_HOUR)
 				return false;
 		}
 		
