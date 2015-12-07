@@ -401,12 +401,11 @@ public class Evaluator {
 	 */
 	private double deltaEvalPref(State st, int aIndex, int sIndex) {
 		double dPrefTotal = 0;
-		if( st.assign[aIndex] != -1 ){
 			for(int j = 0; j < prob.getPreferences()[aIndex].length; j++){
 				dPrefTotal += prob.getPreferences()[aIndex][j];
 			}
 			dPrefTotal -= prob.getPreferences()[aIndex][sIndex];
-		}
+		
 		return dPrefTotal;
 	}
 

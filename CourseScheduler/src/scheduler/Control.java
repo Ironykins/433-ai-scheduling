@@ -60,7 +60,7 @@ public class Control {
 			//take the head of our list
 			//System.out.println("States left in list: "+ stateStack.size());
 			State st = stateStack.pop();
-			
+            //System.out.println("popped eval = " + st.getValue());
 			//If it's worse than our current best we just ignore it
 			if(bestSol == null || bestSol.getValue() > st.getValue()) {
 				if(st.isFullSolution() ){

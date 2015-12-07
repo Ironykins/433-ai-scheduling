@@ -1,9 +1,9 @@
-State-ID = : 11
-Eval-Value:	12.000000
+State-ID = : 15
+Eval-Value:	30.000000
 mFil pen:	0.000000
-Pref pen:	12.000000
+Pref pen:	30.000000
 Pair pen:	0.000000
 SDif pen:	0.000000
-CPSC 101 LEC 01          : MO,  9:00
+CPSC 101 LEC 01          : MO,  8:00
 CPSC 102 LEC 01          : MO, 10:00
-CPSC 103 LEC 01          : MO,  8:00
+CPSC 103 LEC 01          : MO,  9:00
