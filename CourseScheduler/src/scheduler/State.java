@@ -1,5 +1,7 @@
 package scheduler;
 
+import java.io.*;
+
 /**
  * Represents a node in the and-tree-based search.
  * This is a partial or full assignment of courses with data 
@@ -62,6 +64,20 @@ public class State implements Comparable<State> {
 		System.arraycopy(parent.numOfLabs, 0, this.numOfLabs, 0, this.numOfLabs.length);
 		stateId = stateCount = stateCount + 1;
 	}
+	/**
+	 * Writes this state to a file.
+	 * 
+	 * @param file
+	 */
+	public void output(String file){
+		try{
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write(this.toString());
+			out.close();
+		}catch(IOException e){
+			System.out.println("Error writing bestSol to file\n" + e.toString());
+		}
+	}
 	
 	/**
 	 * Gives a string representing a state.
@@ -72,7 +88,12 @@ public class State implements Comparable<State> {
 	public String toString() {
 		StringBuilder strb = new StringBuilder();
 		strb.append(String.format("State-ID = : %d\n", stateId));
-		strb.append(String.format("Eval-Value: %f\n", value));
+		strb.append(String.format("Eval-Value:\t%f\n", value));
+		strb.append(String.format("mFil pen:\t%f\nPref pen:\t%f\nPair pen:\t%f\nSDif pen:\t%f\n", 
+				prob.evaluator.evalMinFilled(this),
+				prob.evaluator.evalPref(this),
+				prob.evaluator.evalPair(this),
+				prob.evaluator.evalSecDiff(this)));
 		
 		//We can only do full output if prob is specified.
 		if(prob == null) {

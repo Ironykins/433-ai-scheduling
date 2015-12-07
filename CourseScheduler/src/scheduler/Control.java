@@ -69,6 +69,8 @@ public class Control {
 					//double oldBest = (bestSol != null) ? bestSol.getValue(): (double) 10000000;
 					bestSol = st;
 					System.out.printf("Improvements = %d\nBest Delta Eval = %f\nOne Time Eval = %f\n\n", numBests,bestSol.getValue(),prob.evaluator.eval(bestSol));
+					System.out.println("updating best solution file");
+					bestSol.output(prob.getName() + "best.txt");
 				} else {
 					//generate a list of valid child states
 					//add our children to the front of the queue, should probably order them before this
