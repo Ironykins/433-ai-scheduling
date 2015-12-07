@@ -97,7 +97,7 @@ public class Evaluator {
 			for(int j = 0; j<prob.Assignables[i].incompatible.size();j++){
 				int k = prob.Assignables[i].incompatible.elementAt(j);
 				//If they are assigned to the same slot, or the slots overlap.
-				if((state.assign[k] == state.assign[i] || prob.overlap[state.assign[k]][state.assign[i]]) && state.assign[i] != -1){
+				if((state.assign[k] == state.assign[i] || ( state.assign[i] != -1 && state.assign[k] != -1 && prob.overlap[state.assign[k]][state.assign[i]]))){
 					return false;
 				}
 			}
