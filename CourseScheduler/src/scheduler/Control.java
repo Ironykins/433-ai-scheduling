@@ -23,8 +23,8 @@ public class Control {
 			startState.setValue(prob.evaluator.eval(startState));
 			stateStack.push(startState);
 			bestSol = null;
-			System.out.printf("Part Assign eval value = %f\n",startState.getValue());
-			System.out.printf("Part Assign:\n%s\n", startState.toString());
+			//System.out.printf("Part Assign eval value = %f\n",startState.getValue());
+			//System.out.printf("Part Assign:\n%s\n", startState.toString());
 		}
 		
 		/**
@@ -34,7 +34,7 @@ public class Control {
 		public State solve(){
 			//need a way to check if a solution is valid/complete.
 			//will check for that, and then check that its the only element in the list
-			int maxStates = 0;
+			//int maxStates = 0;
 			while(!stateStack.isEmpty()) {
 				//this turns it into an or tree
 				//if(bestSol != null) break;
@@ -49,7 +49,7 @@ public class Control {
 				expandHead();
 				headsPopped++;
 			}
-			System.out.printf("max states in the list = %d\nwe popped %d heads\n",maxStates,headsPopped);
+			//System.out.printf("max states in the list = %d\nwe popped %d heads\n",maxStates,headsPopped);
 			return bestSol;
 		}
 		
@@ -64,12 +64,12 @@ public class Control {
 			//If it's worse than our current best we just ignore it
 			if(bestSol == null || bestSol.getValue() > st.getValue()) {
 				if(st.isFullSolution() ){
-					System.out.println("ding");
+					//System.out.println("ding");
 					numBests++;
 					//double oldBest = (bestSol != null) ? bestSol.getValue(): (double) 10000000;
 					bestSol = st;
-					System.out.printf("Improvements = %d\nBest Delta Eval = %f\nOne Time Eval = %f\n\n", numBests,bestSol.getValue(),prob.evaluator.eval(bestSol));
-					System.out.println("updating best solution file");
+					//System.out.printf("Improvements = %d\nBest Delta Eval = %f\nOne Time Eval = %f\n\n", numBests,bestSol.getValue(),prob.evaluator.eval(bestSol));
+					//System.out.println("updating best solution file");
 					bestSol.output(prob.getName() + "best.txt");
 				} else {
 					//generate a list of valid child states
