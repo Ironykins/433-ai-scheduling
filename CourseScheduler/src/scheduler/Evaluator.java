@@ -9,8 +9,6 @@ package scheduler;
  * States and transitions to be evaluated are supplied as arguments.
  */
 public class Evaluator {
-	
-	private final String NIGHT_TIME = "18:00";
 	private final int NIGHT_HOUR = 18;
 	//Reference to our problem object.
 	private final Problem prob;
@@ -69,7 +67,7 @@ public class Evaluator {
 		return (maxCheck(state) && compatibleCheck(state) && unwantedCheck(state) && nightCheck(state) );
 
 	}
-	//Checks that any assignables with LEC 9 are scheduled after 18:00 (NIGHT_TIME)
+	//Checks that any assignables with LEC 9 are scheduled after 18:00 (NIGHT_HOUR)
 	private boolean nightCheck(State state){
 		for(int i = 0; i<state.assign.length; i++){
 			if( (prob.Assignables[i].isEvening()) && (prob.Assignables[i].isCourse) && (state.assign[i] != -1)){
