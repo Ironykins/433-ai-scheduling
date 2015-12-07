@@ -266,10 +266,13 @@ public class Evaluator {
 		double dPrefTotal = 0;		
 		for(int i = 0; i < prob.numberOfAssignables; i++){
 			if( st.assign[i] != -1 ){
-				dPrefTotal += prob.getPreferences()[i][st.assign[i]];
+				for(int j = 0; j < prob.getPreferences()[i].length; j++){
+					dPrefTotal += prob.getPreferences()[i][j];
+				}
+				dPrefTotal -= prob.getPreferences()[i][st.assign[i]];
 			}
 		}
-		return dPrefTotal;
+		return dPrefTotal;	
 	}
 	
 	
@@ -396,8 +399,15 @@ public class Evaluator {
 	 * @param sIndex The index of the slot we are assigning to
 	 * @return The change in eval-value. This can be negative.
 	 */
-	private double deltaEvalPref(State st, int aIndex, int sIndex) {		
-		return prob.getPreferences()[aIndex][sIndex];
+	private double deltaEvalPref(State st, int aIndex, int sIndex) {
+		double dPrefTotal = 0;
+		if( st.assign[aIndex] != -1 ){
+			for(int j = 0; j < prob.getPreferences()[aIndex].length; j++){
+				dPrefTotal += prob.getPreferences()[aIndex][j];
+			}
+			dPrefTotal -= prob.getPreferences()[aIndex][sIndex];
+		}
+		return dPrefTotal;
 	}
 
 	
