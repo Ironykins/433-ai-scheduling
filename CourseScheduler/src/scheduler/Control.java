@@ -64,17 +64,20 @@ public class Control {
 			//If it's worse than our current best we just ignore it
 			if(bestSol == null || bestSol.getValue() > st.getValue()) {
 				if(st.isFullSolution() ){
+					System.out.println("ding");
 					numBests++;
 					//double oldBest = (bestSol != null) ? bestSol.getValue(): (double) 10000000;
 					bestSol = st;
 					System.out.printf("Improvements = %d\nBest Delta Eval = %f\nOne Time Eval = %f\n\n", numBests,bestSol.getValue(),prob.evaluator.eval(bestSol));
+					System.out.println("updating best solution file");
+					bestSol.output(prob.getName() + "best.txt");
 				} else {
 					//generate a list of valid child states
 					//add our children to the front of the queue, should probably order them before this
 					/***************
 					 * Here we need to order the children so the first element in the list after we add all of them is the child we want to expand
 					***************/
-					//System.out.printf("current heads val = %f\n",st.getValue());
+					//System.out.printf("current head number = %d\n",st.stateId);
 					LinkedList<State> children = createChildren(st);
 					if(children != null) stateStack.addAll(children);
 				}

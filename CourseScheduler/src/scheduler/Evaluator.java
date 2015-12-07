@@ -335,7 +335,7 @@ public class Evaluator {
 		double Dpref = deltaEvalPref(st, aIndex, sIndex) * wPref ;
 		double Dpair = deltaEvalPair(st, aIndex, sIndex) * wPair ;
 		double DsecDiff = deltaEvalSecDiff(st, aIndex, sIndex) * wSecDiff;
-		System.out.printf("Delta Values for new Node\nParent val = %f\nDminFilled = %f\nDPref = %f\nDPair = %f\nDsecDif = %f\n\n", st.getValue(),DminFilled,Dpref,Dpair,DsecDiff);
+		//System.out.printf("Delta Values for new Node\nParent val = %f\nDminFilled = %f\nDPref = %f\nDPair = %f\nDsecDif = %f\n\n", st.getValue(),DminFilled,Dpref,Dpair,DsecDiff);
 		return  st.getValue() + DminFilled + Dpref + Dpair + DsecDiff;
 	}
 	

@@ -1,0 +1,11 @@
+State-ID = : 22
+Eval-Value:	5.000000
+mFil pen:	5.000000
+Pref pen:	0.000000
+Pair pen:	0.000000
+SDif pen:	0.000000
+CPSC 433 LEC 01          : MO,  9:00
+CPSC 434 LEC 01          : MO,  8:00
+CPSC 435 LEC 01          : MO,  8:00
+CPSC 910 LEC 91          : TU,  8:00
+CPSC 433 LEC 01 TUT 01   : TU, 14:00
