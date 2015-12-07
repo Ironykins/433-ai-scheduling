@@ -10,6 +10,6 @@
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="scheduler.Main"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-wmf 1 -wpr 1 -wsd 1 -wpa 5 -pcm 5 -plm 5 -psd 5 -ppa 5 examples/gehtnicht7.txt"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-wmf 1 -wpr 1 -wsd 1 -wpa 5 -pcm 5 -plm 5 -psd 5 -ppa 5 examples/gehtnicht10.txt"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="CourseScheduler"/>
 </launchConfiguration>

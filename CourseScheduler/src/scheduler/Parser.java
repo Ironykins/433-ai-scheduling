@@ -28,6 +28,10 @@ public class Parser {
 	private Pattern preferencesPattern;
 	private Pattern pairPattern;
 	
+	//Whether we have 913 or 813 in the list already.
+	private boolean added913;
+	private boolean added813;
+	
 	//Used for building the initial structures.
 	//Later cast to arrays.
 	private Vector<Assignable> assignables;
@@ -184,7 +188,6 @@ public class Parser {
 		
 		if(cpsc813id != -1) {
 			partAssign.assign[cpsc813id] = slotId;
-			
 			for(int id : incompatible813) prob.Assignables[cpsc813id].incompatible.add(id);
 		}
 		if(cpsc913id != -1) {
@@ -276,10 +279,34 @@ public class Parser {
 			if(m.find()) {
 				String name = m.group(0).trim().replaceAll(" +", " "); //Remove duplicate whitespace.
 				Assignable newCourse = new Assignable(assignableIndex++, name, true, Integer.parseInt(m.group(3)));
+				
+				//Handle 813 and 913.
+				if(m.group(2).equals("813")) {
+					if(!added813){
+						cpsc813id = newCourse.id;
+						added813 = true;
+					} else continue; //If we've added it, don't add it again.
+				} else if(m.group(2).equals("913")) {
+					if(!added913){
+						cpsc913id = newCourse.id;
+						added913 = true;
+					} else continue; //If we've added it, don't add it again.
+				}
+
 				assignables.add(newCourse);
 				
-				if(m.group(1).equals("813")) cpsc813id = newCourse.id;
-				if(m.group(1).equals("913")) cpsc913id = newCourse.id;
+				//Also add 813 and 913 when we encounter 313 and 413.
+				if(!added813 && m.group(2).equals("313")) {
+					Assignable newCourse2 = new Assignable(assignableIndex++, "CPSC 813 LEC 01", true, 1);
+					assignables.add(newCourse2);
+					cpsc813id = newCourse2.id;
+					added813 = true;
+				} else if(!added913 && m.group(2).equals("413")) {
+					Assignable newCourse2 = new Assignable(assignableIndex++, "CPSC 913 LEC 01", true, 1);
+					assignables.add(newCourse2);
+					cpsc913id = newCourse2.id;
+					added913 = true;
+				}
 				
 				//If it's a 500 level course
 				if(m.group(2).charAt(0) == '5')
@@ -289,9 +316,26 @@ public class Parser {
 				if(m.group(3).charAt(0) == '9')
 					newCourse.setEvening(true);
 			}
-			else { //If the line is not whitespace and we can't parse it, we have a problem.
-	    		if (line.trim().length() == 0) return;
-    			throw new IOException(String.format("Could not parse line as course: %s", line));
+			else {
+	    		if (line.trim().length() == 0)  //If we hit whitespace we're done.
+	    		{
+	    			//If we have 813 and 913 and we haven't added TU 18:00, add it now.
+	    			if(added813 || added913) {
+	    				boolean slotAdded = false;
+	    				for(Slot s : slots) {
+	    					if(s.day.equals("TU") && s.startTime.equals("18:00") && s.getCourseMax() > 0)
+	    						slotAdded = true;
+	    				}
+	    				if(!slotAdded) {
+	    					Slot newSlot = new Slot(slotIndex++, "TU", "18:00");
+	    					newSlot.setCourseMax(1);
+	    					slots.add(newSlot);
+	    				}
+	    			}
+	    			return;
+	    		} //If the line is not whitespace and we can't parse it, we have a problem.
+	    		else
+	    			throw new IOException(String.format("Could not parse line as course: %s", line));
 			}
 		}
 	}
@@ -368,10 +412,10 @@ public class Parser {
 					
 					//813 should inherit all things incompatible with anything 313.
 					//Same for 913 and 413
-					if(a1.name.contains("313")) {
+					if(a1.name.contains("313") || a2.name.contains("313")) {
 						incompatible813.add(a1.id);
 						incompatible813.add(a2.id);
-					} else if(a1.name.contains("413")) {
+					} else if(a1.name.contains("413") || a2.name.contains("413")) {
 						incompatible913.add(a1.id);
 						incompatible913.add(a2.id);
 					}
