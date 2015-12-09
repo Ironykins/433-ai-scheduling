@@ -2,8 +2,9 @@ package scheduler;
 
 import java.util.Vector;
 
-//Labs and Courses seem pretty much the same,
-//So I think it would be ok to only have one object representing both
+/**
+ * Represents both labs and courses.
+ */
 public class Assignable {
 	
 	/* 

@@ -6,14 +6,6 @@ import java.io.*;
  * Represents a node in the and-tree-based search.
  * This is a partial or full assignment of courses with data 
  * attached describing the value.
- * ############################################################
- * why are we keeping track of the problem in state?
- * this seems pretty space inefficient, also it means partasign contains prob contains partasign contains prob....
- * I think that we should have a state tostring method in prob that takes a state as a parameter
- * this way we can save on redundancies. or instead just have a function in prob that lets state pull the info we need to print it our properly
- * 
- * A: I agree that it's not very clean, but there isn't any extra overhead here.
- * 	  prob is a pointer/reference to a problem object. We are still only storing a single problem object in memory.
  */
 public class State implements Comparable<State> {
 	//We may as well keep track of which problem this state is for.
@@ -168,8 +160,8 @@ public class State implements Comparable<State> {
 	
 	@Override
 	public int compareTo(State other) {
-        if (this.value - other.getValue() > 0) return 1;
-        else if(this.value - other.getValue() < 0) return -1;
+        if (this.value - other.getValue() > 0) return -1;
+        else if(this.value - other.getValue() < 0) return 1;
         else return 0;
 	}
 }

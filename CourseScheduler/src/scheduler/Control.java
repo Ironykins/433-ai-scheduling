@@ -4,6 +4,9 @@ import java.util.Collections;
 import java.util.Stack;
 import java.util.LinkedList;
 
+/**
+ * Main logic for traversing the AND tree.
+ */
 public class Control {
 		private Problem prob; //contains main problem we want to solve
 		private State bestSol; //best running solution, starts as worst possible solution
@@ -38,8 +41,8 @@ public class Control {
 			while(!stateStack.isEmpty()) {
 				//this turns it into an or tree
 				//if(bestSol != null) break;
-				//if(stateStack.size()>maxStates) maxStates = stateStack.size();
-				/*if(headsPopped % 10000000 == 0) System.out.printf(
+				/*if(stateStack.size()>maxStates) maxStates = stateStack.size();
+				if(headsPopped % 10000000 == 0) System.out.printf(
 						"@@@@@@@@@@@@@@@@@@@@@@@@@@\nHead popping iteration number : %d\nMax States in the list :%d\nbestSol: %d\t%f\n@@@@@@@@@@@@@@@@@@@@@@@@\n"
 						,headsPopped
 						,maxStates
